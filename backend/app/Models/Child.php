@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Child extends Model {
+
+    protected $table = 'children';
+
+    protected $fillable = [
+        'name',
+        'birth_date',
+        'notes',
+        'created_by'
+    ];
+}
