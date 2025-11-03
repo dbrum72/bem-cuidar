@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('participant_id')->constrained('shared_care_participants')->onDelete('cascade');
+            $table->foreignId('participant_id')->constrained('appointments')->onDelete('cascade');
             $table->decimal('amount',10,2);
             $table->enum('status',['pending','paid'])->default('pending');
             $table->timestamp('paid_at')->nullable();
@@ -24,6 +24,8 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('transactions');
+        Schema::enableForeignKeyConstraints();
     }
 };

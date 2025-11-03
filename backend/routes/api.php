@@ -17,9 +17,7 @@ Route::group([
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
-
-    
+    Route::post('me', 'AuthController@me');    
 });
 
 Route::group([
@@ -32,8 +30,8 @@ Route::group([
     // Crianças
     Route::apiResource('children', 'ChildController');
 
-    // Eventos de guarda compartilhada
-    Route::apiResource('shared-care-events', 'SharedCareEventController');
+    // Agendamentos de guarda compartilhada
+    Route::apiResource('appointments', 'AppointmentController');
 
     // Transações financeiras
     Route::apiResource('transactions', 'TransactionController');

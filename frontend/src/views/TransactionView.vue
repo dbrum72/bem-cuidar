@@ -6,7 +6,7 @@
       <label>Participante:</label>
       <select v-model="transaction.participant_id" required>
         <option v-for="p in participants" :key="p.id" :value="p.id">
-          {{ p.user.name }} - {{ p.sharedCareEvent.title }}
+          {{ p.user.name }} - {{ p.appointmentEvent.title }}
         </option>
       </select>
 
@@ -21,7 +21,7 @@
 
     <h3>Transações Registradas</h3>
     <div v-for="t in transactions" :key="t.id" class="transaction-card">
-      <p><strong>{{ t.participant.user.name }}</strong> - {{ t.participant.sharedCareEvent.title }}</p>
+      <p><strong>{{ t.participant.user.name }}</strong> - {{ t.participant.appointmentEvent.title }}</p>
       <p>Valor: {{ t.amount }}</p>
       <p>Status: {{ t.status }}</p>
       <p v-if="t.receipt">
@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     ...mapState('transactions', ['transactions']),
-    ...mapState('sharedCare', ['events']),
+    ...mapState('appointment', ['events']),
     participants() {
       // retornar todos participantes de todos eventos
       return this.events.flatMap(e => e.participants || []);
@@ -83,7 +83,7 @@ export default {
   },
   created() {
     // carregar eventos e transações
-    this.$store.dispatch('sharedCare/fetchEvents');
+    this.$store.dispatch('appointment/fetchEvents');
     this.$store.dispatch('transactions/fetchTransactions');
   }
 };

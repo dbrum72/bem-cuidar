@@ -14,8 +14,8 @@
 
         <section>
             <h2>Eventos de Cuidado Compartilhado</h2>
-            <div v-if="sharedCare.length === 0">Nenhum evento</div>
-            <div v-for="e in sharedCare" :key="e.id" class="card">
+            <div v-if="appointments.length === 0">Nenhum evento</div>
+            <div v-for="e in appointments" :key="e.id" class="card">
                 <p><strong>{{ e.title }}</strong></p>
                 <p>Criança: {{ getChildName(e.child_id) }}</p>
                 <p>Início: {{ e.start_datetime }}</p>
@@ -30,7 +30,7 @@
             <div v-if="transactions.length === 0">Nenhuma transação</div>
             <div v-for="t in transactions" :key="t.id" class="card">
                 <p>Participante: {{ t.participant.user.name }}</p>
-                <p>Evento: {{ t.participant.sharedCareEvent.title }}</p>
+                <p>Evento: {{ t.participant.appointmentEvent.title }}</p>
                 <p>Valor: {{ t.amount }}</p>
                 <p>Status: {{ t.status }}</p>
                 <p v-if="t.receipt"><a :href="t.receipt_url" target="_blank">Visualizar comprovante</a></p>
@@ -57,7 +57,7 @@ export default {
 
     computed: {
         ...mapState('children', ['children']),
-        ...mapState('sharedCare', ['sharedCare']),
+        ...mapState('appointments', ['appointments']),
         ...mapState('transactions', ['transactions'])
     },
     methods: {
@@ -69,7 +69,7 @@ export default {
 
     mounted() {
         this.$store.dispatch('children/fetchChildren');
-        this.$store.dispatch('sharedCare/fetchSharedCare');
+        this.$store.dispatch('appointment/fetchAppointments');
         this.$store.dispatch('transactions/fetchTransactions');
         this.$store.dispatch('notifications/fetchNotifications');
     }

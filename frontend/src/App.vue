@@ -3,7 +3,7 @@
         <nav>
             <router-link to="/">Dashboard</router-link> |
             <router-link to="/child">Crianças</router-link> |
-            <router-link to="/shared-care">Eventos</router-link> |
+            <router-link to="/appointment/list">Agendamentos</router-link> |
             <router-link to="/transactions">Transações</router-link> |
             <button @click="logout">Logout</button>
         </nav>

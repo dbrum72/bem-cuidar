@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 
-class SharedCareEventSaveRequest extends FormRequest {
+class AppointmentSaveRequest extends FormRequest {
 
     public function authorize(): bool {
 
@@ -18,21 +18,28 @@ class SharedCareEventSaveRequest extends FormRequest {
         if ($this->user()) {
             $this->merge(['created_by' => $this->user()->id]);
         }
+
+        if ($this->has('total_expense')) {
+            $value = str_replace(',', '.', $this->total_expense);
+            $this->merge([
+                'total_expense' => $value
+            ]);
+        }
     }
 
     public function rules(): array {
 
-        $sharedCareEventId = $this->route('shared-care-events');        
+        $appointmentId = $this->route('shared-care-events');        
 
         $rules = [
-            'id' => [Rule::unique('shared_care_events', 'id')->ignore($sharedCareEventId)],
+            //'id' => [Rule::unique('shared_care_events', 'id')->ignore($appointmentId)],
             'child_id' => ['required','exists:children,id'],
             'title' => ['required','min:3','max:255'],
             'description' => ['nullable'],
             'start_datetime' => ['required','date'],
             'end_datetime' => ['required','date','after_or_equal:start_date'],
             'location' => ['nullable','max:255'],
-            'total_expense' => ['nullable','decimal:2'],
+            'total_expense' => ['required','decimal:2'],
             'created_by' => ['required','exists:users,id']
         ];
 

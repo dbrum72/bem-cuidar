@@ -9,7 +9,7 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('shared_care_events', function (Blueprint $table) {
+        Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('child_id')->constrained('children')->onDelete('cascade');
             $table->string('title');
@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->dateTime('start_datetime');
             $table->dateTime('end_datetime');
             $table->string('location')->nullable();
-            $table->decimal('total_expense', 10, 2)->nullable();
+            $table->decimal('total_expense', 10, 2)->default('0.00');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('shared_care_events');
+        Schema::dropIfExists('appointments');
     }
 };
