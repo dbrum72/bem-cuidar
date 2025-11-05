@@ -45,21 +45,23 @@
 
 <script>
 import { mapState } from "vuex"
-import ChildrenMixin from '@/mixins/ChildrenMixin.js';
+import AbstractMixin from '@/mixins/AbstractMixin'
+import ChildMixin from '@/mixins/ChildMixin'
 import NotificationList from './NotificationList.vue';
 
 export default {
     name: "DashboardView",
 
-    mixins: [ChildrenMixin],
-
     components: { NotificationList },
 
+    mixins: [AbstractMixin, ChildMixin],
+
     computed: {
-        ...mapState('children', ['children']),
+        ...mapState('child', ['children']),
         ...mapState('appointments', ['appointments']),
         ...mapState('transactions', ['transactions'])
     },
+    
     methods: {
         getChildName(child_id) {
             const c = this.children.find(ch => ch.id === child_id);
@@ -68,7 +70,7 @@ export default {
     },
 
     mounted() {
-        this.$store.dispatch('children/fetchChildren');
+        this.getChildren();
         this.$store.dispatch('appointment/fetchAppointments');
         this.$store.dispatch('transactions/fetchTransactions');
         this.$store.dispatch('notifications/fetchNotifications');

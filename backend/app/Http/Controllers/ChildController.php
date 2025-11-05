@@ -62,4 +62,47 @@ class ChildController extends Controller {
         return response()->json(['errors' => ['error' => 'Erro ao criar o registro']], 404);
     }
 
+    /************************************************************************************/
+    public function show($id) {
+
+        if($child = $this->child->find($id)) {
+
+            return response()->json(['child' => $child, 'errors' => []], 200);
+        }
+
+        return response()->json(['errors' => ['error' => 'O registro não foi localizado.']], 404);
+    }
+
+    /************************************************************************************/
+    public function update(ChildSaveRequest $request, $id) {
+
+        if($update = $this->child->find($id)) {
+
+            if($update->update($request->all())) {
+
+                return response()->json([ 'child' => $update, 'errors' => [], 'msg' => 'Registro atualizado com sucesso!'], 200);
+            }       
+
+            return response()->json(['errors' => ['error' => 'Erro ao gravar o registro']], 404);
+        }
+
+        return response()->json(['errors' => ['error' => 'O registro não foi localizado.']], 404);
+    }
+
+    /************************************************************************************/
+    public function destroy($id) {
+
+         if($destroy = $this->child->find($id)) {      
+            
+            if($destroy->delete()) {
+
+                return response()->json(['msg' => 'Registro removido com sucesso!'], 200);
+            }
+            
+            return response()->json([ 'errors' => ['error' => 'Erro ao excluir o registro']], 404);
+        }
+
+        return response()->json(['errors' => ['erro' => 'O registro não foi localizado.']], 404);
+    }
+
 }

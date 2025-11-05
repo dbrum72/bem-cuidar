@@ -30,7 +30,7 @@ class ChildSaveRequest extends FormRequest {
      */
     public function rules(): array {
 
-        $childId = $this->route('children');        
+        $childId = $this->route('child');        
 
         $rules = [
             'name' => ['required','string','min:3','max:255',Rule::unique('children', 'name')->ignore($childId)],

@@ -5,29 +5,29 @@ export default {
 
     methods: {
 
-        ...mapMutations(['SET_USER', 'PUSH_NOTIFICATION', 'SET_ERRORS', 'SET_LOADER']),
+        //...mapMutations(['SET_USER', 'PUSH_NOTIFICATION', 'SET_ERRORS', 'SET_LOADER']),
 
         async handleRequest(request, successMessage, errorMessage, showNotification = true, showLoader = true) {
-            if (showLoader) {
-                this.SET_LOADER({ 'active': true, 'text': 'Processando...' });
-            }
+            //if (showLoader) {
+            //    this.SET_LOADER({ 'active': true, 'text': 'Processando...' });
+            //}
             try {
                 const response = await request();
-                if (showNotification) {
-                    this.PUSH_NOTIFICATION({ type: 'success', message: successMessage || response.data.msg });
-                }
-                this.SET_ERRORS([])
+                //if (showNotification) {
+                //    this.PUSH_NOTIFICATION({ type: 'success', message: successMessage || response.data.msg });
+                //}
+                //this.SET_ERRORS([])
                 return response;
             } catch (error) {
                 const message = error?.response
                     ? errorMessage || 'Ocorreu um erro inesperado. Tente novamente.'
                     : 'Erro de rede ou servidor. Tente novamente.';
-                this.PUSH_NOTIFICATION({ type: 'error', message });
-                this.SET_ERRORS(error.response.data.errors)
+                //this.PUSH_NOTIFICATION({ type: 'error', message });
+                //this.SET_ERRORS(error.response.data.errors)
             } finally {
-                if (showLoader) {
-                    this.SET_LOADER({ 'active': false, 'text': '' });
-                }
+                // (showLoader) {
+                //    this.SET_LOADER({ 'active': false, 'text': '' });
+                //}
             }
         },
 

@@ -5,25 +5,31 @@ export default {
     namespaced: true,
 
     state: {
+        child: {},
         children: []
     },
 
     mutations: {
 
         setChildren(state, children) {
+            console.log(children)
             state.children = children;
         },
 
+        setChild(state, child) {
+            console.log(child)
+            state.child = child;
+        },
+
         addChild(state, child) {
-            state.children.push(child);
-        }
+            if (!child || !child.id) return;
+            const index = state.children.findIndex(a => a.id === child.id);
+            if (index !== -1) state.children.splice(index, 1, child);
+            else state.children.push(child);
+        },
     },
 
     actions: {
-        async fetchChildren({ commit }) {
-            const { data } = await http.get('children');
-            commit('setChildren', data.children);
-        },
 
         async createChild({ commit }, payload) {
             

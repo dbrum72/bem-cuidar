@@ -28,7 +28,7 @@ Route::group([
 ], function ($router) {
 
     // Crianças
-    Route::apiResource('children', 'ChildController');
+    Route::apiResource('child', 'ChildController');
 
     // Agendamentos de guarda compartilhada
     Route::apiResource('appointments', 'AppointmentController');
