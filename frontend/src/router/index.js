@@ -15,16 +15,14 @@ const routes = [
         path: '/dashboard',
         name: 'Dashboard',
         component: () => import('@/views/DashboardView.vue'),
+        meta: { requiresAuth: true },
     },    
     {
         path: '/appointment',
         name: 'Appointment',
+        component: () => import('@/views/appointment/appointment-fetch.vue'),
+        meta: { requiresAuth: true },
         children: [
-            {
-                path: 'list',
-                name: 'AppointmentList',
-                component: () => import('@/views/appointment/appointment-fetch.vue'),
-            },
             {
                 path: 'save/:id?',
                 name: 'AppointmentSave',
@@ -36,6 +34,7 @@ const routes = [
         path: '/child',
         name: 'Child',
         component: () => import('@/views/child/child-fetch.vue'),
+        meta: { requiresAuth: true },
         children: [
             {
                 path: 'save/:id?',
@@ -52,4 +51,16 @@ const routes = [
     { path: '/transactions', name: 'Transactions', component: TransactionView },
 ];
 
-export default createRouter({ history: createWebHistory(), routes });
+const router = createRouter({ history: createWebHistory(), routes });
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token');
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    next({ name: 'Login' });
+  } else {
+    next();
+  }
+});
+
+export default router;

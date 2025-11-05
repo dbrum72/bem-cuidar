@@ -1,5 +1,6 @@
 <template>
-    <h2>Appointmentos de Cuidado Compartilhado</h2>
+    <HeaderBar />
+    <h2>Agendamentos</h2>
     <div v-if="appointments.length === 0">Nenhum evento agendado.</div>
     <div v-else>
         <table>
@@ -38,10 +39,13 @@
 <script>
 import { mapState } from "vuex"
 //import AppointmentMixin from '@/mixins/AppointmentMixin.js';
+import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
 
     name: "AppointmentFetch",
+
+    components: { HeaderBar },
 
     //mixins: [AppointmentMixin],
 

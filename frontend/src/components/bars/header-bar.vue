@@ -3,7 +3,7 @@
         <nav>
             <router-link to="/dashboard">Dashboard</router-link> |
             <router-link to="/child">Crianças</router-link> |
-            <router-link to="/appointment/list">Agendamentos</router-link> |
+            <router-link to="/appointment">Agendamentos</router-link> |
             <router-link to="/transactions">Transações</router-link> |
             <button @click="logout">Logout</button>
         </nav>
