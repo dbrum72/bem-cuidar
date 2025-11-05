@@ -24,7 +24,7 @@ export default {
                     email: this.email,
                     password: this.password
                 });
-                this.$router.push('/');
+                this.$router.push({ name: 'Dashboard' });
             } catch (e) { alert('Erro no login'); }
         }
     }

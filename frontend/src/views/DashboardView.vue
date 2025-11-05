@@ -1,5 +1,7 @@
 <template>
     <div>
+        <HeaderBar />
+        
         <h1>Dashboard</h1>
 
         <section>
@@ -48,11 +50,12 @@ import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
 import ChildMixin from '@/mixins/ChildMixin'
 import NotificationList from './NotificationList.vue';
+import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
     name: "DashboardView",
 
-    components: { NotificationList },
+    components: { HeaderBar, NotificationList },
 
     mixins: [AbstractMixin, ChildMixin],
 

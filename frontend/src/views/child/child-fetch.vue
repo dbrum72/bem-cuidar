@@ -1,5 +1,8 @@
 <template>
-    <h2>Appointmentos de Cuidado Compartilhado</h2>
+
+    <HeaderBar />
+
+    <h2>Crianças</h2>
     <div v-if="children.length === 0">Nenhuma criança cadastrada</div>
 
     <div v-else>
@@ -36,10 +39,13 @@
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
 import ChildMixin from '@/mixins/ChildMixin'
+import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
 
     name: "ChildFetch",
+
+    components: { HeaderBar },
 
     mixins: [AbstractMixin, ChildMixin],
 

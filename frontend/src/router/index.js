@@ -1,14 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import LoginView from '@/views/LoginView.vue';
 import RegisterView from '@/views/RegisterView.vue';
-import DashboardView from '@/views/DashboardView.vue';
-import ChildView from '@/views/child/child-save.vue';
 import TransactionView from '@/views/TransactionView.vue';
 
 const routes = [
-    { path: '/', name: 'Dashboard', component: DashboardView },
+    {
+        path: '/',
+        name: 'Index',
+        component: () => import('@/views/index.vue'),
+    },
     { path: '/login', name: 'Login', component: LoginView },
-    { path: '/register', name: 'Register', component: RegisterView },
+    { path: '/register', name: 'Register', component: RegisterView },     
+    {
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/DashboardView.vue'),
+    },    
     {
         path: '/appointment',
         name: 'Appointment',
@@ -28,12 +35,8 @@ const routes = [
     {
         path: '/child',
         name: 'Child',
+        component: () => import('@/views/child/child-fetch.vue'),
         children: [
-            {
-                path: 'list',
-                name: 'ChildrenList',
-                component: () => import('@/views/child/child-fetch.vue'),
-            },
             {
                 path: 'save/:id?',
                 name: 'ChildSave',
