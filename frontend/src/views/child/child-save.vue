@@ -5,6 +5,7 @@
         <input type="text" v-model="form.name" placeholder="Nome" required />
         <input type="date" v-model="form.birth_date" required />
         <textarea v-model="form.notes" placeholder="Notas"></textarea>
+        <button type="button" @click="cancelSave">Cancelar</button>
         <button type="submit">Salvar</button>
     </form>
 </template>
@@ -41,7 +42,7 @@ export default {
         },
 
         cancelSave() {
-            this.$router.push({ name: 'Children' })
+            this.$router.push({ name: 'ChildList' })
         }
     },
 

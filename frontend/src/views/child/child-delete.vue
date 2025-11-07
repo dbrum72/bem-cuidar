@@ -13,7 +13,7 @@
                     Confirma a exclusão do registro de ID nº. "{{ child.id }}" ?
                 </div>
                 <div class="text-end">
-                    <router-link class="btn btn-gray me-2" :to="{ name: 'ChildrenList'}">Cancelar</router-link>
+                    <router-link class="btn btn-gray me-2" :to="{ name: 'ChildList'}">Cancelar</router-link>
                     <button type="button" class=""
                         @click="(destroyChild(child.id))">Excluir</button>
                 </div>

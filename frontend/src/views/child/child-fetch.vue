@@ -24,6 +24,9 @@
                     <td>{{ i.birth_date }}</td>
                     <td>{{ i.notes }}</td>
                     <td>
+                        <router-link :to="{ name: 'ChildShow', params: { id: i.id } }">
+                            Visualizar
+                        </router-link>
                         <router-link :to="{ name: 'ChildSave', params: { id: i.id } }">
                             Editar
                         </router-link>

@@ -23,7 +23,6 @@ export default {
         },
 
         async getChild(id) {
-            console.log("ID do Child:", id);
             const url = `${import.meta.env.VITE_BACKEND_URL}/child/${id}`
             const response = await this.handleRequest(
                 () => getData(url),
@@ -45,7 +44,7 @@ export default {
             );
             if (response) {
                 this.$store.commit('child/addChild', response.data.child);
-                //this.resetChildView();
+                this.resetChildView();
             }
         },
 
@@ -58,7 +57,8 @@ export default {
             );
             if (response) {
                 this.$store.commit('child/addChild', response.data.child);
-                //this.resetChildView(response.data.id);
+                
+                this.resetChildView(response.data.child.id);
             }
         },
 
@@ -79,9 +79,9 @@ export default {
         },
 
         resetChildView(id) {
-            this.Child = {}
-            this.SET_ERRORS([])
-            id ? this.$router.push({ name: 'ShowChild', params: { 'id': id } }) : this.$router.push({ name: 'ListChildren' })
+            //this.Child = {}
+            //this.SET_ERRORS([])
+            id ? this.$router.push({ name: 'ChildShow', params: { 'id': id } }) : this.$router.push({ name: 'ChildList' })
         },
     }
 }

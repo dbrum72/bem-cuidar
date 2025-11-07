@@ -14,13 +14,14 @@ const routes = [
     {
         path: '/register',
         name: 'Register',
-        component: () => import('@/views/RegisterView.vue'),},     
+        component: () => import('@/views/RegisterView.vue'),
+    },
     {
         path: '/dashboard',
         name: 'Dashboard',
         component: () => import('@/views/DashboardView.vue'),
         meta: { requiresAuth: true },
-    },    
+    },
     {
         path: '/appointment',
         name: 'Appointment',
@@ -37,9 +38,18 @@ const routes = [
     {
         path: '/child',
         name: 'Child',
-        component: () => import('@/views/child/child-fetch.vue'),
         meta: { requiresAuth: true },
         children: [
+            {
+                path: 'list',
+                name: 'ChildList',
+                component: () => import('@/views/child/child-fetch.vue'),
+            },
+            {
+                path: 'show/:id',
+                name: 'ChildShow',
+                component: () => import('@/views/child/child-show.vue'),
+            },
             {
                 path: 'save/:id?',
                 name: 'ChildSave',
@@ -52,23 +62,27 @@ const routes = [
             }
         ]
     },
-    { path: '/transactions',
+    {
+        path: '/transactions',
         name: 'Transactions',
         component: () => import('@/views/TransactionView.vue'),
         meta: { requiresAuth: true },
     },
 ];
 
-const router = createRouter({ history: createWebHashHistory(import.meta.env.VITE_BACKEND_URL), routes });
+const router = createRouter({
+    history: createWebHashHistory(),
+    routes
+})
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = !!localStorage.getItem('token');
-  
-  if (to.meta.requiresAuth && !isAuthenticated) {
-    next({ name: 'Login' });
-  } else {
-    next();
-  }
+    const isAuthenticated = !!localStorage.getItem('token');
+
+    if (to.meta.requiresAuth && !isAuthenticated) {
+        next({ name: 'Login' });
+    } else {
+        next();
+    }
 });
 
 export default router;
