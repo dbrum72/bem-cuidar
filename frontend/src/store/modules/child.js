@@ -1,5 +1,3 @@
-import http from "@/services/http.js";
-
 export default {
 
     namespaced: true,
@@ -12,12 +10,10 @@ export default {
     mutations: {
 
         setChildren(state, children) {
-            console.log(children)
             state.children = children;
         },
 
         setChild(state, child) {
-            console.log(child)
             state.child = child;
         },
 
@@ -27,18 +23,5 @@ export default {
             if (index !== -1) state.children.splice(index, 1, child);
             else state.children.push(child);
         },
-    },
-
-    actions: {
-
-        async createChild({ commit }, payload) {
-            
-            const { data } = await http.post('children', payload, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            commit('addChild', data);
-        }
     }
 }

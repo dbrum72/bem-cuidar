@@ -2,8 +2,8 @@
   <header class="header-bar">
     <nav v-if="isAuthenticated" class="nav-bar">
       <router-link to="/dashboard">Dashboard</router-link>
-      <router-link to="/children">Crianças</router-link>
-      <router-link to="/appointments">Agendamentos</router-link>
+      <router-link to="/child">Crianças</router-link>
+      <router-link to="/appointment">Agendamentos</router-link>
 
       <button @click="logout" class="logout-btn">Sair</button>
     </nav>

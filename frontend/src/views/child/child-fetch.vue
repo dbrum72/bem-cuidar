@@ -2,8 +2,11 @@
 
     <HeaderBar />
 
-    <h2>Crianças</h2>
-    <div v-if="children.length === 0">Nenhuma criança cadastrada</div>
+    <div class="d-flex justify-content-between px-3">
+        <h2>Crianças</h2>
+        <router-link :to="{ name: 'ChildSave' }">Adicionar</router-link>
+    </div>
+    <div v-if="list.length === 0">Nenhuma criança cadastrada</div>
 
     <div v-else>
         <table>
@@ -16,22 +19,21 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="child in children" :key="child.id" class="">
-                    <td>{{ child.name }}</td>
-                    <td>{{ child.birth_date }}</td>
-                    <td>{{ child.notes }}</td>
+                <tr v-for="i in list" :key="i.id" class="">
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.birth_date }}</td>
+                    <td>{{ i.notes }}</td>
                     <td>
-                        <router-link :to="{ name: 'ChildSave', params: { id: child.id } }">
+                        <router-link :to="{ name: 'ChildSave', params: { id: i.id } }">
                             Editar
                         </router-link>
-                        <router-link class="" :to="{ name: 'ChildDelete', params: { id: child.id } }">
+                        <router-link class="" :to="{ name: 'ChildDelete', params: { id: i.id } }">
                             Excluir
                         </router-link>
                     </td>
                 </tr>
             </tbody>
         </table>
-
     </div>
 </template>
 
@@ -39,7 +41,7 @@
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
 import ChildMixin from '@/mixins/ChildMixin'
-import HeaderBar from "@/components/bars/header-bar.vue";
+import HeaderBar from "@/components/bars/header-bar.vue"
 
 export default {
 
@@ -50,11 +52,11 @@ export default {
     mixins: [AbstractMixin, ChildMixin],
 
     computed: {
-        ...mapState('child', ['children'])
+        ...mapState('child', ['list'])
     },
 
     mounted() {
-        this.getChildren();
+        this.getList(null, null, null, null);
     },
 }
 </script>

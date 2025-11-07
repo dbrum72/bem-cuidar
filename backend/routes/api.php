@@ -31,7 +31,7 @@ Route::group([
     Route::apiResource('child', 'ChildController');
 
     // Agendamentos de guarda compartilhada
-    Route::apiResource('appointments', 'AppointmentController');
+    Route::apiResource('appointment', 'AppointmentController');
 
     // Transações financeiras
     Route::apiResource('transactions', 'TransactionController');

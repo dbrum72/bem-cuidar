@@ -1,5 +1,7 @@
 <template>
-    <form @submit.prevent="saveChild">
+    <HeaderBar />
+
+    <form @submit.prevent="save">
         <input type="text" v-model="form.name" placeholder="Nome" required />
         <input type="date" v-model="form.birth_date" required />
         <textarea v-model="form.notes" placeholder="Notas"></textarea>
@@ -10,10 +12,13 @@
 <script>
 import AbstractMixin from '@/mixins/AbstractMixin'
 import ChildMixin from '@/mixins/ChildMixin'
+import HeaderBar from "@/components/bars/header-bar.vue"
 
 export default {
 
     name: "ChildSave",
+
+    components: { HeaderBar },
 
     mixins: [AbstractMixin, ChildMixin],
 
@@ -26,7 +31,7 @@ export default {
 
     methods: {
 
-        async saveChild() {
+        async save() {
 
             if (this.isEditing) {
                 await this.updateChild(this.form)

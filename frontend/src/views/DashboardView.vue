@@ -1,7 +1,7 @@
 <template>
     <div>
         <HeaderBar />
-        
+
         <h1>Dashboard</h1>
 
         <section>
@@ -26,7 +26,7 @@
                 <p>Total: {{ e.total_cost }}</p>
             </div>
         </section>
-
+        <!--
         <section>
             <h2>Transações</h2>
             <div v-if="transactions.length === 0">Nenhuma transação</div>
@@ -38,33 +38,35 @@
                 <p v-if="t.receipt"><a :href="t.receipt_url" target="_blank">Visualizar comprovante</a></p>
             </div>
         </section>
-
+        
         <section>
             <NotificationList />
         </section>
+        -->
     </div>
 </template>
 
 <script>
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
+import AppointmentMixin from '@/mixins/AppointmentMixin'
 import ChildMixin from '@/mixins/ChildMixin'
-import NotificationList from './NotificationList.vue';
+//import NotificationList from './NotificationList.vue';
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
     name: "DashboardView",
 
-    components: { HeaderBar, NotificationList },
+    components: { HeaderBar },
 
-    mixins: [AbstractMixin, ChildMixin],
+    mixins: [AbstractMixin, AppointmentMixin, ChildMixin],
 
     computed: {
         ...mapState('child', ['children']),
-        ...mapState('appointments', ['appointments']),
-        ...mapState('transactions', ['transactions'])
+        ...mapState('appointment', ['appointments']),
+        //...mapState('transactions', ['transactions'])
     },
-    
+
     methods: {
         getChildName(child_id) {
             const c = this.children.find(ch => ch.id === child_id);
@@ -74,9 +76,9 @@ export default {
 
     mounted() {
         this.getChildren();
-        this.$store.dispatch('appointment/fetchAppointments');
-        this.$store.dispatch('transactions/fetchTransactions');
-        this.$store.dispatch('notifications/fetchNotifications');
+        this.getAppointments();
+        //this.$store.dispatch('transactions/fetchTransactions');
+        //this.$store.dispatch('notifications/fetchNotifications');
     }
 }
 </script>

@@ -50,12 +50,12 @@ export default {
     //mixins: [AppointmentMixin],
 
     computed: {
-        ...mapState('children', ['children']),
+        ...mapState('child', ['children']),
         ...mapState('appointments', ['appointments']),
     },
 
     mounted() {
-        this.$store.dispatch('children/fetchChildren');
+        this.$store.dispatch('child/fetchChildren');
         this.$store.dispatch('appointments/fetchAppointments');
     },
 
