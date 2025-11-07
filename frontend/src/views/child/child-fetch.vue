@@ -6,7 +6,7 @@
         <h2>Crianças</h2>
         <router-link :to="{ name: 'ChildSave' }">Adicionar</router-link>
     </div>
-    <div v-if="list.length === 0">Nenhuma criança cadastrada</div>
+    <div v-if="children.length === 0">Nenhuma criança cadastrada</div>
 
     <div v-else>
         <table>
@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="i in list" :key="i.id" class="">
+                <tr v-for="i in children" :key="i.id" class="">
                     <td>{{ i.name }}</td>
                     <td>{{ i.birth_date }}</td>
                     <td>{{ i.notes }}</td>
@@ -39,9 +39,9 @@
 
 <script>
 import { mapState } from "vuex"
-import AbstractMixin from '@/mixins/AbstractMixin'
-import ChildMixin from '@/mixins/ChildMixin'
-import HeaderBar from "@/components/bars/header-bar.vue"
+import AbstractMixin from '@/mixins/AbstractMixin.js';
+import ChildMixin from "@/mixins/ChildMixin.js";
+import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
 
@@ -52,11 +52,15 @@ export default {
     mixins: [AbstractMixin, ChildMixin],
 
     computed: {
-        ...mapState('child', ['list'])
+        ...mapState("child", ["children"]),
     },
 
-    mounted() {
-        this.getList(null, null, null, null);
-    },
+    async mounted() {
+        try {
+            await this.getChildren();
+        } catch (error) {
+            console.error("Erro ao carregar crianças:", error);
+        }
+    }
 }
 </script>

@@ -6,10 +6,18 @@ export default {
 
     state: {
         token: localStorage.getItem("token") || null,
-        user: JSON.parse(localStorage.getItem("user")) || null,
+        user: (() => {
+            try {
+                const saved = localStorage.getItem("user");
+                return saved ? JSON.parse(saved) : null;
+            } catch {
+                localStorage.removeItem("user");
+                return null;
+            }
+        })(),
     },
 
-    mutations: {        
+    mutations: {
         setToken(state, token) {
             state.token = token;
             if (token) localStorage.setItem("token", token);
@@ -37,7 +45,7 @@ export default {
             commit('setUser', data.user);
             router.push({ name: 'Dashboard' });
         },
-        
+
         logout({ commit }) {
             commit('setToken', null);
             commit('setUser', null);

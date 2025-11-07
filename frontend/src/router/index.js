@@ -1,7 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import LoginView from '@/views/LoginView.vue';
-import RegisterView from '@/views/RegisterView.vue';
-import TransactionView from '@/views/TransactionView.vue';
+import { createRouter, createWebHashHistory } from 'vue-router';
 
 const routes = [
     {
@@ -9,8 +6,15 @@ const routes = [
         name: 'Index',
         component: () => import('@/views/index.vue'),
     },
-    { path: '/login', name: 'Login', component: LoginView },
-    { path: '/register', name: 'Register', component: RegisterView },     
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/views/LoginView.vue'),
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/RegisterView.vue'),},     
     {
         path: '/dashboard',
         name: 'Dashboard',
@@ -48,10 +52,14 @@ const routes = [
             }
         ]
     },
-    { path: '/transactions', name: 'Transactions', component: TransactionView },
+    { path: '/transactions',
+        name: 'Transactions',
+        component: () => import('@/views/TransactionView.vue'),
+        meta: { requiresAuth: true },
+    },
 ];
 
-const router = createRouter({ history: createWebHistory(), routes });
+const router = createRouter({ history: createWebHashHistory(import.meta.env.VITE_BACKEND_URL), routes });
 
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem('token');

@@ -5,14 +5,12 @@ export default {
 
     methods: {
 
-        ...mapMutations(['SET_ERRORS']),
+        ...mapMutations('child', ['setChildren', 'setChild', 'addChild']),
+        //...mapMutations(['SET_ERRORS']),
 
-        computed: {
-        ...mapState('child', ['child']),
-    },
 
         async getChildren(filter, extendedFilter, parameter, sort) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/child`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/child`
             const response = await this.handleRequest(
                 () => getCollection(url, filter, extendedFilter, parameter, sort),
                 null,
@@ -20,13 +18,13 @@ export default {
                 false
             );
             if (response) {
-                this.$store.commit('child/setChildren', response.data.children);
+                this.setChildren(response.data.children);
             }
         },
 
         async getChild(id) {
             console.log("ID do Child:", id);
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/child/${id}`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/child/${id}`
             const response = await this.handleRequest(
                 () => getData(url),
                 null,
@@ -39,7 +37,7 @@ export default {
         },
 
         async storeChild(payload) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/child`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/child`
             const response = await this.handleRequest(
                 () => upstoreData(url, null, payload),
                 null,
@@ -52,7 +50,7 @@ export default {
         },
 
         async updateChild(payload) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/child`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/child`
             const response = await this.handleRequest(
                 () => upstoreData(url, payload.id, payload),
                 null,
@@ -65,7 +63,7 @@ export default {
         },
 
         async destroyChild(id) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/child`
+            const url = `${import.meta.env.VITE_BACKEND_URL}/child`
             const response = await this.handleRequest(
                 () => deleteData(url, id),
                 'Registro excluído com sucesso.',
