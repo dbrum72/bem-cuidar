@@ -1,90 +1,82 @@
-import { getCollection, getData, upstoreData, deleteData } from '@/services/abstract.js';
-import { mapState, mapMutations } from "vuex";
+import { createResource } from '@/services/resource.js';
+import { mapMutations } from 'vuex';
+
+const appointmentsAPI = createResource('appointments');
 
 export default {
+  methods: {
+    ...mapMutations('appointment', ['setAppointments', 'setAppointment', 'addAppointment']),
 
-    methods: {
-
-        ...mapMutations(['SET_ERRORS']),
-        ...mapMutations('appointment', ['setAppointments', 'setAppointment']),
-
-        computed: {
-        ...mapState('appointment', ['appointment']),
+    async getAppointments(filter, extendedFilter, parameter, sort) {
+      const call = () => appointmentsAPI.list({ filter, extendedFilter, relationship, sort });
+      const response = await this._execRequest(call, {
+        errorMsg: 'Erro ao carregar a lista de agendamentos.',
+      });
+      if (response?.data) this.setAppointments(response.data.appointments);
     },
 
-        async getAppointments(filter, extendedFilter, parameter, sort) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/appointment`
-            const response = await this.handleRequest(
-                () => getCollection(url, filter, extendedFilter, parameter, sort),
-                null,
-                'Erro ao carregar a lista de produtos.',
-                false
-            );
-            if (response) {
-                this.setAppointments(response.data.appointments);
-            }
-        },
+    async getAppointment(id) {
+      const call = () => appointmentsAPI.get(id);
+      const response = await this._execRequest(call, {
+        errorMsg: 'Erro ao carregar o agendamento.',
+      });
+      if (response?.data) this.setAppointment(response.data.appointment);
+    },
 
-        async getAppointment(id) {
-            console.log("ID do Appointment:", id);
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/appointment/${id}`
-            const response = await this.handleRequest(
-                () => getData(url),
-                null,
-                'Erro ao carregar a lista de produtos.',
-                false
-            );
-            if (response) {
-                this.setAppointment(response.data.appointment);
-            }
-        },
+    async storeAppointment(payload) {
+      const call = () => appointmentsAPI.saveOrUpdate(payload);
+      const response = await this._execRequest(call, {
+        errorMsg: 'Erro ao salvar o agendamento.',
+      });
+      if (response?.data) {
+        this.addAppointment(response.data.appointment);
+        this.resetAppointmentView();
+      }
+    },
 
-        async storeAppointment(payload) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/appointment`
-            const response = await this.handleRequest(
-                () => upstoreData(url, null, payload),
-                null,
-                'Erro ao salvar os dados.'
-            );
-            if (response) {
-                this.$store.commit('appointment/addAppointment', response.data.appointment);
-                //this.resetAppointmentView();
-            }
-        },
+    async updateAppointment(payload) {
+      const call = () => appointmentsAPI.saveOrUpdate(payload);
+      const response = await this._execRequest(call, {
+        errorMsg: 'Erro ao atualizar o agendamento.',
+      });
+      if (response?.data) {
+        this.addAppointment(response.data.appointment);
+        this.resetAppointmentView(response.data.appointment.id);
+      }
+    },
 
-        async updateAppointment(payload) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/appointment`
-            const response = await this.handleRequest(
-                () => upstoreData(url, payload.id, payload),
-                null,
-                'Erro ao salvar os dados.'
-            );
-            if (response) {
-                this.$store.commit('appointment/addAppointment', response.data.appointment);
-                //this.resetAppointmentView(response.data.id);
-            }
-        },
+    async destroyAppointment(id) {
+      const call = () => appointmentsAPI.remove(id);
+      const response = await this._execRequest(call, {
+        successMsg: 'Agendamento excluído com sucesso.',
+        errorMsg: 'Erro ao excluir o agendamento.',
+      });
+      if (response) this.resetAppointmentView();
+    },
 
-        async destroyAppointment(id) {
-            const url = `${ import.meta.env.VITE_BACKEND_URL }/appointment`
-            const response = await this.handleRequest(
-                () => deleteData(url, id),
-                'Registro excluído com sucesso.',
-                'Erro ao excluir o produto.'
-            );
-            if (response) {
-                this.resetAppointmentView();
-            }
-        },
+    resetAppointmentView(id) {
+      id
+        ? this.$router.push({ name: 'AppointmentShow', params: { id } })
+        : this.$router.push({ name: 'AppointmentList' });
+    },
 
-        getFile(file) {
-            return getFile(file)
-        },
-
-        resetAppointmentView(id) {
-            this.Appointment = {}
-            this.SET_ERRORS([])
-            id ? this.$router.push({ name: 'ShowAppointment', params: { 'id': id } }) : this.$router.push({ name: 'ListAppointments' })
-        },
-    }
-}
+    async _execRequest(callFn, { successMsg = null, errorMsg = null, swallow = true } = {}) {
+      if (typeof this.handleRequest === 'function') {
+        try {
+          return await this.handleRequest(callFn, successMsg, errorMsg, swallow);
+        } catch {
+          return null;
+        }
+      }
+      try {
+        const res = await callFn();
+        if (successMsg && this.$toast) this.$toast.success(successMsg);
+        return res;
+      } catch (err) {
+        if (errorMsg && this.$toast) this.$toast.error(errorMsg);
+        console.error(errorMsg, err);
+        return null;
+      }
+    },
+  },
+};
