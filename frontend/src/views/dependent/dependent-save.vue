@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import AbstractMixin from '@/mixins/AbstractMixin'
+//import AbstractMixin from '@/mixins/AbstractMixin'
 import DependentMixin from '@/mixins/DependentMixin'
 import HeaderBar from "@/components/bars/header-bar.vue"
 
@@ -21,7 +21,7 @@ export default {
 
     components: { HeaderBar },
 
-    mixins: [AbstractMixin, DependentMixin],
+    mixins: [ DependentMixin ],
 
     data() {
         return {

@@ -1,13 +1,13 @@
 import { createResource } from '@/services/resource.js';
 import { mapMutations } from 'vuex';
 
-const appointmentsAPI = createResource('appointments');
+const appointmentsAPI = createResource('appointment');
 
 export default {
   methods: {
     ...mapMutations('appointment', ['setAppointments', 'setAppointment', 'addAppointment']),
 
-    async getAppointments(filter, extendedFilter, parameter, sort) {
+    async getAppointments(filter, extendedFilter, relationship, sort) {
       const call = () => appointmentsAPI.list({ filter, extendedFilter, relationship, sort });
       const response = await this._execRequest(call, {
         errorMsg: 'Erro ao carregar a lista de agendamentos.',

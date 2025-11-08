@@ -1,5 +1,7 @@
 <template>
-    <form @submit.prevent="saveAppointment">
+    <HeaderBar />
+
+    <form @submit.prevent="save">
         <h2>Evento de Cuidado Compartilhado</h2>
 
         <div class="col-sm-12 col-lg-8 mb-2">
@@ -8,6 +10,7 @@
 
         <label>Criança:</label>
         <select v-model="form.dependent_id" required>
+            <option value="" selected>Selecione...</option>
             <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">{{ dependent.name }}</option>
         </select>
 
@@ -39,15 +42,23 @@
             <button type="button" @click="removeParticipant(index)">Remover</button>
         </div>
         <button type="button" @click="addParticipant">Adicionar Participante</button>
-
-        <button type="submit">Salvar Appointment</button>
+        <button type="submit">Salvar</button>
     </form>
 </template>
 
 <script>
 import { mapState } from 'vuex';
+import AppointmentMixin from '@/mixins/AppointmentMixin';
+import DependentMixin from '@/mixins/DependentMixin';
+import HeaderBar from "@/components/bars/header-bar.vue"
 
 export default {
+    name: "AppointmentSave",
+
+    components: { HeaderBar },
+
+    mixins: [AppointmentMixin, DependentMixin],
+
     data() {
         return {
             form: {},
@@ -55,88 +66,37 @@ export default {
             isEditing: false
         };
     },
-
+    
     computed: {
-        ...mapState('appointments', ['appointment']),
-        ...mapState('dependents', ['dependents']),
+        ...mapState('appointment', ['appointment']),
+        ...mapState('dependent', ['dependents']),
         ...mapState('auth', ['users'])
     },
     
-    methods: {
-        addParticipant() {
-            this.participants.push({ user_id: '', share_percentage: 0 });
-        },
+     methods: {
 
-        removeParticipant(index) {
-            this.participants.splice(index, 1);
-        },
+        async save() {
 
-        async saveAppointment() {
-            
-            if (!this.form.dependent_id || !this.form.title || !this.form.start_datetime || !this.form.end_datetime) {
-                alert('Preencha todos os campos obrigatórios!');
-                return;
-            }
-
-            try {
-                await this.$store.dispatch('appointments/saveAppointment', {
-                    ...this.form,
-                    participants: this.participants
-                });
-
-                this.$store.commit(
-                    'alerts/pushAlert',
-                    {
-                        type: 'success',
-                        message: "Evento salvo com sucesso."
-                    },
-                    { root: true }
-                );
-
-                this.$router.push({ name: 'AppointmentList' });
-
-                // Reset do formulário
-                this.resetForm();
-            } catch (error) {
-                this.$store.commit(
-                    'alerts/pushAlert',
-                    {
-                        type: 'error',
-                        message: error.response?.data?.msg || "Erro ao salvar evento."
-                    },
-                    { root: true }
-                );
+            if (this.isEditing) {
+                await this.updateAppointment(this.form)
+            } else {
+                await this.storeAppointment(this.form)
             }
         },
 
-        resetForm() {
-            this.form = {};
-            this.participants = [];
-            this.formattedExpense = 'R$ 0,00';
+        cancelSave() {
+            this.$router.push({ name: 'AppointmentList' })
         }
     },
 
-    watch: {
-        '$route.params.id': {
-            immediate: true,
-            async handler(newId) {
-                if (newId) {
-                    this.isEditing = true;
-                    await this.$store.dispatch('appointments/getAppointment', newId);
-                    this.form = { ...this.appointment } || {};
-                    this.participants = this.appointment.participants ? [...this.appointment.participants] : [];
-                } else {
-                    this.isEditing = false;
-                    this.resetForm();
-                }
-            }
+    async mounted() {
+        const id = this.$route.params.id;
+        if (id) {
+            this.isEditing = true
+            await this.getAppointment(id)
+            this.form = { ...this.$store.state.appointment.appointment }
         }
-    },
-
-    mounted() {
-        this.$store.dispatch('dependents/fetchDependents');
-        // Carregar usuários se necessário
-        // this.$store.dispatch('users/fetchUsers');
+        await this.getDependents()
     }
 };
 </script>

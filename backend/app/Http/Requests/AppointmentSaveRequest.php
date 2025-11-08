@@ -33,7 +33,7 @@ class AppointmentSaveRequest extends FormRequest {
 
         $rules = [
             //'id' => [Rule::unique('shared_care_events', 'id')->ignore($appointmentId)],
-            'child_id' => ['required','exists:children,id'],
+            'dependent_id' => ['required','exists:dependents,id'],
             'title' => ['required','min:3','max:255'],
             'description' => ['nullable'],
             'start_datetime' => ['required','date'],

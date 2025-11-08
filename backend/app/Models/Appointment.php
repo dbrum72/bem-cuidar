@@ -9,7 +9,7 @@ class Appointment extends Model {
     protected $table = 'appointments';
 
     protected $fillable = [
-        'child_id',
+        'dependent_id',
         'title',
         'description',
         'start_datetime',

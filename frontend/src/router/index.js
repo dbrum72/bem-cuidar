@@ -25,9 +25,13 @@ const routes = [
     {
         path: '/appointment',
         name: 'Appointment',
-        component: () => import('@/views/appointment/appointment-fetch.vue'),
         meta: { requiresAuth: true },
         children: [
+            {
+                path: 'list',
+                name: 'AppointmentList',
+                component: () => import('@/views/appointment/appointment-fetch.vue'),
+            },
             {
                 path: 'save/:id?',
                 name: 'AppointmentSave',
