@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('child_id')->constrained('children')->onDelete('cascade');
+            $table->foreignId('dependent_id')->constrained('dependents')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->dateTime('start_datetime');

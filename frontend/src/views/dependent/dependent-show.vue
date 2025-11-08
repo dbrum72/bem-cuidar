@@ -2,7 +2,7 @@
     <div class="">
         <div class="d-flex areaHeader">
             <span class="font12rW600TuCg pe-2">Criança</span>
-            <router-link class="btn btn-sm btn-gray" :to="{ name: 'ChildList' }">Lista</router-link>
+            <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
         </div>
         <div class="subArea mb-5">
             <div class="d-flex justify-content-between m-2 title-sub-area">
@@ -14,7 +14,7 @@
                         ID
                     </div>
                     <div class="data">
-                        {{ child.id }}
+                        {{ dependent.id }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -22,7 +22,7 @@
                         Nome
                     </div>
                     <div class="data">
-                        {{ child.name }}
+                        {{ dependent.name }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -30,7 +30,7 @@
                         Data de Nascimento
                     </div>
                     <div class="data">
-                        {{ child.birth_date }}
+                        {{ dependent.birth_date }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -38,7 +38,7 @@
                         Criado em
                     </div>
                     <div class="data">
-                        {{ child.created_at ? formatDate(this.child.created_at) : '' }}
+                        {{ dependent.created_at ? formatDate(this.dependent.created_at) : '' }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -46,7 +46,7 @@
                         Atualizado em
                     </div>
                     <div class="data">
-                        {{ child.updated_at ? formatDate(this.child.updated_at) : '' }}
+                        {{ dependent.updated_at ? formatDate(this.dependent.updated_at) : '' }}
                     </div>
                 </div>
             </div>
@@ -57,21 +57,21 @@
 <script>
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
-import ChildMixin from '@/mixins/ChildMixin'
+import DependentMixin from '@/mixins/DependentMixin'
 
 export default {
 
-    name: 'ChildShow',
+    name: 'DependentShow',
 
-    mixins: [AbstractMixin, ChildMixin],
+    mixins: [AbstractMixin, DependentMixin],
 
     computed: {
         ...mapState(['errors', 'loader']),
-        ...mapState('child', ['child']),
+        ...mapState('dependent', ['dependent']),
     },
 
     mounted() {
-        this.getChild(this.$route.params.id)
+        this.getDependent(this.$route.params.id)
     }
 }
 </script>

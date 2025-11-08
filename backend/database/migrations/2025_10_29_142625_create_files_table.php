@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->string('storaged', 255);
-            $table->foreignId('child_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('dependent_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

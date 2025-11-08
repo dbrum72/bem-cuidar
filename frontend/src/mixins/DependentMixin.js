@@ -1,52 +1,52 @@
 import { createResource } from '@/services/resource.js';
 import { mapMutations } from 'vuex';
 
-const childAPI = createResource('child');
+const dependentAPI = createResource('dependent');
 
 export default {
     methods: {
-        ...mapMutations('child', ['setChildren', 'setChild', 'addChild']),
+        ...mapMutations('dependent', ['setDependents', 'setDependent', 'addDependent']),
 
         /**
          * Usa this.handleRequest(...) se existir — assim você mantém tratamento centralizado.
          * Caso não exista, cai em fallback simples try/catch com console.error.
          */
 
-        async getChildren(filter, extendedFilter, relationship, sort) {
-            const call = () => childAPI.list({ filter, extendedFilter, relationship, sort });
+        async getDependents(filter, extendedFilter, relationship, sort) {
+            const call = () => dependentAPI.list({ filter, extendedFilter, relationship, sort });
             const response = await this._execRequest(call, { errorMsg: 'Erro ao carregar a lista de produtos.', swallow: false });
-            if (response?.data) this.setChildren(response.data.children);
+            if (response?.data) this.setDependents(response.data.dependents);
         },
 
-        async getChild(id) {
-            const call = () => childAPI.get(id);
+        async getDependent(id) {
+            const call = () => dependentAPI.get(id);
             const response = await this._execRequest(call, { errorMsg: 'Erro ao carregar os dados do registro.', swallow: false });
-            if (response?.data) this.$store.commit('child/setChild', response.data.child);
+            if (response?.data) this.$store.commit('dependent/setDependent', response.data.dependent);
         },
 
-        async storeChild(payload) {
-            const call = () => childAPI.saveOrUpdate(payload);
+        async storeDependent(payload) {
+            const call = () => dependentAPI.saveOrUpdate(payload);
             const response = await this._execRequest(call, { errorMsg: 'Erro ao salvar os dados.' });
             if (response?.data) {
-                this.$store.commit('child/addChild', response.data.child);
-                this.resetChildView();
+                this.$store.commit('dependent/addDependent', response.data.dependent);
+                this.resetDependentView();
             }
         },
 
-        async updateChild(payload) {
-            const call = () => childAPI.saveOrUpdate(payload);
+        async updateDependent(payload) {
+            const call = () => dependentAPI.saveOrUpdate(payload);
             const response = await this._execRequest(call, { errorMsg: 'Erro ao salvar os dados.' });
             if (response?.data) {
-                this.$store.commit('child/addChild', response.data.child);
-                this.resetChildView(response.data.child.id);
+                this.$store.commit('dependent/addDependent', response.data.dependent);
+                this.resetDependentView(response.data.dependent.id);
             }
         },
 
-        async destroyChild(id) {
-            const call = () => childAPI.remove(id);
+        async destroyDependent(id) {
+            const call = () => dependentAPI.remove(id);
             const response = await this._execRequest(call, { successMsg: 'Registro excluído com sucesso.', errorMsg: 'Erro ao excluir o produto.' });
             if (response) {
-                this.resetChildView();
+                this.resetDependentView();
             }
         },
 
@@ -56,12 +56,12 @@ export default {
             return file;
         },
 
-        resetChildView(id) {
+        resetDependentView(id) {
             // mantém compatibilidade com seus nomes de rota
             // ajuste os nomes das rotas caso necessário
-            this.Child = {};
+            this.Dependent = {};
             if (this.SET_ERRORS) this.SET_ERRORS([]);
-            id ? this.$router.push({ name: 'ChildShow', params: { id } }) : this.$router.push({ name: 'ChildList' });
+            id ? this.$router.push({ name: 'DependentShow', params: { id } }) : this.$router.push({ name: 'DependentList' });
         },
 
         /**

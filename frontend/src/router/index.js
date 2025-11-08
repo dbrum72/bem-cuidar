@@ -36,29 +36,29 @@ const routes = [
         ]
     },
     {
-        path: '/child',
-        name: 'Child',
+        path: '/dependent',
+        name: 'Dependent',
         meta: { requiresAuth: true },
         children: [
             {
                 path: 'list',
-                name: 'ChildList',
-                component: () => import('@/views/child/child-fetch.vue'),
+                name: 'DependentList',
+                component: () => import('@/views/dependent/dependent-fetch.vue'),
             },
             {
                 path: 'show/:id',
-                name: 'ChildShow',
-                component: () => import('@/views/child/child-show.vue'),
+                name: 'DependentShow',
+                component: () => import('@/views/dependent/dependent-show.vue'),
             },
             {
                 path: 'save/:id?',
-                name: 'ChildSave',
-                component: () => import('@/views/child/child-save.vue'),
+                name: 'DependentSave',
+                component: () => import('@/views/dependent/dependent-save.vue'),
             },
             {
                 path: 'delete/:id',
-                name: 'ChildDelete',
-                component: () => import('@/views/child/child-delete.vue'),
+                name: 'DependentDelete',
+                component: () => import('@/views/dependent/dependent-delete.vue'),
             }
         ]
     },

@@ -7,8 +7,8 @@
         </div>
 
         <label>Criança:</label>
-        <select v-model="form.child_id" required>
-            <option v-for="child in children" :key="child.id" :value="child.id">{{ child.name }}</option>
+        <select v-model="form.dependent_id" required>
+            <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">{{ dependent.name }}</option>
         </select>
 
         <label>Título:</label>
@@ -58,7 +58,7 @@ export default {
 
     computed: {
         ...mapState('appointments', ['appointment']),
-        ...mapState('children', ['children']),
+        ...mapState('dependents', ['dependents']),
         ...mapState('auth', ['users'])
     },
     
@@ -73,7 +73,7 @@ export default {
 
         async saveAppointment() {
             
-            if (!this.form.child_id || !this.form.title || !this.form.start_datetime || !this.form.end_datetime) {
+            if (!this.form.dependent_id || !this.form.title || !this.form.start_datetime || !this.form.end_datetime) {
                 alert('Preencha todos os campos obrigatórios!');
                 return;
             }
@@ -134,7 +134,7 @@ export default {
     },
 
     mounted() {
-        this.$store.dispatch('children/fetchChildren');
+        this.$store.dispatch('dependents/fetchDependents');
         // Carregar usuários se necessário
         // this.$store.dispatch('users/fetchUsers');
     }

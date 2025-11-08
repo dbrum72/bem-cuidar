@@ -4,9 +4,9 @@
 
     <div class="d-flex justify-content-between px-3">
         <h2>Crianças</h2>
-        <router-link :to="{ name: 'ChildSave' }">Adicionar</router-link>
+        <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
     </div>
-    <div v-if="children.length === 0">Nenhuma criança cadastrada</div>
+    <div v-if="dependents.length === 0">Nenhuma criança cadastrada</div>
 
     <div v-else>
         <table>
@@ -19,18 +19,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="i in children" :key="i.id" class="">
+                <tr v-for="i in dependents" :key="i.id" class="">
                     <td>{{ i.name }}</td>
                     <td>{{ i.birth_date }}</td>
                     <td>{{ i.notes }}</td>
                     <td>
-                        <router-link :to="{ name: 'ChildShow', params: { id: i.id } }">
+                        <router-link :to="{ name: 'DependentShow', params: { id: i.id } }">
                             Visualizar
                         </router-link>
-                        <router-link :to="{ name: 'ChildSave', params: { id: i.id } }">
+                        <router-link :to="{ name: 'DependentSave', params: { id: i.id } }">
                             Editar
                         </router-link>
-                        <router-link class="" :to="{ name: 'ChildDelete', params: { id: i.id } }">
+                        <router-link class="" :to="{ name: 'DependentDelete', params: { id: i.id } }">
                             Excluir
                         </router-link>
                     </td>
@@ -43,26 +43,26 @@
 <script>
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin.js';
-import ChildMixin from "@/mixins/ChildMixin.js";
+import DependentMixin from "@/mixins/DependentMixin.js";
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
 
-    name: "ChildFetch",
+    name: "DependentFetch",
 
     components: { HeaderBar },
 
-    mixins: [AbstractMixin, ChildMixin],
+    mixins: [AbstractMixin, DependentMixin],
 
     computed: {
-        ...mapState("child", ["children"]),
+        ...mapState("dependent", ["dependents"]),
     },
 
     async mounted() {
         try {
-            await this.getChildren();
+            await this.getDependents();
         } catch (error) {
-            console.error("Erro ao carregar crianças:", error);
+            console.error("Erro ao carregar dependentes:", error);
         }
     }
 }

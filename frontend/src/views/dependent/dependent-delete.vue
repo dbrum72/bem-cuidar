@@ -10,12 +10,12 @@
                     <span>Atenção</span>
                 </div>
                 <div style="margin: 10px;">
-                    Confirma a exclusão do registro de ID nº. "{{ child.id }}" ?
+                    Confirma a exclusão do registro de ID nº. "{{ dependent.id }}" ?
                 </div>
                 <div class="text-end">
-                    <router-link class="btn btn-gray me-2" :to="{ name: 'ChildList'}">Cancelar</router-link>
+                    <router-link class="btn btn-gray me-2" :to="{ name: 'DependentList'}">Cancelar</router-link>
                     <button type="button" class=""
-                        @click="(destroyChild(child.id))">Excluir</button>
+                        @click="(destroyDependent(dependent.id))">Excluir</button>
                 </div>
             </div>
         </div>
@@ -25,20 +25,20 @@
 <script>
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
-import ChildMixin from '@/mixins/ChildMixin'
+import DependentMixin from '@/mixins/DependentMixin'
 
 export default {
 
-    name: 'ChildDelete',
+    name: 'DependentDelete',
 
-    mixins: [AbstractMixin, ChildMixin],
+    mixins: [AbstractMixin, DependentMixin],
 
     computed: {
-        ...mapState('child', ['child'])
+        ...mapState('dependent', ['dependent'])
     },
 
     mounted() {
-        this.getChild(this.$route.params.id)
+        this.getDependent(this.$route.params.id)
     }
 }
 </script>

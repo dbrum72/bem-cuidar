@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 
-class ChildSaveRequest extends FormRequest {
+class DependentSaveRequest extends FormRequest {
 
     /**
      * Determine if the user is authorized to make this request.
@@ -30,10 +30,10 @@ class ChildSaveRequest extends FormRequest {
      */
     public function rules(): array {
 
-        $childId = $this->route('child');        
+        $dependentId = $this->route('dependent');        
 
         $rules = [
-            'name' => ['required','string','min:3','max:255',Rule::unique('children', 'name')->ignore($childId)],
+            'name' => ['required','string','min:3','max:255',Rule::unique('dependents', 'name')->ignore($dependentId)],
             'birth_date' => ['required','date'],
             'notes' => ['nullable','string'],
             'created_by' => ['required','exists:users,id']

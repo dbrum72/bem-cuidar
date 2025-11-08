@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Child extends Model {
+class Dependent extends Model {
 
-    protected $table = 'children';
+    protected $table = 'dependents';
 
     protected $fillable = [
         'name',

@@ -12,16 +12,16 @@
 
 <script>
 import AbstractMixin from '@/mixins/AbstractMixin'
-import ChildMixin from '@/mixins/ChildMixin'
+import DependentMixin from '@/mixins/DependentMixin'
 import HeaderBar from "@/components/bars/header-bar.vue"
 
 export default {
 
-    name: "ChildSave",
+    name: "DependentSave",
 
     components: { HeaderBar },
 
-    mixins: [AbstractMixin, ChildMixin],
+    mixins: [AbstractMixin, DependentMixin],
 
     data() {
         return {
@@ -35,14 +35,14 @@ export default {
         async save() {
 
             if (this.isEditing) {
-                await this.updateChild(this.form)
+                await this.updateDependent(this.form)
             } else {
-                await this.storeChild(this.form)
+                await this.storeDependent(this.form)
             }
         },
 
         cancelSave() {
-            this.$router.push({ name: 'ChildList' })
+            this.$router.push({ name: 'DependentList' })
         }
     },
 
@@ -50,8 +50,8 @@ export default {
         const id = this.$route.params.id;
         if (id) {
             this.isEditing = true
-            await this.getChild(id)
-            this.form = { ...this.$store.state.child.child }
+            await this.getDependent(id)
+            this.form = { ...this.$store.state.dependent.dependent }
         }
     }
 }

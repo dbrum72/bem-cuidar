@@ -17,7 +17,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="e in appointments" :key="e.id">
-                            <td>{{ getChildName(e.child_id) }}</td>
+                            <td>{{ getDependentName(e.dependent_id) }}</td>
                             <td>{{ e.title }}</td>                            
                             <td>{{ e.start_datetime }}</td>
                             <td>{{ e.end_datetime }}</td>
@@ -50,18 +50,18 @@ export default {
     //mixins: [AppointmentMixin],
 
     computed: {
-        ...mapState('child', ['children']),
+        ...mapState('dependent', ['dependents']),
         ...mapState('appointments', ['appointments']),
     },
 
     mounted() {
-        this.$store.dispatch('child/fetchChildren');
+        this.$store.dispatch('dependent/fetchDependents');
         this.$store.dispatch('appointments/fetchAppointments');
     },
 
     methods: {
-        getChildName(child_id) {
-            const c = this.children.find(ch => ch.id === child_id);
+        getDependentName(dependent_id) {
+            const c = this.dependents.find(ch => ch.id === dependent_id);
             return c ? c.name : '';
         }
     },

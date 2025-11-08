@@ -5,12 +5,12 @@
         <h1>Dashboard</h1>
 
         <section>
-            <h2>Crianças</h2>
-            <div v-if="children.length === 0">Nenhuma criança cadastrada</div>
-            <div v-for="child in children" :key="child.id" class="card">
-                <p><strong>{{ child.name }}</strong></p>
-                <p>Data de nascimento: {{ child.birth_date }}</p>
-                <p v-if="child.notes">Notas: {{ child.notes }}</p>
+            <h2>Dependentes</h2>
+            <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
+            <div v-for="dependent in dependents" :key="dependent.id" class="card">
+                <p><strong>{{ dependent.name }}</strong></p>
+                <p>Data de nascimento: {{ dependent.birth_date }}</p>
+                <p v-if="dependent.notes">Notas: {{ dependent.notes }}</p>
             </div>
         </section>
 
@@ -19,7 +19,7 @@
             <div v-if="appointments.length === 0">Nenhum evento</div>
             <div v-for="e in appointments" :key="e.id" class="card">
                 <p><strong>{{ e.title }}</strong></p>
-                <p>Criança: {{ getChildName(e.child_id) }}</p>
+                <p>Criança: {{ getDependentName(e.dependent_id) }}</p>
                 <p>Início: {{ e.start_datetime }}</p>
                 <p>Fim: {{ e.end_datetime }}</p>
                 <p>Local: {{ e.location }}</p>
@@ -50,7 +50,7 @@
 import { mapState } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
 import AppointmentMixin from '@/mixins/AppointmentMixin'
-import ChildMixin from '@/mixins/ChildMixin'
+import DependentMixin from '@/mixins/DependentMixin'
 //import NotificationList from './NotificationList.vue';
 import HeaderBar from "@/components/bars/header-bar.vue";
 
@@ -59,23 +59,23 @@ export default {
 
     components: { HeaderBar },
 
-    mixins: [AbstractMixin, AppointmentMixin, ChildMixin],
+    mixins: [AbstractMixin, AppointmentMixin, DependentMixin],
 
     computed: {
-        ...mapState('child', ['children']),
+        ...mapState('dependent', ['dependents']),
         ...mapState('appointment', ['appointments']),
         //...mapState('transactions', ['transactions'])
     },
 
     methods: {
-        getChildName(child_id) {
-            const c = this.children.find(ch => ch.id === child_id);
+        getDependentName(dependent_id) {
+            const c = this.dependents.find(ch => ch.id === dependent_id);
             return c ? c.name : '';
         }
     },
 
     mounted() {
-        this.getChildren();
+        this.getDependents();
         this.getAppointments();
         //this.$store.dispatch('transactions/fetchTransactions');
         //this.$store.dispatch('notifications/fetchNotifications');

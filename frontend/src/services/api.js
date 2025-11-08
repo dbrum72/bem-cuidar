@@ -29,10 +29,6 @@ export function buildQuery(baseUrl, { filter, extendedFilter, relationship, sort
     return qs ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${qs}` : baseUrl;
 }
 
-/**
- * Wrapper genérico para GET
- * Retorna a promise do axios (http)
- */
 export const apiGet = (url) => http.get(url);
 
 /**
