@@ -30,7 +30,15 @@
                         Data de Nascimento
                     </div>
                     <div class="data">
-                        {{ dependent.birth_date }}
+                        {{ formatDate(dependent.birth_date) ?? '' }}
+                    </div>
+                </div>
+                <div class="tupla">
+                    <div class="field">
+                        Nota
+                    </div>
+                    <div class="data">
+                        {{ dependent.notes }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -38,7 +46,7 @@
                         Criado em
                     </div>
                     <div class="data">
-                        {{ dependent.created_at ? formatDate(this.dependent.created_at) : '' }}
+                        {{ formatDateTime(this.dependent.created_at) ?? '' }}
                     </div>
                 </div>
                 <div class="tupla">
@@ -46,7 +54,7 @@
                         Atualizado em
                     </div>
                     <div class="data">
-                        {{ dependent.updated_at ? formatDate(this.dependent.updated_at) : '' }}
+                        {{ formatDateTime(this.dependent.updated_at) ?? '' }}
                     </div>
                 </div>
             </div>

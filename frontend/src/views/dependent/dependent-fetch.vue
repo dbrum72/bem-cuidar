@@ -21,7 +21,7 @@
             <tbody>
                 <tr v-for="i in dependents" :key="i.id" class="">
                     <td>{{ i.name }}</td>
-                    <td>{{ i.birth_date }}</td>
+                    <td>{{ formatDate(i.birth_date) }}</td>
                     <td>{{ i.notes }}</td>
                     <td>
                         <router-link :to="{ name: 'DependentShow', params: { id: i.id } }">
