@@ -14,4 +14,11 @@ class Dependent extends Model {
         'notes',
         'created_by'
     ];
+
+    public function tutors()
+    {
+        return $this->belongsToMany('App/Models/User', 'dependent_tutor', 'dependent_id', 'tutor_id')
+                    ->withPivot('relationship_type', 'status', 'invite_token')
+                    ->withTimestamps();
+    }
 }

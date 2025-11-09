@@ -105,8 +105,8 @@ export default {
 
     methods: {
         getDependentName(dependent_id) {
-            const d= this.dependents.find(a => a.id === dependent_id);
-            return d ? c.name : '';
+            const d = this.dependents.find(a => a.id === dependent_id);
+            return d ? d.name : '';
         }
     },
 

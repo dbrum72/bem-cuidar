@@ -17,7 +17,7 @@ export default {
       if (response?.data) {
         this.setToken(response.data.token);
         this.setUser(response.data.user);
-        router.push({ name: 'Dashboard' });
+        router.push({ name: 'DashboardView' });
       }
     },
 

@@ -3,8 +3,6 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('auth/login', [AuthController::class, 'login']);
-
 Route::group([
 
     'namespace' => 'App\Http\Controllers',
@@ -27,6 +25,10 @@ Route::group([
 
 ], function ($router) {
 
+    // Tutor - Convite
+    Route::post('/dependents/{id}/invite-tutor', 'TutorInviteController@sendInvite');
+    Route::get('/dependents/{id}/tutors', 'TutorInviteController@listTutors');
+
     // Crianças
     Route::apiResource('dependent', 'DependentController');
 
@@ -41,3 +43,6 @@ Route::group([
     Route::post('notifications/mark-read/{id}', 'NotificationController@markRead');
     
 });
+
+// Tutor - Aceite
+Route::get('/tutor/accept/{token}', [TutorInviteController::class, 'acceptInvite']);
