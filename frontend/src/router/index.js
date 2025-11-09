@@ -18,7 +18,7 @@ const routes = [
     },
     {
         path: '/dashboard',
-        name: 'Dashboard',
+        name: 'DashboardView',
         component: () => import('@/views/DashboardView.vue'),
         meta: { requiresAuth: true },
     },
@@ -36,6 +36,11 @@ const routes = [
                 path: 'save/:id?',
                 name: 'AppointmentSave',
                 component: () => import('@/views/appointment/appointment-save.vue'),
+            },
+            {
+                path: 'show/:id',
+                name: 'AppointmentShow',
+                component: () => import('@/views/appointment/appointment-show.vue'),
             }
         ]
     },

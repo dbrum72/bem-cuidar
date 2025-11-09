@@ -1,9 +1,9 @@
 <template>
   <header class="header-bar">
     <nav v-if="isAuthenticated" class="nav-bar">
-      <router-link to="/dashboard">Dashboard</router-link>
-      <router-link to="/dependent/list">Dependentes</router-link>
-      <router-link to="/appointment">Agendamentos</router-link>
+      <router-link :to="{ name: 'DashboardView' }">Dashboard</router-link>
+      <router-link :to="{ name: 'DependentList' }">Dependentes</router-link>
+      <router-link :to="{ name: 'AppointmentList' }">Agendamentos</router-link>
 
       <button @click="logout" class="logout-btn">Sair</button>
     </nav>

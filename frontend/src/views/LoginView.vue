@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="loginUser">
+    <form @submit.prevent="performLogin">
         <h2>Login</h2>
         <input type="email" v-model="email" placeholder="Email" required />
         <input type="password" v-model="password" placeholder="Senha" required />
@@ -8,7 +8,13 @@
 </template>
 
 <script>
+import LoginMixin from '@/mixins/LoginMixin';
+
 export default {
+
+    name: 'LoginView',
+
+    mixins: [LoginMixin],
 
     data() {
         return {
@@ -18,14 +24,12 @@ export default {
     },
 
     methods: {
-        async loginUser() {
-            try {
-                await this.$store.dispatch('auth/login', {
-                    email: this.email,
-                    password: this.password
-                });
-                this.$router.push({ name: 'Dashboard' });
-            } catch (e) { alert('Erro no login'); }
+
+        performLogin() {
+            this.login({
+                email: this.email,
+                password: this.password
+            });
         }
     }
 }

@@ -32,12 +32,6 @@ export default {
     },
 
     actions: {
-        async login({ commit }, credentials) {
-            const { data } = await http.post('auth/login', credentials);
-            commit('setToken', data.token);
-            commit('setUser', data.user);
-            router.push({ name: 'Dashboard' });
-        },
 
         async register({ commit }, payload) {
             const { data } = await http.post('auth/register', payload);

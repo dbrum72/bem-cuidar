@@ -42,6 +42,7 @@
             <button type="button" @click="removeParticipant(index)">Remover</button>
         </div>
         <button type="button" @click="addParticipant">Adicionar Participante</button>
+        <button type="button" @click="cancelSave">Cancelar</button>
         <button type="submit">Salvar</button>
     </form>
 </template>

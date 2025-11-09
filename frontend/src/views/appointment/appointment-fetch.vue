@@ -20,15 +20,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="e in appointments" :key="e.id">
-                    <td>{{ getDependentName(e.dependent_id) }}</td>
-                    <td>{{ e.title }}</td>
-                    <td>{{ e.start_datetime }}</td>
-                    <td>{{ e.end_datetime }}</td>
-                    <td>{{ e.location }}</td>
-                    <td>{{ e.total_expense }}</td>
+                <tr v-for="item in appointments" :key="item.id">
+                    <td>{{ getDependentName(item.dependent_id) }}</td>
+                    <td>{{ item.title }}</td>
+                    <td>{{ item.start_datetime }}</td>
+                    <td>{{ item.end_datetime }}</td>
+                    <td>{{ item.location }}</td>
+                    <td>{{ item.total_expense }}</td>
                     <td>
-                        <router-link :to="{ name: 'AppointmentSave', params: { id: e.id } }">
+                        <router-link :to="{ name: 'AppointmentShow', params: { id: item.id } }">
+                            Visualizar
+                        </router-link>
+                        <router-link :to="{ name: 'AppointmentSave', params: { id: item.id } }">
                             Editar
                         </router-link>
                     </td>

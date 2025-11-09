@@ -48,7 +48,6 @@
 
 <script>
 import { mapState } from "vuex"
-import AbstractMixin from '@/mixins/AbstractMixin'
 import AppointmentMixin from '@/mixins/AppointmentMixin'
 import DependentMixin from '@/mixins/DependentMixin'
 //import NotificationList from './NotificationList.vue';
@@ -59,7 +58,7 @@ export default {
 
     components: { HeaderBar },
 
-    mixins: [AbstractMixin, AppointmentMixin, DependentMixin],
+    mixins: [ AppointmentMixin, DependentMixin],
 
     computed: {
         ...mapState('dependent', ['dependents']),
