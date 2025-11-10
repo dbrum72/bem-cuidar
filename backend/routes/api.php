@@ -2,47 +2,48 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TutorInviteController;
+use App\Http\Controllers\DependentController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\NotificationController;
 
+// ROTAS DE AUTENTICAÇÃO
 Route::group([
-
-    'namespace' => 'App\Http\Controllers',
     'middleware' => 'api',
     'prefix' => 'auth'
-
-], function ($router) {
-
-    Route::post('register', 'AuthController@register');
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');    
+], function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('refresh', [AuthController::class, 'refresh']);
+    Route::post('me', [AuthController::class, 'me']);
 });
 
-Route::group([
-
-    'namespace' => 'App\Http\Controllers',
-    'middleware' => ['api','jwt.auth']
-
-], function ($router) {
-
+// ROTAS PROTEGIDAS (jwt.auth)
+Route::group(['middleware' => ['api', 'jwt.auth']], function () {
+    
     // Tutor - Convite
-    Route::post('/dependents/{id}/invite-tutor', 'TutorInviteController@sendInvite');
-    Route::get('/dependents/{id}/tutors', 'TutorInviteController@listTutors');
+    Route::get('tutor-invite', [TutorInviteController::class, 'index'])->middleware('role:tutor|admin');
+    Route::post('tutor-invite', [TutorInviteController::class, 'store'])->middleware('role:tutor|admin');
+    Route::post('tutor-invite/{id}/resend', [TutorInviteController::class, 'resend'])->middleware('role:tutor|admin');
+    Route::delete('tutor-invite/{id}', [TutorInviteController::class, 'destroy'])->middleware('role:admin');
 
     // Crianças
-    Route::apiResource('dependent', 'DependentController');
+    Route::apiResource('dependent', DependentController::class);
 
-    // Agendamentos de guarda compartilhada
-    Route::apiResource('appointment', 'AppointmentController');
+    // Agendamentos
+    Route::apiResource('appointment', AppointmentController::class);
 
     // Transações financeiras
-    Route::apiResource('transactions', 'TransactionController');
+    Route::apiResource('transactions', TransactionController::class);
 
     // Notificações
-    Route::get('notifications', 'NotificationController@index');
-    Route::post('notifications/mark-read/{id}', 'NotificationController@markRead');
-    
+    Route::get('notifications', [NotificationController::class, 'index']);
+    Route::post('notifications/mark-read/{id}', [NotificationController::class, 'markRead']);
 });
 
-// Tutor - Aceite
-Route::get('/tutor/accept/{token}', [TutorInviteController::class, 'acceptInvite']);
+// Tutor - Aceite (sem autenticação)
+Route::get('/invite/accept/{token}', [TutorInviteController::class, 'accept'])
+    ->name('tutor-invite.accept');

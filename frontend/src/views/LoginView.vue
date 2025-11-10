@@ -8,13 +8,13 @@
 </template>
 
 <script>
-import LoginMixin from '@/mixins/LoginMixin';
+import AuthMixin from '@/mixins/AuthMixin'
 
 export default {
 
     name: 'LoginView',
 
-    mixins: [LoginMixin],
+    mixins: [AuthMixin],
 
     data() {
         return {
@@ -25,8 +25,8 @@ export default {
 
     methods: {
 
-        performLogin() {
-            this.login({
+        async performLogin() {
+            await this.login({
                 email: this.email,
                 password: this.password
             });

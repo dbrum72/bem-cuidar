@@ -5,7 +5,7 @@
       <router-link :to="{ name: 'DependentList' }">Dependentes</router-link>
       <router-link :to="{ name: 'AppointmentList' }">Agendamentos</router-link>
 
-      <button @click="logout" class="logout-btn">Sair</button>
+      <button @click="performLogout()" class="logout-btn">Sair</button>
     </nav>
 
     <div v-else class="login-container">
@@ -15,21 +15,24 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import AuthMixin from '@/mixins/AuthMixin'
 
 export default {
+
   name: "HeaderBar",
 
-  computed: {
-    ...mapState('auth', ['token', 'user']),
-    
+  mixins: [AuthMixin],
+
+  computed: {    
     isAuthenticated() {
-      return !!this.token
+      return !!this.getToken();
     }
   },
 
   methods: {
-    ...mapActions('auth', ['logout'])
+    performLogout() {
+      this.logout();
+    }
   }
 }
 </script>

@@ -1,49 +1,65 @@
-import http from "@/services/http.js";
-import router from "@/router";
-
+// src/store/modules/auth.js
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    state: {
-        token: localStorage.getItem("token") || null,
-        user: (() => {
-            try {
-                const saved = localStorage.getItem("user");
-                return saved ? JSON.parse(saved) : null;
-            } catch {
-                localStorage.removeItem("user");
-                return null;
-            }
-        })(),
-    },
+	state: {
+		token: localStorage.getItem("token") || null,
+		user: localStorage.getItem("user")
+			? JSON.parse(localStorage.getItem("user"))
+			: null,
+		roles: localStorage.getItem("roles")
+			? JSON.parse(localStorage.getItem("roles"))
+			: [],
+		permissions: localStorage.getItem("permissions")
+			? JSON.parse(localStorage.getItem("permissions"))
+			: [],
+	},
 
-    mutations: {
-        setToken(state, token) {
-            state.token = token;
-            if (token) localStorage.setItem("token", token);
-            else localStorage.removeItem("token");
-        },
+	mutations: {
+		setToken(state, token) {
+			state.token = token;
+			if (token) localStorage.setItem("token", token);
+			else localStorage.removeItem("token");
+		},
 
-        setUser(state, user) {
-            state.user = user;
-            if (user) localStorage.setItem("user", JSON.stringify(user));
-            else localStorage.removeItem("user");
-        }
-    },
+		setUser(state, user) {
+			state.user = user;
+			if (user) localStorage.setItem("user", JSON.stringify(user));
+			else localStorage.removeItem("user");
+		},
 
-    actions: {
+		setRoles(state, roles) {
+			state.roles = roles || [];
+			if (roles) localStorage.setItem("roles", JSON.stringify(roles));
+			else localStorage.removeItem("roles");
+		},
 
-        async register({ commit }, payload) {
-            const { data } = await http.post('auth/register', payload);
-            commit('setToken', data.token);
-            commit('setUser', data.user);
-            router.push({ name: 'Dashboard' });
-        },
+		setPermissions(state, permissions) {
+			state.permissions = permissions || [];
+			if (permissions)
+				localStorage.setItem(
+					"permissions",
+					JSON.stringify(permissions)
+				);
+			else localStorage.removeItem("permissions");
+		},
 
-        logout({ commit }) {
-            commit('setToken', null);
-            commit('setUser', null);
-            router.push({ name: 'Index' });
-        }
-    }
-}
+		logout(state) {
+			state.token = null;
+			state.user = null;
+			state.roles = [];
+			state.permissions = [];
+			localStorage.removeItem("token");
+			localStorage.removeItem("user");
+			localStorage.removeItem("roles");
+			localStorage.removeItem("permissions");
+		},
+	},
+
+	getters: {
+		hasRole: (state) => (role) => state.roles.includes(role),
+		hasAnyRole: (state) => (roles) =>
+			roles.some((r) => state.roles.includes(r)),
+		hasPermission: (state) => (perm) => state.permissions.includes(perm),
+	},
+};

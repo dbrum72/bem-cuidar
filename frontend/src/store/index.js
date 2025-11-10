@@ -4,6 +4,7 @@ import dependent from './modules/dependent';
 import appointment from './modules/appointment';
 import transactions from './modules/transactions';
 import notifications from './modules/notifications';
+import tutorInvite from './modules/tutorInvite';
 import alerts from './modules/alerts';
 
 export default createStore({
@@ -13,6 +14,7 @@ export default createStore({
         appointment,
         transactions,
         notifications,
-        alerts
+        tutorInvite,
+        alerts,
     }
 });

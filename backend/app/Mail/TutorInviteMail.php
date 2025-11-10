@@ -2,7 +2,8 @@
 
 namespace App\Mail;
 
-use App\Models\Dependent;
+use App\Models\TutorInvite;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -11,27 +12,28 @@ class TutorInviteMail extends Mailable {
 
     use Queueable, SerializesModels;
 
-    public $dependent;
-    public $token;
-    public $expiresAt;
+    public $invite;
+    public $inviter;
+    public $customMessage;
 
-    public function __construct(Dependent $dependent, string $token, $expiresAt) {
+    public function __construct(TutorInvite $invite, User $inviter, $customMessage = null)  {
 
-        $this->dependent = $dependent;
-        $this->token = $token;
-        $this->expiresAt = $expiresAt;
+        $this->invite = $invite;
+        $this->inviter = $inviter;
+        $this->customMessage = $customMessage;
     }
 
     public function build() {
         
-        $acceptUrl = url("/tutor/accept/{$this->token}");
-
-        return $this->subject('Convite para ser tutor de ' . $this->dependent->name)
+        $acceptUrl = config('app.frontend_url') . '/invite/accept?token=' . $this->invite->token;
+        // usamos view dedicada
+        return $this->subject('Você foi convidado(a) como tutor')
                     ->view('emails.tutor_invite')
                     ->with([
-                        'dependent' => $this->dependent,
+                        'invite' => $this->invite,
+                        'inviter' => $this->inviter,
                         'acceptUrl' => $acceptUrl,
-                        'expiresAt' => $this->expiresAt->format('d/m/Y H:i'),
+                        'customMessage' => $this->customMessage
                     ]);
     }
 }

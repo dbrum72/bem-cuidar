@@ -2,83 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class AuthController extends Controller {
 
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct() {
 
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function login()  {
+    public function login(Request $request)  {
 
-        $credentials = request(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
-        if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Não autorizado'], 401);
+        if (!$token = Auth::guard('api')->attempt($credentials)) {
+            return response()->json(['message' => 'Credenciais inválidas.'], 401);
         }
 
         return $this->respondWithToken($token);
     }
 
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function me()  {
+    public function me() {
+        $user = Auth::guard('api')->user();
+        if (!$user) return response()->json(null, 401);
 
-        return response()->json(auth()->user());
-    }
-
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function logout() {
-
-        auth()->logout();
-
-        return response()->json(['message' => 'Successfully logged out']);
-    }
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function refresh() {
-
-        return $this->respondWithToken(auth()->refresh());
-    }
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    protected function respondWithToken($token) {
+        $roles = $user->getRoleNames(); // collection
+        $permissions = $user->getAllPermissions()->pluck('name');
 
         return response()->json([
-            'user' => auth()->user(),
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
+        ]);
+    }
+
+    public function logout() {
+
+        Auth::guard('api')->logout();
+        return response()->json(['message' => 'Logout realizado com sucesso.']);
+    }
+
+    public function refresh() {
+
+        try {
+            $newToken = Auth::guard('api')->refresh();
+            return $this->respondWithToken($newToken);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Não foi possível renovar o token.'], 401);
+        }
+    }
+
+    protected function respondWithToken($token) {
+
+        $user = Auth::guard('api')->user();
+        $roles = $user->getRoleNames();
+        $permissions = $user->getAllPermissions()->pluck('name');
+
+        return response()->json([
+            'user' => $user,
+            'roles' => $roles,
+            'permissions' => $permissions,
             'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
             'msg' => 'Login realizado com sucesso.'
         ]);
     }
