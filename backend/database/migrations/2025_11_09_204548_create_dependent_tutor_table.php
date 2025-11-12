@@ -24,7 +24,7 @@ return new class extends Migration {
 
         Schema::disableForeignKeyConstraints();
 
-        Schema::dropIfExists('dependent_user');
+        Schema::dropIfExists('dependent_tutor');
 
         Schema::enableForeignKeyConstraints();
     }
