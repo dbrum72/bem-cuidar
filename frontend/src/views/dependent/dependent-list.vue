@@ -3,10 +3,10 @@
     <HeaderBar />
 
     <div class="d-flex justify-content-between px-3">
-        <h2>Crianças</h2>
+        <h2>Dependentes</h2>
         <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
     </div>
-    <div v-if="dependents.length === 0">Nenhuma criança cadastrada</div>
+    <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
 
     <div v-else>
         <table>

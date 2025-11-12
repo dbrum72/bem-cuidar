@@ -4,10 +4,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePermissionTable extends Migration
-{
-    public function up()
-    {
+class CreatePermissionTable extends Migration {
+
+    public function up() {
+        
         $tableNames = config('permission.table_names', [
             'roles' => 'roles',
             'permissions' => 'permissions',

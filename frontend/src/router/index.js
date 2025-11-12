@@ -56,7 +56,7 @@ const routes = [
 				path: "list",
 				name: "DependentList",
 				component: () =>
-					import("@/views/dependent/dependent-fetch.vue"),
+					import("@/views/dependent/dependent-list.vue"),
 			},
 			{
 				path: "show/:id",
