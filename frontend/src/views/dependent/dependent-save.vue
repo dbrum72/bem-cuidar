@@ -5,20 +5,17 @@
         </h2>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
-            <!-- Nome -->
             <div>
                 <label class="block text-sm font-medium mb-1">Nome completo</label>
                 <input v-model="form.name" type="text" class="input" placeholder="Digite o nome do dependente"
                     required />
             </div>
 
-            <!-- Data de nascimento -->
             <div>
                 <label class="block text-sm font-medium mb-1">Data de nascimento</label>
                 <input v-model="form.birth_date" type="date" class="input" required />
             </div>
 
-            <!-- Tipo de relacionamento (campo da tabela dependent_tutor) -->
             <div>
                 <label class="block text-sm font-medium mb-1">Tipo de vínculo</label>
                 <select v-model="form.relationship_type" class="input">
@@ -29,14 +26,12 @@
                 </select>
             </div>
 
-            <!-- Observações -->
             <div>
                 <label class="block text-sm font-medium mb-1">Observações</label>
-                <textarea v-model="form.observation" class="input" placeholder="Observações gerais sobre o dependente"
+                <textarea v-model="form.notes" class="input" placeholder="Observações gerais sobre o dependente"
                     rows="3"></textarea>
             </div>
 
-            <!-- Foto -->
             <div>
                 <label class="block text-sm font-medium mb-1">Foto</label>
                 <input type="file" accept="image/*" @change="handleFileUpload" class="input" />
@@ -46,7 +41,6 @@
                 </div>
             </div>
 
-            <!-- Botões -->
             <div class="flex justify-end space-x-3 mt-6">
                 <button type="button" class="btn-secondary" @click="$router.push({ name: 'DependentList' })">
                     Cancelar
@@ -61,11 +55,13 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import DependentMixin from "@/mixins/DependentMixin";
 import AuthMixin from "@/mixins/AuthMixin";
 
 export default {
     name: "DependentSave",
+
     mixins: [DependentMixin, AuthMixin],
 
     data() {
@@ -74,7 +70,7 @@ export default {
                 id: null,
                 name: "",
                 birth_date: "",
-                observation: "",
+                notes: "",
                 relationship_type: "",
                 photo: null,
                 created_by: null,
@@ -82,38 +78,30 @@ export default {
             },
             preview: null,
             isSaving: false,
+            isEditing: false,
         };
     },
 
+    async mounted() {
+
+        const id = this.$route.params.id;
+        if (id) {
+            this.isEditing = true
+            let response = await this.getDependent(id)
+            if (this.dependent) {
+                this.form = this.dependent
+                if (this.dependent.photo_url) this.preview = this.dependent.photo_url;
+            }
+
+        }
+    },
+
     computed: {
-        isEditing() {
-            return !!this.$route.params.id;
-        },
+        ...mapState('dependent', ['dependent'])
     },
 
-    async created() {
-        // Define tutor autenticado
-        const user = this.user || JSON.parse(localStorage.getItem("user"));
-        if (user?.id) this.form.created_by = user.id;
-
-        if (this.isEditing) await this.loadDependent();
-    },
 
     methods: {
-        async loadDependent() {
-            const id = this.$route.params.id;
-            const res = await this.getDependent(id);
-            if (res?.data?.dependent) {
-                this.form = {
-                    ...this.form,
-                    ...res.data.dependent,
-                    created_by: this.form.created_by,
-                };
-                if (res.data.dependent.photo_url)
-                    this.preview = res.data.dependent.photo_url;
-            }
-        },
-
         handleFileUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -128,17 +116,10 @@ export default {
             try {
                 const formData = new FormData();
 
-                // Envia todos os campos, incluindo pivot data (created_by, relationship_type, status)
-                Object.entries(this.form).forEach(([key, value]) => {
-                    if (value !== null && value !== undefined) {
-                        formData.append(key, value);
-                    }
-                });
-
                 if (this.isEditing) {
-                    await this.updateDependent(formData);
+                    await this.updateDependent(this.form);
                 } else {
-                    await this.storeDependent(formData);
+                    await this.storeDependent(this.form);
                 }
 
                 this.$toast?.success("Dependente salvo com sucesso!");

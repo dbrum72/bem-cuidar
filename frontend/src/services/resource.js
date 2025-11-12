@@ -43,9 +43,7 @@ export function createResource(resourcePath) {
 		saveOrUpdate(data) {
 			if (!data) throw new Error("data is required");
 			if (data.id) {
-				const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${
-					data.id
-				}`;
+				const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`;
 				return apiRequest({ method: "patch", url, data });
 			} else {
 				const url = `${import.meta.env.VITE_BACKEND_URL}${base}`;
