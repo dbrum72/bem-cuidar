@@ -37,7 +37,7 @@ export default {
 			this.setRoles(data.roles || []);
 			this.setPermissions(data.permissions || []);
 			this._toastSuccess("Login realizado com sucesso!");
-			this.$router.push({ name: "Dashboard" });
+			this.$router.push({ name: "DashboardView" });
 		},
 
 		async loadUser() {

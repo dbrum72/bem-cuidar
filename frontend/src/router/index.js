@@ -88,6 +88,17 @@ const routes = [
 		component: () => import("@/views/tutor/tutor-invite.vue"),
 		meta: { requiresAuth: true, roles: ['tutor', 'admin'] }
 	},
+	{
+		path: '/user',
+		name: 'User',
+		meta: { requiresAuth: true },
+		children: [
+			{ path: 'list', name: 'UserList', component: () => import('@/views/user/user-list.vue') },
+			{ path: 'show/:id', name: 'UserShow', component: () => import('@/views/user/user-show.vue') },
+			{ path: 'save/:id', name: 'UserSave', component: () => import('@/views/user/user-save.vue') },
+		],
+	},
+
 ];
 
 const router = createRouter({

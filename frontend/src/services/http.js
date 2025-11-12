@@ -1,45 +1,42 @@
-// src/services/http.js
 import axios from "axios";
-import AuthMixin from "@/mixins/AuthMixin.js";
+import store from "@/store";
+import router from "@/router";
 
-const http = axios.create({
-	baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api/",
+const axiosInstance = axios.create({
+	baseURL: import.meta.env.VITE_API_URL,
 	headers: {
 		"Content-Type": "application/json",
 		Accept: "application/json",
 	},
 });
 
-// instancia temporária do AuthMixin (sem Vue, só para token)
-const authHelper = {
-	getAuthToken: AuthMixin.methods.getAuthToken,
-	clearSession: AuthMixin.methods.clearSession,
-	logoutUser: AuthMixin.methods.logoutUser,
-};
-
-// Adiciona token em cada requisição
-http.interceptors.request.use(
+axiosInstance.interceptors.request.use(
 	(config) => {
-		const token = authHelper.getAuthToken();
+		const token = store.state.auth.token || localStorage.getItem("token");
+
 		if (token) config.headers.Authorization = `Bearer ${token}`;
 		return config;
 	},
 	(error) => Promise.reject(error)
 );
 
-// Intercepta respostas não autorizadas
-http.interceptors.response.use(
+axiosInstance.interceptors.response.use(
 	(response) => response,
 	(error) => {
 		if (error.response && error.response.status === 401) {
-			console.warn("Sessão expirada ou não autorizada. Limpando sessão.");
-			authHelper.clearSession();
-			if (window.location.pathname !== "/login") {
-				window.location.href = "/login";
+			// Limpa sessão
+			store.commit("auth/setUser", null);
+			store.commit("auth/setToken", null);
+			localStorage.removeItem("token");
+			localStorage.removeItem("user");
+
+			// Evita loop se já estiver na tela de login
+			if (router.currentRoute.value.name !== "Login") {
+				router.push({ name: "Login" });
 			}
 		}
 		return Promise.reject(error);
 	}
 );
 
-export default http;
+export default axiosInstance;

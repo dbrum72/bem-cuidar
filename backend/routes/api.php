@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TutorInviteController;
 use App\Http\Controllers\DependentController;
 use App\Http\Controllers\AppointmentController;
@@ -14,7 +15,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function () {
-    Route::post('register', [AuthController::class, 'register']);
+    Route::post('register', [UserController::class, 'store']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
@@ -42,6 +43,9 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     // Notificações
     Route::get('notifications', [NotificationController::class, 'index']);
     Route::post('notifications/mark-read/{id}', [NotificationController::class, 'markRead']);
+
+    // User
+    Route::apiResource('user', UserController::class)->only(['index', 'show', 'update', 'destroy']);
 });
 
 // Tutor - Aceite (sem autenticação)

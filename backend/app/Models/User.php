@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\Dependent;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,7 +42,7 @@ class User extends Authenticatable implements JWTSubject {
 
     public function dependents() {
         
-        return $this->belongsToMany('App/Models/Dependent', 'dependent_tutor', 'tutor_id', 'dependent_id')
+        return $this->belongsToMany(Dependent::class, 'dependent_tutor', 'tutor_id', 'dependent_id')
                     ->withPivot('relationship_type', 'status', 'invite_token')
                     ->withTimestamps();
     }

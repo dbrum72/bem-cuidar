@@ -17,6 +17,8 @@ class AppointmentController extends Controller {
     /************************************************************************************/
     public function index(Request $request) {
 
+        $user = auth()->user();
+
         $appointmentRepository = new AppointmentRepository($this->appointment);
 
         if($request->has('with')) {

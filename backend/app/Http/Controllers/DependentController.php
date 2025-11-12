@@ -18,7 +18,11 @@ class DependentController extends Controller {
     /************************************************************************************/
     public function index(Request $request) {
 
+        $user = auth()->user();
+
         $dependentRepository = new DependentRepository($this->dependent);
+
+        $dependentRepository->extendedFilter('tutors,tutor_id:=:'.$user->id);
 
         if($request->has('with')) {
 

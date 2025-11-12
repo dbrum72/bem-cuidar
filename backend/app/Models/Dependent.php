@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+use App\Models\User;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,9 +16,9 @@ class Dependent extends Model {
         'created_by'
     ];
 
-    public function tutors()
-    {
-        return $this->belongsToMany('App/Models/User', 'dependent_tutor', 'dependent_id', 'tutor_id')
+    public function tutors() {
+
+        return $this->belongsToMany(User::class, 'dependent_tutor', 'dependent_id', 'tutor_id')
                     ->withPivot('relationship_type', 'status', 'invite_token')
                     ->withTimestamps();
     }
