@@ -6,38 +6,32 @@
         <h2>Dependentes</h2>
         <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
     </div>
-    <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
+    <div class="container mt-4">
+        <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
 
-    <div v-else>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Data Nascimento</th>
-                    <th>Notas</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="i in dependents" :key="i.id" class="">
-                    <td>{{ i.name }}</td>
-                    <td>{{ formatDate(i.birth_date) }}</td>
-                    <td>{{ i.notes }}</td>
-                    <td>
+
+        <div v-else class="d-flex justify-content-center gap-3">
+            <div class="card" v-for="i in dependents" :key="i.id">
+                <img :src="(i.photo_url || '/public/img/default-dependent.png')" class="card-img-top" style="width: 10rem":alt="i.name">
+                <div class="card-body">
+                    <h5 class="card-title text-center">{{ i.name }}</h5>
+                    <p class="card-text text-center">{{ formatDate(i.birth_date) }}</p>
+                    <div class="d-flex justify-content-center gap-3">
                         <router-link :to="{ name: 'DependentShow', params: { id: i.id } }">
-                            Visualizar
+                            <i class="fa-solid fa-eye" style="color: green;" alt="Visualizar" />
                         </router-link>
                         <router-link :to="{ name: 'DependentSave', params: { id: i.id } }">
-                            Editar
+                            <i class="fa-solid fa-user-pen" style="color: blue;" alt="Editar" />
                         </router-link>
                         <router-link class="" :to="{ name: 'DependentDelete', params: { id: i.id } }">
-                            Excluir
+                            <i class="fa-solid fa-trash-can" style="color: red;"></i>
                         </router-link>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </template>
 
 <script>
