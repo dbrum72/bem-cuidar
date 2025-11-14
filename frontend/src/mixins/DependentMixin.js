@@ -1,7 +1,7 @@
 import { createResource } from "@/services/resource.js";
 import { mapMutations } from "vuex";
 
-const dependentAPI = createResource("dependent");
+let dependentAPI = createResource("dependent");
 
 export default {
 	methods: {
@@ -11,23 +11,13 @@ export default {
 			"addDependent",
 		]),
 
-		/**
-		 * Usa this.handleRequest(...) se existir — assim você mantém tratamento centralizado.
-		 * Caso não exista, cai em fallback simples try/catch com console.error.
-		 */
-
 		async getDependents(filter, extendedFilter, relationship, sort) {
 			const call = () =>
-				dependentAPI.list({
-					filter,
-					extendedFilter,
-					relationship,
-					sort,
-				});
+				dependentAPI.list({filter, extendedFilter, relationship, sort});
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao carregar a lista de produtos.",
 				swallow: false,
-			});
+			}); 
 			if (response?.data) this.setDependents(response.data.dependents);
 		},
 
@@ -47,6 +37,7 @@ export default {
 
 			return null;
 		},
+
 		async storeDependent(payload) {
 			const call = () => dependentAPI.saveOrUpdate(payload);
 			const response = await this._execRequest(call, {

@@ -1,13 +1,5 @@
 import { buildQuery, apiGet, apiRequest, apiDelete } from "@/services/api.js";
 
-/**
- * createResource: factory para criar client REST padrão para um recurso (ex: 'dependent')
- * basePath pode ser string absoluta ou relativa (sem slash inicial).
- *
- * Uso:
- * const dependentResource = createResource('dependent', '/dependent');
- * await dependentResource.list({ filter: 'x' });
- */
 export function createResource(resourcePath) {
 	// se o usuário passar 'dependent' transformamos em '/dependent'
 	const base = resourcePath.startsWith("/")

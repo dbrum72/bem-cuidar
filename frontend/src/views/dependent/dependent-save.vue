@@ -1,4 +1,6 @@
 <template>
+    <HeaderBar />
+
     <div class="dependent-save max-w-2xl mx-auto">
         <h2 class="text-2xl font-semibold mb-6">
             {{ isEditing ? "Editar Dependente" : "Novo Dependente" }}
@@ -58,9 +60,12 @@
 import { mapState } from 'vuex';
 import DependentMixin from "@/mixins/DependentMixin";
 import AuthMixin from "@/mixins/AuthMixin";
+import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
     name: "DependentSave",
+
+    components: { HeaderBar },
 
     mixins: [DependentMixin, AuthMixin],
 
@@ -83,16 +88,20 @@ export default {
     },
 
     async mounted() {
-
         const id = this.$route.params.id;
+
         if (id) {
             this.isEditing = true
-            let response = await this.getDependent(id)
+            await this.getDependent(id)
+
             if (this.dependent) {
-                this.form = this.dependent
+                this.form.id = this.dependent.id;
+                this.form.name = this.dependent.name;
+                this.form.birth_date = this.dependent.birth_date;
+                this.form.notes = this.dependent.notes;
+                this.form.relationship_type = this.dependent.tutors[0].pivot.relationship_type;
                 if (this.dependent.photo_url) this.preview = this.dependent.photo_url;
             }
-
         }
     },
 
@@ -114,8 +123,6 @@ export default {
             this.isSaving = true;
 
             try {
-                const formData = new FormData();
-
                 if (this.isEditing) {
                     await this.updateDependent(this.form);
                 } else {
