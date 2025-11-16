@@ -35,6 +35,7 @@ class DependentSaveRequest extends FormRequest {
         $rules = [
             'name' => ['required','string','min:3','max:255',Rule::unique('dependents', 'name')->ignore($dependentId)],
             'birth_date' => ['required','date'],
+            'photo' => ['nullable','file','mimes:jpg,jpeg,png','max:2048'],
             'notes' => ['nullable','string'],
             'created_by' => ['required','exists:users,id']
         ];
@@ -62,9 +63,12 @@ class DependentSaveRequest extends FormRequest {
         return [
             'required' => 'Este campo é obrigatório.',
             'min' => 'Campo deve possuir no mínimo 3 caracteres.',
-            'max' => 'Máximo 255 caracteres.',
+            'max' => 'Máximo 2048 bytes.',
             'date' => 'Data inválida.',
-            'unique' => 'O dado informado já existe.'            
+            'unique' => 'O dado informado já existe.',
+            'mimes' => 'Formato inválido. Aceito: jpg, jpeg, png.',
+            'file' => 'O campo deve ser um arquivo.',
+            'exists' => 'O usuário informado não existe.'  
         ];        
     }
 }

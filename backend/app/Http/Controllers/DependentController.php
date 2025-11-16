@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Repositories\DependentRepository;
 use App\Http\Requests\DependentSaveRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class DependentController extends Controller {
 
@@ -52,11 +53,17 @@ class DependentController extends Controller {
     public function store(DependentSaveRequest $request){
 
         if($request->hasFile('photo')){
-            $photo = $request->file('photo')->store('dependents','public');
-            $request->merge(['photo' => $photo]);
+
+            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' . $request->photo->getClientOriginalExtension();
+
+            $photo = $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
+            
+            $request->merge(['photo' => $nameUnico]);
         }
 
-        $request->photo_url = $request->photo ? asset('storage/'.$request->photo) : null;
+        
+
+        //$request->photo_url = $request->photo ? asset('storage/'.$request->photo) : null;
 
         // cria o dependente como já fazia
         if($stored = $this->dependent->create($request->all())) {
@@ -97,22 +104,6 @@ class DependentController extends Controller {
     }
 
     /************************************************************************************/
-    public function show($id) {
-
-        $user = auth()->user(); // tutor autenticado
-
-        if($dependent = $this->dependent
-            ->where('id', $id)
-            ->whereHas('tutors', fn($q) => $q->where('tutor_id', $user->id))
-            ->with(['tutors' => fn($q) => $q->where('tutor_id', $user->id)])
-            ->first()) {
-                return response()->json(['dependent' => $dependent, 'errors' => []], 200);
-            }
-
-            return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
-    }
-
-    /************************************************************************************/
     public function update(DependentSaveRequest $request, $id) {
 
         $dependent = $this->dependent->find($id);
@@ -121,12 +112,14 @@ class DependentController extends Controller {
             return response()->json(['errors' => ['error' => 'Registro não encontrado']], 404);
         }
 
-        if ($request->hasFile('photo')) {
-            $photo = $request->file('photo')->store('dependents', 'public');
-            $request->merge(['photo' => $photo]);
-        }
+        if($request->hasFile('photo')){
 
-        $request->photo_url = $request->photo ? asset('storage/' . $request->photo) : null;
+            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' . $request->photo->getClientOriginalExtension();
+
+            $photo = $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
+            
+            $request->merge(['photo' => $nameUnico]);
+        }
 
         // Atualiza o registro existente
         if ($dependent->update($request->all())) {
@@ -163,6 +156,21 @@ class DependentController extends Controller {
         return response()->json(['errors' => ['error' => 'Erro ao atualizar o registro']], 500);
     }
 
+    /************************************************************************************/
+    public function show($id) {
+
+        $user = auth()->user(); // tutor autenticado
+
+        if($dependent = $this->dependent
+            ->where('id', $id)
+            ->whereHas('tutors', fn($q) => $q->where('tutor_id', $user->id))
+            ->with(['tutors' => fn($q) => $q->where('tutor_id', $user->id)])
+            ->first()) {
+                return response()->json(['dependent' => $dependent, 'errors' => []], 200);
+            }
+
+            return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
+    }
 
     /************************************************************************************/
     public function destroy($id) {

@@ -13,11 +13,11 @@ export default {
 
 		async getDependents(filter, extendedFilter, relationship, sort) {
 			const call = () =>
-				dependentAPI.list({filter, extendedFilter, relationship, sort});
+				dependentAPI.list({ filter, extendedFilter, relationship, sort });
 			const response = await this._execRequest(call, {
-				errorMsg: "Erro ao carregar a lista de produtos.",
+				errorMsg: "Erro ao carregar a lista de dependentes.",
 				swallow: false,
-			}); 
+			});
 			if (response?.data) this.setDependents(response.data.dependents);
 		},
 
@@ -40,6 +40,7 @@ export default {
 
 		async storeDependent(payload) {
 			const call = () => dependentAPI.saveOrUpdate(payload);
+
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
 			});
@@ -53,7 +54,16 @@ export default {
 		},
 
 		async updateDependent(payload) {
+			const formData = new FormData();
+
+			Object.keys(payload).forEach(key => {
+				if (payload[key] !== null && payload[key] !== undefined) {
+					formData.append(key, payload[key]);
+				}
+			});
+
 			const call = () => dependentAPI.saveOrUpdate(payload);
+
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
 			});

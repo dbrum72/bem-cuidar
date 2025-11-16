@@ -83,9 +83,9 @@ export default {
                 id: null,
                 name: "",
                 birth_date: "",
-                notes: "",
-                relationship_type: "",
                 photo: null,
+                notes: "",
+                relationship_type: "",                
                 created_by: null,
                 status: "accepted", // tutor criador é aceito automaticamente
             },
@@ -100,6 +100,7 @@ export default {
 
         if (id) {
             this.isEditing = true
+            
             await this.getDependent(id)
 
             if (this.dependent) {
