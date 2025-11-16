@@ -1,18 +1,18 @@
 <template>
 
     <HeaderBar />
+    <div class="container-lg mt-4">
+        <div class="d-flex justify-content-between">
+            <h4>Dependentes</h4>
+            <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
+        </div>
 
-    <div class="d-flex justify-content-between px-3">
-        <h2>Dependentes</h2>
-        <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
-    </div>
-    <div class="container mt-4">
         <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
 
-
-        <div v-else class="d-flex justify-content-center gap-3">
+        <div v-else class="d-flex justify-content-center gap-3 mt-4">
             <div class="card" v-for="i in dependents" :key="i.id">
-                <img :src="(i.photo_url || '/public/img/default-dependent.png')" class="card-img-top" style="width: 10rem":alt="i.name">
+                <img :src="(i.photo_url || '/public/img/default-dependent.png')" class="card-img-top"
+                    style="width: 10rem" :alt="i.name">
                 <div class="card-body">
                     <h5 class="card-title text-center">{{ i.name }}</h5>
                     <p class="card-text text-center">{{ formatDate(i.birth_date) }}</p>

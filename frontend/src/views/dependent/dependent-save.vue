@@ -1,50 +1,58 @@
 <template>
     <HeaderBar />
 
-    <div class="dependent-save max-w-2xl mx-auto">
-        <h2 class="text-2xl font-semibold mb-6">
+    <div class="container mt-4">
+        <h4 class="text-2xl font-semibold mb-6">
             {{ isEditing ? "Editar Dependente" : "Novo Dependente" }}
-        </h2>
+        </h4>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Nome completo</label>
-                <input v-model="form.name" type="text" class="input" placeholder="Digite o nome do dependente"
-                    required />
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Data de nascimento</label>
-                <input v-model="form.birth_date" type="date" class="input" required />
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Tipo de vínculo</label>
-                <select v-model="form.relationship_type" class="input">
-                    <option value="">Selecione...</option>
-                    <option value="parent">Responsável</option>
-                    <option value="guardian">Tutor legal</option>
-                    <option value="other">Outro</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Observações</label>
-                <textarea v-model="form.notes" class="input" placeholder="Observações gerais sobre o dependente"
-                    rows="3"></textarea>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Foto</label>
-                <input type="file" accept="image/*" @change="handleFileUpload" class="input" />
-
-                <div v-if="preview" class="mt-2">
-                    <img :src="preview" alt="Pré-visualização" class="w-32 h-32 object-cover rounded-lg border" />
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="block text-sm font-medium mb-1">Nome completo</label>
+                    <input v-model="form.name" type="text" class="input" placeholder="Digite o nome do dependente"
+                        required />
                 </div>
             </div>
 
-            <div class="flex justify-end space-x-3 mt-6">
-                <button type="button" class="btn-secondary" @click="$router.push({ name: 'DependentList' })">
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 mb-3">
+                    <label class="text-sm font-medium">Data de nascimento</label>
+                    <input v-model="form.birth_date" type="date" class="input" required />
+                </div>
+
+                <div class="col-sm-12 col-lg-6">
+                    <label class="text-sm font-medium">Tipo de vínculo</label>
+                    <select v-model="form.relationship_type" class="input">
+                        <option value="">Selecione...</option>
+                        <option value="parent">Responsável</option>
+                        <option value="guardian">Tutor legal</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="text-sm font-medium mb-1">Observações</label>
+                    <textarea v-model="form.notes" class="input" placeholder="Observações gerais sobre o dependente"
+                        rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 mb-3">
+                    <label class="text-sm font-medium mb-1">Foto</label>
+                    <input type="file" accept="image/*" @change="handleFileUpload" class="input" />
+
+                    <div v-if="preview" class="mt-2">
+                        <img :src="preview" alt="Pré-visualização" class="w-32 h-32 object-cover rounded-lg border" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end my-3">
+                <button type="button" class="btn-secondary me-3" @click="$router.push({ name: 'DependentList' })">
                     Cancelar
                 </button>
 

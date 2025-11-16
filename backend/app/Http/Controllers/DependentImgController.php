@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\File;
+use App\Models\DependentImg;
 use App\Http\Requests\FileStoreRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
-class FileController extends Controller {
+class DependentImgController extends Controller {
 
     public function store(FileStoreRequest $request) {
 
@@ -16,10 +16,10 @@ class FileController extends Controller {
         
             $nameUnico = str_shuffle(time() . Str::random(10)) . '.' . $file->getClientOriginalExtension();
 
-            if($store = File::create([
+            if($store = DependentImg::create([
                 'name' => $file->getClientOriginalName(),
                 'storaged' => $nameUnico,
-                'child_id' => $request->child_id
+                'dependent_id' => $request->dependent_id
             ])) {
                 $file->storeAs('files', $nameUnico, 'public');
             }         
@@ -33,7 +33,7 @@ class FileController extends Controller {
 
     /********************************************************************************************************/
 
-    public function destroy(File $product_file) {
+    public function destroy(DependentImg $product_file) {
         
         if($product_file && $product_file->delete()) {
 
