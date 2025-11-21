@@ -43,7 +43,7 @@
             <div class="row">
                 <div class="col-12 mb-3">
                     <label class="text-sm font-medium mb-1">Foto</label>
-                    <input type="file" accept="image/*" @change="handleFileUpload" class="input" />
+                    <input type="file" accept="image/*" @change="onFileChange" class="input" />
 
                     <div v-if="preview" class="mt-2">
                         <img :src="preview" alt="Pré-visualização" class="w-32 h-32 object-cover rounded-lg border" />
@@ -85,7 +85,7 @@ export default {
                 birth_date: "",
                 photo: null,
                 notes: "",
-                relationship_type: "",                
+                relationship_type: "",
                 created_by: null,
                 status: "accepted", // tutor criador é aceito automaticamente
             },
@@ -100,16 +100,17 @@ export default {
 
         if (id) {
             this.isEditing = true
-            
+
             await this.getDependent(id)
 
             if (this.dependent) {
                 this.form.id = this.dependent.id;
                 this.form.name = this.dependent.name;
                 this.form.birth_date = this.dependent.birth_date;
+                this.form.photo = null;
                 this.form.notes = this.dependent.notes;
                 this.form.relationship_type = this.dependent.tutors[0].pivot.relationship_type;
-                if (this.dependent.photo_url) this.preview = this.dependent.photo_url;
+                if (this.dependent.photo) this.preview = this.dependent.photo;
             }
         }
     },
@@ -120,7 +121,7 @@ export default {
 
 
     methods: {
-        handleFileUpload(event) {
+        onFileChange(event) {
             const file = event.target.files[0];
             if (file) {
                 this.form.photo = file;
@@ -131,12 +132,14 @@ export default {
         async handleSubmit() {
             this.isSaving = true;
 
+            const formData = new FormData();
+            
+            Object.keys(this.form).forEach(key => {
+                formData.append(key, this.form[key]);
+            });
+
             try {
-                if (this.isEditing) {
-                    await this.updateDependent(this.form);
-                } else {
-                    await this.storeDependent(this.form);
-                }
+                await this.storeOrUpdate(this.form);
 
                 this.$toast?.success("Dependente salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });

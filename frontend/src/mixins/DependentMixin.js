@@ -13,7 +13,12 @@ export default {
 
 		async getDependents(filter, extendedFilter, relationship, sort) {
 			const call = () =>
-				dependentAPI.list({ filter, extendedFilter, relationship, sort });
+				dependentAPI.list({
+					filter,
+					extendedFilter,
+					relationship,
+					sort,
+				});
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao carregar a lista de dependentes.",
 				swallow: false,
@@ -38,7 +43,12 @@ export default {
 			return null;
 		},
 
-		async storeDependent(payload) {
+		async storeOrUpdate(payload) {		
+
+			if (!(payload.photo instanceof File)) {
+				delete payload.photo;
+			}
+
 			const call = () => dependentAPI.saveOrUpdate(payload);
 
 			const response = await this._execRequest(call, {
@@ -54,19 +64,24 @@ export default {
 		},
 
 		async updateDependent(payload) {
+			if (!(payload.photo instanceof File)) {
+				delete payload.photo;
+			}
+
 			const formData = new FormData();
 
-			Object.keys(payload).forEach(key => {
+			Object.keys(payload).forEach((key) => {
 				if (payload[key] !== null && payload[key] !== undefined) {
 					formData.append(key, payload[key]);
 				}
 			});
 
-			const call = () => dependentAPI.saveOrUpdate(payload);
+			const call = () => dependentAPI.saveOrUpdate(formData);
 
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
 			});
+
 			if (response?.data) {
 				this.$store.commit(
 					"dependent/addDependent",

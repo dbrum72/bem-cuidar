@@ -29,17 +29,23 @@ export function createResource(resourcePath) {
 
 		saveOrUpdate(data) {
 			if (!data) throw new Error("Dados são requeridos.");
-			
-			const config = {
-				headers: data.photo ? '"Content-Type": "multipart/form-data"' : '"Content-Type": "application/json"',
-				method: data.id ? "patch" : "post",
-				url: data.id
-					? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
-					: `${import.meta.env.VITE_BACKEND_URL}${base}`,
-				data: data,
-			};
 
-			return apiRequest(config);
+			const isFormData = data instanceof FormData;
+
+			const id = isFormData ? data.get("id") : data.id;
+
+            const method = isFormData
+                ? (data.get("id") ? "post" : "post") // Laravel tratado pelo backend
+                : (data.id ? "patch" : "post");
+
+            const url = `${import.meta.env.VITE_BACKEND_URL}${base}${id ? "/" + id : ""}`;
+
+            return apiRequest({
+                method: method,
+                url,
+                data,
+                headers: isFormData ? {} : { "Content-Type": "application/json" },
+            });
 		},
 
 
