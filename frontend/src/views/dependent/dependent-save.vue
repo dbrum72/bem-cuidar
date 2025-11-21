@@ -21,7 +21,7 @@
                     <input v-model="form.birth_date" type="date" class="input" required />
                 </div>
 
-                <div class="col-sm-12 col-lg-6">
+                <div class="col-sm-12 col-lg-6 mb-3">
                     <label class="text-sm font-medium">Tipo de vínculo</label>
                     <select v-model="form.relationship_type" class="input">
                         <option value="">Selecione...</option>
@@ -110,7 +110,8 @@ export default {
                 this.form.photo = null;
                 this.form.notes = this.dependent.notes;
                 this.form.relationship_type = this.dependent.tutors[0].pivot.relationship_type;
-                if (this.dependent.photo) this.preview = this.dependent.photo;
+                if (this.dependent.photo)
+                    this.preview = `${import.meta.env.VITE_BACKEND_FILES}/dependents/${this.dependent.photo}`;
             }
         }
     },
@@ -132,11 +133,11 @@ export default {
         async handleSubmit() {
             this.isSaving = true;
 
-            const formData = new FormData();
+            /*const formData = new FormData();
             
             Object.keys(this.form).forEach(key => {
                 formData.append(key, this.form[key]);
-            });
+            });*/
 
             try {
                 await this.storeOrUpdate(this.form);

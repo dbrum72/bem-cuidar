@@ -30,24 +30,27 @@ export function createResource(resourcePath) {
 		saveOrUpdate(data) {
 			if (!data) throw new Error("Dados são requeridos.");
 
-			const isFormData = data instanceof FormData;
+			const formData = new FormData();
 
-			const id = isFormData ? data.get("id") : data.id;
+			Object.keys(data).forEach((key) => {
+				if (data[key] !== null && data[key] !== undefined) {
+					formData.append(key, data[key]);
+				}
+			});
 
-            const method = isFormData
-                ? (data.get("id") ? "post" : "post") // Laravel tratado pelo backend
-                : (data.id ? "patch" : "post");
+			const url = data.id
+				? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
+				: `${import.meta.env.VITE_BACKEND_URL}${base}`;
 
-            const url = `${import.meta.env.VITE_BACKEND_URL}${base}${id ? "/" + id : ""}`;
-
-            return apiRequest({
-                method: method,
-                url,
-                data,
-                headers: isFormData ? {} : { "Content-Type": "application/json" },
-            });
+			return apiRequest({
+				method: data.id ? "patch" : "post",
+				url,
+				data: formData,
+				headers: {
+					"Content-Type": "multipart/form-data",
+				},
+			});
 		},
-
 
 		remove(id) {
 			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;
@@ -69,7 +72,9 @@ export function createResource(resourcePath) {
 		},
 
 		patch(pathOrId, data) {
-			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${pathOrId}`;
+			const url = `${
+				import.meta.env.VITE_BACKEND_URL
+			}${base}/${pathOrId}`;
 			return apiRequest({ method: "patch", url, data });
 		},
 	};

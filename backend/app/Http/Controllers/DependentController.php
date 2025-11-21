@@ -50,34 +50,30 @@ class DependentController extends Controller {
 
     /************************************************************************************/
 
-    public function store(DependentSaveRequest $request){
+    public function store(DependentSaveRequest $request) {
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
 
-            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' . $request->photo->getClientOriginalExtension();
+            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' .
+                        $request->photo->getClientOriginalExtension();
 
-            $photo = $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
-            
-            $request->merge(['photo' => $nameUnico]);
+            $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
         }
 
-        
+        $data = $request->all();
+        unset($data['photo']);
+        $data['photo'] = $nameUnico ?? null;
 
-        //$request->photo_url = $request->photo ? asset('storage/'.$request->photo) : null;
+        // Cria o dependente
+        if ($stored = $this->dependent->create($data)) {
 
-        // cria o dependente como já fazia
-        if($stored = $this->dependent->create($request->all())) {
-
-            // --- nova parte: vincular o tutor criador na pivot dependent_tutor ---
-            // o DependentSaveRequest já seta created_by => id do usuário autenticado.
-            // mantemos relationship_type nulo (ou use $request->relationship_type se quiser)
+            // Vincula tutor criador (quando enviado)
             if ($request->filled('created_by')) {
                 try {
-                    // usamos syncWithoutDetaching para não quebrar caso já exista vínculo
                     $stored->tutors()->syncWithoutDetaching([
                         $request->input('created_by') => [
                             'relationship_type' => $request->input('relationship_type', null),
-                            'status' => 'accepted',      // criador é tutor aceito por padrão
+                            'status' => 'accepted', // criador é tutor aceito por padrão
                             'invite_token' => null,
                             'expires_at' => null,
                             'created_at' => now(),
@@ -85,23 +81,32 @@ class DependentController extends Controller {
                         ]
                     ]);
                 } catch (\Throwable $e) {
-                    // em caso de erro no pivot, removemos o registro recém-criado e retornamos erro
-                    // (opcional — se preferir, apenas logue e continue)
                     $stored->delete();
-                    return response()->json(['errors' => ['error' => 'Erro ao vincular tutor: '.$e->getMessage()]], 500);
+
+                    return response()->json([
+                        'errors' => [
+                            'error' => 'Erro ao vincular tutor: ' . $e->getMessage()
+                        ]
+                    ], 500);
                 }
             }
-            // --- fim da nova parte ---
 
-            // devolve dependente (já criado)
-            // carregamos tutores para o frontend ter a informação completa
             $stored->load('tutors');
 
-            return response()->json([ 'dependent' => $stored, 'errors' => [], 'msg' => 'Registro criado com sucesso!'], 201);
+            return response()->json([
+                'dependent' => $stored,
+                'errors' => [],
+                'msg' => 'Registro criado com sucesso!'
+            ], 201);
         }
 
-        return response()->json(['errors' => ['error' => 'Erro ao criar o registro']], 404);
+        return response()->json([
+            'errors' => [
+                'error' => 'Erro ao criar o registro'
+            ]
+        ], 404);
     }
+
 
     /************************************************************************************/
     public function update(DependentSaveRequest $request, $id) {
