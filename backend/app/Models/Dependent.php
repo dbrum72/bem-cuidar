@@ -12,7 +12,6 @@ class Dependent extends Model {
     protected $fillable = [
         'name',
         'birth_date',
-        'photo',
         'notes',
         'created_by'
     ];
@@ -20,7 +19,7 @@ class Dependent extends Model {
     public function tutors() {
 
         return $this->belongsToMany(User::class, 'dependent_tutor', 'dependent_id', 'tutor_id')
-                    ->withPivot('relationship_type', 'status', 'invite_token')
+                    ->withPivot('relationship_type', 'status', 'invite_token', 'photo')
                     ->withTimestamps();
     }
 }

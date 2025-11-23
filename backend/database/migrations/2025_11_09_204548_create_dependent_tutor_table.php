@@ -13,6 +13,7 @@ return new class extends Migration {
             $table->foreignId('dependent_id')->constrained()->onDelete('cascade');
             $table->foreignId('tutor_id')->constrained('users')->onDelete('cascade');
             $table->string('relationship_type')->nullable();
+            $table->string('photo')->nullable();
             $table->enum('status', ['pending', 'accepted'])->default('pending');
             $table->string('invite_token')->nullable()->unique();
             $table->timestamp('expires_at')->nullable();

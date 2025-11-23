@@ -1,9 +1,10 @@
 <template>
-    <div class="">
+    <div class="container mt-4">
         <div class="d-flex areaHeader">
-            <span class="font12rW600TuCg pe-2">Criança</span>
+            <h4 class="text-2xl font-semibold mb-6">Dependente</h4>
             <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
         </div>
+
         <div class="subArea mb-5">
             <div class="d-flex justify-content-between m-2 title-sub-area">
                 <div><span>Informações</span></div>

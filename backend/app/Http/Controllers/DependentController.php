@@ -6,6 +6,7 @@ use App\Models\Dependent;
 use App\Repositories\DependentRepository;
 use App\Http\Requests\DependentSaveRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -52,44 +53,46 @@ class DependentController extends Controller {
 
     public function store(DependentSaveRequest $request) {
 
-        if ($request->hasFile('photo')) {
+        $nameUnico = null;
 
+        // Upload da foto (não entra na transação)
+        if ($request->hasFile('photo')) {
             $nameUnico = str_shuffle(time() . Str::random(10)) . '.' .
                         $request->photo->getClientOriginalExtension();
 
             $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
         }
 
+        // Prepara dados
         $data = $request->all();
         unset($data['photo']);
-        $data['photo'] = $nameUnico ?? null;
+        $data['photo'] = $nameUnico;
 
-        // Cria o dependente
-        if ($stored = $this->dependent->create($data)) {
+        try {
+            DB::beginTransaction();
 
-            // Vincula tutor criador (quando enviado)
-            if ($request->filled('created_by')) {
-                try {
-                    $stored->tutors()->syncWithoutDetaching([
-                        $request->input('created_by') => [
-                            'relationship_type' => $request->input('relationship_type', null),
-                            'status' => 'accepted', // criador é tutor aceito por padrão
-                            'invite_token' => null,
-                            'expires_at' => null,
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]
-                    ]);
-                } catch (\Throwable $e) {
-                    $stored->delete();
+            // 1) Cria o dependente
+            $stored = $this->dependent->create($data);
 
-                    return response()->json([
-                        'errors' => [
-                            'error' => 'Erro ao vincular tutor: ' . $e->getMessage()
-                        ]
-                    ], 500);
-                }
+            if (!$stored) {
+                throw new \Exception("Erro ao criar o dependente.");
             }
+
+            // 2) Vincula tutor criador
+            if ($request->filled('created_by')) {
+                $stored->tutors()->syncWithoutDetaching([
+                    $request->input('created_by') => [
+                        'relationship_type' => $request->input('relationship_type', null),
+                        'status' => 'accepted',
+                        'invite_token' => null,
+                        'expires_at' => null,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                ]);
+            }
+
+            DB::commit();
 
             $stored->load('tutors');
 
@@ -98,67 +101,65 @@ class DependentController extends Controller {
                 'errors' => [],
                 'msg' => 'Registro criado com sucesso!'
             ], 201);
-        }
 
-        return response()->json([
-            'errors' => [
-                'error' => 'Erro ao criar o registro'
-            ]
-        ], 404);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            if ($nameUnico) {
+                Storage::disk('public')->delete("dependents/$nameUnico");
+            }
+
+            return response()->json(['errors' => ['error' => 'Erro ao salvar dependente: ' . $e->getMessage()]], 500);
+        }
     }
 
 
     /************************************************************************************/
     public function update(DependentSaveRequest $request, $id) {
 
-        $dependent = $this->dependent->find($id);
+        if($update = $this->dependent->find($id)) {
 
-        if (!$dependent) {
-            return response()->json(['errors' => ['error' => 'Registro não encontrado']], 404);
-        }
+            $data = $request->all();
+            $currentPhoto = $update->photo;
+            $newPhotoName = $currentPhoto;
 
-        if($request->hasFile('photo')){
+            // ---------------------------------------------------------
+            // 1. SE O FRONTEND ENVIOU UM NOVO ARQUIVO DE FOTO
+            // ---------------------------------------------------------
+            if ($request->hasFile('photo')) {
 
-            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' . $request->photo->getClientOriginalExtension();
+                $newPhotoName = str_shuffle(time() . Str::random(10)) . '.' .
+                $request->photo->getClientOriginalExtension();
 
-            $photo = $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
-            
-            $request->merge(['photo' => $nameUnico]);
-        }
-
-        // Atualiza o registro existente
-        if ($dependent->update($request->all())) {
-
-            // --- nova parte: sincroniza vínculo tutor-dependente ---
-            if ($request->filled('created_by')) {
-                try {
-                    $dependent->tutors()->syncWithoutDetaching([
-                        $request->input('created_by') => [
-                            'relationship_type' => $request->input('relationship_type', null),
-                            'status' => 'accepted',
-                            'invite_token' => null,
-                            'expires_at' => null,
-                            'updated_at' => now(),
-                        ],
-                    ]);
-                } catch (\Throwable $e) {
-                    return response()->json([
-                        'errors' => ['error' => 'Erro ao atualizar vínculo tutor: ' . $e->getMessage()],
-                    ], 500);
+                if ($currentPhoto && Storage::disk('public')->exists("dependents/{$currentPhoto}")) {
+                    Storage::disk('public')->delete("dependents/{$currentPhoto}");
                 }
+
+                $request->file('photo')->storeAs('dependents', $newPhotoName, 'public');
             }
-            // --- fim da nova parte ---
+            else {
+                // Manteve a mesma foto → não muda nada
+                $newPhotoName = $currentPhoto;
+            }
+            
+            $data['photo'] = $newPhotoName;
+            unset($data['created_by']); // não atualizar esse campo diretamente
 
-            $dependent->load('tutors');
+            // Atualiza dependente
+            if ($update->update($data)) {
 
-            return response()->json([
-                'dependent' => $dependent,
-                'errors' => [],
-                'msg' => 'Registro atualizado com sucesso!',
-            ]);
+                $update->load('tutors');
+
+                return response()->json([
+                    'dependent' => $update,
+                    'errors' => [],
+                    'msg' => 'Registro atualizado com sucesso!'
+                ], 200);
+            }
         }
-
-        return response()->json(['errors' => ['error' => 'Erro ao atualizar o registro']], 500);
+        
+        return response()->json(['errors' => ['error' => 'Erro ao atualizar o registro']], 404);
     }
 
     /************************************************************************************/
@@ -166,16 +167,23 @@ class DependentController extends Controller {
 
         $user = auth()->user(); // tutor autenticado
 
-        if($dependent = $this->dependent
+        if ($dependent = $this->dependent
             ->where('id', $id)
             ->whereHas('tutors', fn($q) => $q->where('tutor_id', $user->id))
-            ->with(['tutors' => fn($q) => $q->where('tutor_id', $user->id)])
-            ->first()) {
-                return response()->json(['dependent' => $dependent, 'errors' => []], 200);
-            }
+            ->with([
+                'tutors' => function ($q) use ($user) {
+                    $q->where('tutor_id', $user->id)
+                    ->withPivot('relationship_type'); // <-- adiciona relation_ship
+                }
+            ])
+            ->first()
+        ) {
+            return response()->json(['dependent' => $dependent, 'errors' => []], 200);
+        }
 
-            return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
+        return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
     }
+
 
     /************************************************************************************/
     public function destroy($id) {

@@ -43,8 +43,8 @@ export default {
 			return null;
 		},
 
-		async storeOrUpdate(payload) {		
-
+		async storeOrUpdate(payload) {
+			
 			if (!(payload.photo instanceof File)) {
 				delete payload.photo;
 			}

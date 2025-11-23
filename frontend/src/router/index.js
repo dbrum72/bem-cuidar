@@ -77,6 +77,19 @@ const routes = [
 		],
 	},
 	{
+		path: "/relationship",
+		name: "Relationship",
+		meta: { requiresAuth: true },
+		children: [
+			{
+				path: "save/:id?",
+				name: "RelationshipSave",
+				component: () =>
+					import("@/views/relationship/relationship-save.vue"),
+			}
+		],
+	},
+	{
 		path: "/transactions",
 		name: "Transactions",
 		component: () => import("@/views/TransactionView.vue"),

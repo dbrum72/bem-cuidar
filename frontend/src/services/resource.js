@@ -28,6 +28,7 @@ export function createResource(resourcePath) {
 		},
 
 		saveOrUpdate(data) {
+			
 			if (!data) throw new Error("Dados são requeridos.");
 
 			const formData = new FormData();
@@ -46,9 +47,7 @@ export function createResource(resourcePath) {
 				method: data.id ? "patch" : "post",
 				url,
 				data: formData,
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
+				headers: { "Content-Type": "multipart/form-data" },
 			});
 		},
 
