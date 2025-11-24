@@ -27,7 +27,7 @@ export function createResource(resourcePath) {
 			return apiGet(url);
 		},
 
-		saveOrUpdate(data) {
+		save(data) {
 			
 			if (!data) throw new Error("Dados são requeridos.");
 

@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->string('name', 255);
             $table->date('birth_date');
+            $table->enum('document_type', ['RG', 'CPF', 'outro']);
+            $table->string('document_number', 255);
             $table->text('notes')->nullable();
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();

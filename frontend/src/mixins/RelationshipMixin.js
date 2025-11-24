@@ -43,9 +43,13 @@ export default {
 			return null;
 		},
 
-		async saveOrUpdate(payload) {
+		async storeOrUpdate(payload) {
+			
+			if (!(payload.photo instanceof File)) {
+				delete payload.photo;
+			}
 
-			const call = () => dependentAPI.save(payload);
+			const call = () => dependentAPI.saveOrUpdate(payload);
 
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
@@ -59,7 +63,7 @@ export default {
 			}
 		},
 
-		/*async updateDependent(payload) {
+		async updateDependent(payload) {
 			if (!(payload.photo instanceof File)) {
 				delete payload.photo;
 			}
@@ -85,7 +89,7 @@ export default {
 				);
 				this.resetDependentView(response.data.dependent.id);
 			}
-		},*/
+		},
 
 		async destroyDependent(id) {
 			const call = () => dependentAPI.remove(id);

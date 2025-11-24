@@ -12,6 +12,8 @@ class Dependent extends Model {
     protected $fillable = [
         'name',
         'birth_date',
+        'document_type',
+        'document_number',
         'notes',
         'created_by'
     ];

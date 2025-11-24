@@ -9,31 +9,78 @@
         <form @submit.prevent="handleSubmit" class="space-y-4">
             <div class="row">
                 <div class="col-sm-12 col-lg-8 mb-3">
-                    <label class="block text-sm font-medium mb-1">Nome completo</label>
-                    <input v-model="form.name" type="text" class="input" placeholder="Digite o nome do dependente"
+                    <label class="form-label">Nome completo</label>
+                    <input v-model="form.name" type="text" class="form-control"
+                        placeholder="Digite o nome do dependente" required />
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-3">
+                    <label class="form-label">Data de nascimento</label>
+                    <input v-model="form.birth_date" type="date" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-4 mb-3">
+                    <label class="form-label">Documento (Nº)</label>
+                    <input v-model="form.document_number" type="text" class="form-control" placeholder="Nº do documento"
                         required />
                 </div>
-                
+
                 <div class="col-sm-12 col-lg-4 mb-3">
-                    <label class="text-sm font-medium">Data de nascimento</label>
-                    <input v-model="form.birth_date" type="date" class="input" required />
+                    <label class="form-label">Documento (Tipo)</label>
+                    <select v-model="form.document_type" class="form-select" aria-label="Default select example">
+                        <option value="" selected disabled>selecione...</option>
+                        <option value="RG">RG</option>
+                        <option value="CPF">CPF</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-3">
+                    <label class="form-label">Tipo de vínculo</label>
+                    <select v-model="form.relationship_type" class="form-select">
+                        <option value="" selected disabled>selecione...</option>
+                        <!-- Vínculo Legal -->
+                        <option value="pai_mae">Pai / Mãe (poder familiar)</option>
+                        <option value="tutor">Tutor</option>
+                        <option value="curador">Curador</option>
+                        <option value="responsavel_legal">Responsável legal</option>
+
+                        <!-- Vínculo Familiar ou Afetivo -->
+                        <option value="parente">Parente (cuidado informal)</option>
+                        <option value="socioafetivo">Responsável socioafetivo</option>
+
+                        <!-- Vínculo Contratual -->
+                        <option value="cuidador_profissional">Cuidador profissional</option>
+                        <option value="enfermeiro">Enfermeiro / Técnico de enfermagem</option>
+                        <option value="instituicao_abrigo">Instituição de acolhimento / ILPI</option>
+
+                        <!-- Vínculo Profissional ou de Serviço -->
+                        <option value="profissional_saude">Profissional de saúde</option>
+                        <option value="assistente_social">Assistente social</option>
+                        <option value="professor_responsavel">Professor / Escola responsável</option>
+
+                        <!-- Vínculo Administrativo -->
+                        <option value="agente_publico">Agente público responsável</option>
+                    </select>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-12 mb-3">
-                    <label class="text-sm font-medium mb-1">Observações</label>
-                    <textarea v-model="form.notes" class="input" placeholder="Observações gerais sobre o dependente"
-                        rows="3"></textarea>
+                    <label class="form-label">Observações</label>
+                    <textarea v-model="form.notes" class="form-control"
+                        placeholder="Observações gerais sobre o dependente" rows="3"></textarea>
                 </div>
             </div>
 
             <div class="d-flex justify-content-end my-3">
-                <button type="button" class="btn-secondary me-3" @click="$router.push({ name: 'DependentList' })">
+                <button type="button" class="btn btn-secondary me-3" @click="$router.push({ name: 'DependentList' })">
                     Cancelar
                 </button>
 
-                <button type="submit" class="btn-primary" :disabled="isSaving">
+                <button type="submit" class="btn btn-primary" :disabled="isSaving">
                     {{ isSaving ? "Salvando..." : isEditing ? "Atualizar" : "Salvar" }}
                 </button>
             </div>
@@ -60,13 +107,12 @@ export default {
                 id: null,
                 name: "",
                 birth_date: "",
-                photo: null,
-                notes: "",
+                document_type: "",
+                document_number: "",
                 relationship_type: "",
-                created_by: null,
+                notes: "",
                 status: "accepted", // tutor criador é aceito automaticamente
             },
-            preview: null,
             isSaving: false,
             isEditing: false,
         };
@@ -83,12 +129,11 @@ export default {
             if (this.dependent) {
                 this.form.id = this.dependent.id;
                 this.form.name = this.dependent.name;
+                this.form.document_type = this.dependent.document_type;
+                this.form.document_number = this.dependent.document_number;
                 this.form.birth_date = this.dependent.birth_date;
-                this.form.photo = this.dependent.photo;
                 this.form.notes = this.dependent.notes;
                 this.form.relationship_type = this.dependent.tutors[0].pivot.relationship_type;
-                if (this.dependent.photo)
-                    this.preview = `${import.meta.env.VITE_BACKEND_FILES}/dependents/${this.dependent.photo}`;
             }
         }
     },
@@ -99,19 +144,12 @@ export default {
 
 
     methods: {
-        onFileChange(event) {
-            const file = event.target.files[0];
-            if (file) {
-                this.form.photo = file;
-                this.preview = URL.createObjectURL(file);
-            }
-        },
 
         async handleSubmit() {
             this.isSaving = true;
 
             try {
-                await this.storeOrUpdate(this.form);
+                await this.saveOrUpdate(this.form);
                 this.$toast?.success("Dependente salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });
             }
@@ -127,38 +165,4 @@ export default {
 };
 </script>
 
-<style scoped>
-.input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    outline: none;
-    transition: all 0.2s;
-}
-
-.input:focus {
-    border-color: #3b82f6;
-}
-
-.btn-primary {
-    background-color: #2563eb;
-    color: white;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    transition: background-color 0.2s;
-}
-
-.btn-primary:hover {
-    background-color: #1e40af;
-}
-
-.btn-secondary {
-    background-color: #e5e7eb;
-    color: #374151;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-}
-</style>
+<style scoped></style>
