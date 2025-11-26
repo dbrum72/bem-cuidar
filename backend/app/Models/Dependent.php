@@ -21,7 +21,7 @@ class Dependent extends Model {
     public function tutors() {
 
         return $this->belongsToMany(User::class, 'dependent_tutor', 'dependent_id', 'tutor_id')
-                    ->withPivot('relationship_type', 'status', 'invite_token', 'photo')
+                    ->withPivot('id', 'relationship_type', 'status', 'invite_token', 'photo')
                     ->withTimestamps();
     }
 }

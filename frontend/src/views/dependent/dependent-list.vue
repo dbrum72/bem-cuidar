@@ -23,6 +23,9 @@
                         <router-link :to="{ name: 'DependentSave', params: { id: i.id } }">
                             <i class="fa-solid fa-user-pen" style="color: blue;" alt="Editar" />
                         </router-link>
+                        <router-link class="" :to="{ name: 'RelationshipSave', params: { id: i.tutors[0].pivot.id } }">
+                            <i class="fa-solid fa-link" style="color: #0d6dfb;"></i>
+                        </router-link>
                         <router-link class="" :to="{ name: 'DependentDelete', params: { id: i.id } }">
                             <i class="fa-solid fa-trash-can" style="color: red;"></i>
                         </router-link>
@@ -31,7 +34,6 @@
             </div>
         </div>
     </div>
-
 </template>
 
 <script>
@@ -54,7 +56,7 @@ export default {
 
     async mounted() {
         try {
-            await this.getDependents();
+            await this.getDependents(null, null, 'tutors', null);
         } catch (error) {
             console.error("Erro ao carregar dependentes:", error);
         }

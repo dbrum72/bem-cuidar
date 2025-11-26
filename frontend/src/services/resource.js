@@ -28,26 +28,43 @@ export function createResource(resourcePath) {
 		},
 
 		save(data) {
-			
 			if (!data) throw new Error("Dados são requeridos.");
 
-			const formData = new FormData();
+			const hasFile = Object.values(data).some(
+				(v) => v instanceof File || v instanceof Blob
+			);
 
-			Object.keys(data).forEach((key) => {
-				if (data[key] !== null && data[key] !== undefined) {
-					formData.append(key, data[key]);
-				}
-			});
+			let payload;
+			let headers = {};
+
+			if (hasFile) {
+				const formData = new FormData();
+
+				Object.keys(data).forEach((key) => {
+					if (data[key] !== null && data[key] !== undefined) {
+						formData.append(key, data[key]);
+					}
+				});
+
+				formData.append('_method', 'PATCH');
+				payload = formData;
+				
+			} else {
+				payload = JSON.stringify(data);
+				headers["Content-Type"] = "application/json";
+			}
+
+			const method = hasFile ? 'post' : data.id ? "patch" : "post";
 
 			const url = data.id
 				? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
 				: `${import.meta.env.VITE_BACKEND_URL}${base}`;
 
 			return apiRequest({
-				method: data.id ? "patch" : "post",
+				method,
 				url,
-				data: formData,
-				headers: { "Content-Type": "multipart/form-data" },
+				data: payload,
+				headers,
 			});
 		},
 

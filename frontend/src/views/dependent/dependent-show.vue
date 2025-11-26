@@ -1,6 +1,6 @@
 <template>
     <div class="container mt-4">
-        <div class="d-flex areaHeader">
+        <div class="d-flex">
             <h4 class="text-2xl font-semibold mb-6">Dependente</h4>
             <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
         </div>
@@ -10,51 +10,51 @@
                 <div><span>Informações</span></div>
             </div>
             <div class="dados">
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         ID
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ dependent.id }}
                     </div>
                 </div>
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         Nome
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ dependent.name }}
                     </div>
                 </div>
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         Data de Nascimento
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ formatDate(dependent.birth_date) ?? '' }}
                     </div>
                 </div>
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         Nota
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ dependent.notes }}
                     </div>
                 </div>
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         Criado em
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ formatDateTime(this.dependent.created_at) ?? '' }}
                     </div>
                 </div>
-                <div class="tupla">
-                    <div class="field">
+                <div class="row mb-3">
+                    <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
                         Atualizado em
                     </div>
-                    <div class="data">
+                    <div class="col-sm-12 col-lg-4">
                         {{ formatDateTime(this.dependent.updated_at) ?? '' }}
                     </div>
                 </div>
@@ -84,5 +84,3 @@ export default {
     }
 }
 </script>
-
-<style></style>

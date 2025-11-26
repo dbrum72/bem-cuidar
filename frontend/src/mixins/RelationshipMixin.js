@@ -1,7 +1,7 @@
 import { createResource } from "@/services/resource.js";
 import { mapMutations } from "vuex";
 
-let dependentAPI = createResource("dependent");
+let relationshipAPI = createResource("relationship");
 
 export default {
 	methods: {
@@ -13,7 +13,7 @@ export default {
 
 		async getDependents(filter, extendedFilter, relationship, sort) {
 			const call = () =>
-				dependentAPI.list({
+				relationshipAPI.list({
 					filter,
 					extendedFilter,
 					relationship,
@@ -26,8 +26,8 @@ export default {
 			if (response?.data) this.setDependents(response.data.dependents);
 		},
 
-		async getDependent(id) {
-			const call = () => dependentAPI.get(id);
+		async getRelationship(id) {
+			const call = () => relationshipAPI.get(id);
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao carregar os dados do registro.",
 				swallow: false,
@@ -43,13 +43,14 @@ export default {
 			return null;
 		},
 
-		async storeOrUpdate(payload) {
-			
+		async saveOrUpdate(payload) {
+			console.log(payload)
+			return;
 			if (!(payload.photo instanceof File)) {
 				delete payload.photo;
 			}
 
-			const call = () => dependentAPI.saveOrUpdate(payload);
+			const call = () => relationshipAPI.saveOrUpdate(payload);
 
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
@@ -76,7 +77,7 @@ export default {
 				}
 			});
 
-			const call = () => dependentAPI.saveOrUpdate(formData);
+			const call = () => relationshipAPI.saveOrUpdate(formData);
 
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao salvar os dados.",
@@ -92,7 +93,7 @@ export default {
 		},
 
 		async destroyDependent(id) {
-			const call = () => dependentAPI.remove(id);
+			const call = () => relationshipAPI.remove(id);
 			const response = await this._execRequest(call, {
 				successMsg: "Registro excluído com sucesso.",
 				errorMsg: "Erro ao excluir o produto.",

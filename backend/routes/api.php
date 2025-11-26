@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TutorInviteController;
 use App\Http\Controllers\DependentController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
 
@@ -31,11 +32,14 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     Route::post('tutor-invite/{id}/resend', [TutorInviteController::class, 'resend'])->middleware('role:tutor|admin');
     Route::delete('tutor-invite/{id}', [TutorInviteController::class, 'destroy'])->middleware('role:admin');
 
-    // Crianças
+    // Dependente
     Route::apiResource('dependent', DependentController::class);
 
-    // Agendamentos
+    // Agendamento
     Route::apiResource('appointment', AppointmentController::class);
+
+    // Relacionamento
+    Route::apiResource('relationship', RelationshipController::class)->only(['update', 'show']);
 
     // Transações financeiras
     Route::apiResource('transactions', TransactionController::class);

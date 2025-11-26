@@ -1,11 +1,10 @@
 <template>
-    <div>
-        <HeaderBar />
-
+    <HeaderBar />
+    <div class="container-lg mt-4 p-3">
         <h1>Dashboard</h1>
 
         <section>
-            <h2>Dependentes</h2>
+            <h5>Dependentes</h5>
             <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
             <div v-for="dependent in dependents" :key="dependent.id" class="card">
                 <p><strong>{{ dependent.name }}</strong></p>
@@ -15,7 +14,7 @@
         </section>
 
         <section>
-            <h2>Eventos de Cuidado Compartilhado</h2>
+            <h5>Eventos de Cuidado Compartilhado</h5>
             <div v-if="appointments.length === 0">Nenhum evento</div>
             <div v-for="e in appointments" :key="e.id" class="card">
                 <p><strong>{{ e.title }}</strong></p>
@@ -58,7 +57,7 @@ export default {
 
     components: { HeaderBar },
 
-    mixins: [ AppointmentMixin, DependentMixin],
+    mixins: [AppointmentMixin, DependentMixin],
 
     computed: {
         ...mapState('dependent', ['dependents']),

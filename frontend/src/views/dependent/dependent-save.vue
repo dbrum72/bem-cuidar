@@ -91,7 +91,6 @@
 <script>
 import { mapState } from 'vuex';
 import DependentMixin from "@/mixins/DependentMixin";
-import AuthMixin from "@/mixins/AuthMixin";
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
@@ -99,7 +98,7 @@ export default {
 
     components: { HeaderBar },
 
-    mixins: [DependentMixin, AuthMixin],
+    mixins: [ DependentMixin ],
 
     data() {
         return {

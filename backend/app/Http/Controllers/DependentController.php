@@ -50,117 +50,91 @@ class DependentController extends Controller {
     }
 
     /************************************************************************************/
-
     public function store(DependentSaveRequest $request) {
 
-        $nameUnico = null;
-
-        // Upload da foto (não entra na transação)
-        if ($request->hasFile('photo')) {
-            $nameUnico = str_shuffle(time() . Str::random(10)) . '.' .
-                        $request->photo->getClientOriginalExtension();
-
-            $request->file('photo')->storeAs('dependents', $nameUnico, 'public');
-        }
-
-        // Prepara dados
-        $data = $request->all();
-        unset($data['photo']);
-        $data['photo'] = $nameUnico;
+        DB::beginTransaction();
 
         try {
-            DB::beginTransaction();
 
             // 1) Cria o dependente
-            $stored = $this->dependent->create($data);
+            $dependent = $this->dependent->create($data);
 
-            if (!$stored) {
-                throw new \Exception("Erro ao criar o dependente.");
-            }
-
-            // 2) Vincula tutor criador
+            // 2) Vincula tutor criador (se enviado)
             if ($request->filled('created_by')) {
-                $stored->tutors()->syncWithoutDetaching([
-                    $request->input('created_by') => [
-                        'relationship_type' => $request->input('relationship_type', null),
-                        'status' => 'accepted',
-                        'invite_token' => null,
-                        'expires_at' => null,
-                        'created_at' => now(),
-                        'updated_at' => now(),
+                $dependent->tutors()->syncWithoutDetaching([
+                    $request->created_by => [
+                        'relationship_type' => $request->relationship_type,
+                        'status'            => 'accepted',
+                        'invite_token'      => null,
+                        'expires_at'        => null,
                     ]
                 ]);
             }
 
             DB::commit();
 
-            $stored->load('tutors');
-
             return response()->json([
-                'dependent' => $stored,
-                'errors' => [],
-                'msg' => 'Registro criado com sucesso!'
+                'dependent' => $dependent->load('tutors'),
+                'errors'    => [],
+                'msg'       => 'Registro criado com sucesso!'
             ], 201);
 
         } catch (\Throwable $e) {
 
             DB::rollBack();
 
-            if ($nameUnico) {
-                Storage::disk('public')->delete("dependents/$nameUnico");
-            }
-
-            return response()->json(['errors' => ['error' => 'Erro ao salvar dependente: ' . $e->getMessage()]], 500);
+            return response()->json([
+                'errors' => ['error' => 'Erro ao criar o registro: ' . $e->getMessage()]
+            ], 400);
         }
     }
+
 
 
     /************************************************************************************/
     public function update(DependentSaveRequest $request, $id) {
 
-        if($update = $this->dependent->find($id)) {
+        $user = auth()->user(); // tutor autenticado
 
-            $data = $request->all();
-            $currentPhoto = $update->photo;
-            $newPhotoName = $currentPhoto;
+        DB::beginTransaction();
 
-            // ---------------------------------------------------------
-            // 1. SE O FRONTEND ENVIOU UM NOVO ARQUIVO DE FOTO
-            // ---------------------------------------------------------
-            if ($request->hasFile('photo')) {
+        try {
 
-                $newPhotoName = str_shuffle(time() . Str::random(10)) . '.' .
-                $request->photo->getClientOriginalExtension();
+            // 1) Encontra o dependente vinculado ao tutor logado
+            $dependent = $this->dependent
+                ->where('id', $id)
+                ->whereHas('tutors', fn($q) => $q->where('tutor_id', $user->id))
+                ->firstOrFail();
 
-                if ($currentPhoto && Storage::disk('public')->exists("dependents/{$currentPhoto}")) {
-                    Storage::disk('public')->delete("dependents/{$currentPhoto}");
-                }
+            // 2) Atualiza apenas os dados do dependente
+            $dependent->update($request->validated());
 
-                $request->file('photo')->storeAs('dependents', $newPhotoName, 'public');
+            // 3) Atualiza SOMENTE relationship_type na pivot
+            if ($request->filled('relationship_type')) {
+                $dependent->tutors()->updateExistingPivot(
+                    $user->id,
+                    ['relationship_type' => $request->relationship_type]
+                );
             }
-            else {
-                // Manteve a mesma foto → não muda nada
-                $newPhotoName = $currentPhoto;
-            }
-            
-            $data['photo'] = $newPhotoName;
-            unset($data['created_by']); // não atualizar esse campo diretamente
 
-            // Atualiza dependente
-            if ($update->update($data)) {
+            DB::commit();
 
-                $update->load('tutors');
+            return response()->json([
+                'dependent' => $dependent->load('tutors'),
+                'errors'    => [],
+                'msg'       => 'Registro atualizado com sucesso!'
+            ], 200);
 
-                return response()->json([
-                    'dependent' => $update,
-                    'errors' => [],
-                    'msg' => 'Registro atualizado com sucesso!'
-                ], 200);
-            }
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'errors' => ['error' => 'Erro ao atualizar o registro: ' . $e->getMessage()]
+            ], 400);
         }
-        
-        return response()->json(['errors' => ['error' => 'Erro ao atualizar o registro']], 404);
     }
+
 
     /************************************************************************************/
     public function show($id) {
