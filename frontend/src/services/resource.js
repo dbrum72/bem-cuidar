@@ -1,16 +1,12 @@
 import { buildQuery, apiGet, apiRequest, apiDelete } from "@/services/api.js";
 
 export function createResource(resourcePath) {
-	// se o usuário passar 'dependent' transformamos em '/dependent'
+	
 	const base = resourcePath.startsWith("/")
 		? resourcePath
 		: `/${resourcePath}`;
 
 	return {
-		/**
-		 * list({ filter, extendedFilter, relationship, sort, parameter })
-		 * retorna Promise (axios)
-		 */
 		list(params = {}) {
 			const url = buildQuery(
 				`${import.meta.env.VITE_BACKEND_URL}${base}`,
@@ -19,11 +15,11 @@ export function createResource(resourcePath) {
 			return apiGet(url);
 		},
 
-		/**
-		 * get(id)
-		 */
-		get(id) {
-			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;
+		get(id, params = {}) {
+			const url = buildQuery(
+				`${import.meta.env.VITE_BACKEND_URL}${base}/${id}`,
+				params
+			);
 			return apiGet(url);
 		},
 
@@ -77,7 +73,6 @@ export function createResource(resourcePath) {
 			let path = "";
 			let data = pathOrData;
 
-			// se o primeiro argumento for string, é um subpath
 			if (typeof pathOrData === "string") {
 				path = `/${pathOrData}`;
 				data = maybeData;

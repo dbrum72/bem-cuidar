@@ -89,16 +89,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import DependentMixin from "@/mixins/DependentMixin";
+import { mapState, mapActions } from 'vuex';
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
     name: "DependentSave",
 
     components: { HeaderBar },
-
-    mixins: [ DependentMixin ],
 
     data() {
         return {
@@ -117,32 +114,14 @@ export default {
         };
     },
 
-    async mounted() {
-        const id = this.$route.params.id;
-
-        if (id) {
-            this.isEditing = true
-
-            await this.getDependent(id)
-
-            if (this.dependent) {
-                this.form.id = this.dependent.id;
-                this.form.name = this.dependent.name;
-                this.form.document_type = this.dependent.document_type;
-                this.form.document_number = this.dependent.document_number;
-                this.form.birth_date = this.dependent.birth_date;
-                this.form.notes = this.dependent.notes;
-                this.form.relationship_type = this.dependent.tutors[0].pivot.relationship_type;
-            }
-        }
-    },
-
     computed: {
         ...mapState('dependent', ['dependent'])
     },
 
 
     methods: {
+
+        ...mapActions('dependent', ['saveOrUpdate', 'getDependent']),
 
         async handleSubmit() {
             this.isSaving = true;
@@ -160,6 +139,27 @@ export default {
                 this.isSaving = false;
             }
         },
+    },
+
+    async mounted() {
+        const id = this.$route.params.id;
+
+        if (id) {
+            this.isEditing = true
+
+            await this.getDependent(id)
+
+            if (this.dependent) {
+                this.form.id = this.dependent.id;
+                this.form.name = this.dependent.name;
+                this.form.document_type = this.dependent.document_type;
+                this.form.document_number = this.dependent.document_number;
+                this.form.birth_date = this.dependent.birth_date;
+                this.form.notes = this.dependent.notes;
+                const tutorRel = this.dependent?.tutors?.[0]?.pivot?.relationship_type;
+                this.form.relationship_type = tutorRel ?? "";
+            }
+        }
     },
 };
 </script>

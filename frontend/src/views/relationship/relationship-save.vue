@@ -5,7 +5,7 @@
         <h4 class="text-2xl font-semibold mb-6">
             {{ isEditing ? "Editar Relacionamento" : "Novo Relacionamento" }}
         </h4>
-        <h6>{{ this.dependent.name }}</h6>
+        <h6>{{  }}</h6>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
 
@@ -63,9 +63,9 @@ export default {
         if (id) {
             this.isEditing = true
 
-            await this.getRelationship(id)
+            await this.getRelationship(id, 'dependent')
 
-            if (this.dependent) {
+            if (this.relationship) {
                 this.form.id = this.dependent.id;
                 this.form.photo = this.dependent.photo;
                 if (this.dependent.photo)
@@ -75,7 +75,7 @@ export default {
     },
 
     computed: {
-        ...mapState('dependent', ['dependent'])
+        ...mapState('relationship', ['relationship'])
     },
 
 
@@ -93,12 +93,12 @@ export default {
 
             try {
                 await this.saveOrUpdate(this.form);
-                this.$toast?.success("Dependente salvo com sucesso!");
+                this.$toast?.success("Registro salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });
             }
             catch (error) {
-                console.error("Erro ao salvar dependente:", error);
-                this.$toast?.error("Erro ao salvar dependente.");
+                console.error("Erro ao salvar registro:", error);
+                this.$toast?.error("Erro ao salvar registro.");
             }
             finally {
                 this.isSaving = false;

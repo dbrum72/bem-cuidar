@@ -5,7 +5,7 @@ let relationshipAPI = createResource("relationship");
 
 export default {
 	methods: {
-		...mapMutations("dependent", [
+		/*...mapMutations("dependent", [
 			"setDependents",
 			"setDependent",
 			"addDependent",
@@ -24,10 +24,10 @@ export default {
 				swallow: false,
 			});
 			if (response?.data) this.setDependents(response.data.dependents);
-		},
+		},*/
 
-		async getRelationship(id) {
-			const call = () => relationshipAPI.get(id);
+		async getRelationship(id, relationship) {
+			const call = () => relationshipAPI.get(id, relationship);
 			const response = await this._execRequest(call, {
 				errorMsg: "Erro ao carregar os dados do registro.",
 				swallow: false,
@@ -35,8 +35,8 @@ export default {
 
 			if (response?.data) {
 				this.$store.commit(
-					"dependent/setDependent",
-					response.data.dependent
+					"relationship/setRelationship",
+					response.data.relationship
 				);
 			}
 
@@ -44,8 +44,7 @@ export default {
 		},
 
 		async saveOrUpdate(payload) {
-			console.log(payload)
-			return;
+			
 			if (!(payload.photo instanceof File)) {
 				delete payload.photo;
 			}
@@ -109,10 +108,10 @@ export default {
 			return file;
 		},
 
-		resetDependentView(id) {
+		resetRelationshipView(id) {
 			// mantém compatibilidade com seus nomes de rota
 			// ajuste os nomes das rotas caso necessário
-			this.Dependent = {};
+			this.relationship = {};
 			if (this.SET_ERRORS) this.SET_ERRORS([]);
 			id
 				? this.$router.push({ name: "DependentShow", params: { id } })

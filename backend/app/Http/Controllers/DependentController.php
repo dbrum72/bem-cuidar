@@ -57,7 +57,7 @@ class DependentController extends Controller {
         try {
 
             // 1) Cria o dependente
-            $dependent = $this->dependent->create($data);
+            $dependent = $this->dependent->create($request->all());
 
             // 2) Vincula tutor criador (se enviado)
             if ($request->filled('created_by')) {

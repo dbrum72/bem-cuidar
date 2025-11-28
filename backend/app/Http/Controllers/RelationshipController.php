@@ -175,7 +175,7 @@ class RelationshipController extends Controller {
     /************************************************************************************/
     public function show($id) {
 
-        if ($relationship = $this->relationship->find($id)) {
+        if ($relationship = $this->relationship->with('dependent')->with('tutor')->find($id)) {
 
             return response()->json(['relationship' => $relationship, 'errors' => []], 200);
         }
