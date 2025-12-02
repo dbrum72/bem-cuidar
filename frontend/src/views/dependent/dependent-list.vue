@@ -16,35 +16,35 @@
         <!-- LISTA -->
         <div v-else class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
 
-            <div class="card" v-for="i in dependents" :key="i.id">
+            <div class="card" v-for="dependent in dependents" :key="dependent.id">
                 <img
-                    :src="i.photo_url || '/public/img/default-dependent.png'"
+                    :src="dependent.photo_url || '/public/img/default-dependent.png'"
                     class="card-img-top"
                     style="width: 10rem"
-                    :alt="i.name"
+                    :alt="dependent.name"
                 />
 
                 <div class="card-body">
-                    <h5 class="card-title text-center">{{ i.name }}</h5>
+                    <h5 class="card-title text-center">{{ dependent.name }}</h5>
                     <p class="card-text text-center">
-                        {{ formatDate(i.birth_date) }}
+                        {{ formatDate(dependent.birth_date) }}
                     </p>
 
                     <div class="d-flex justify-content-center gap-3">
 
-                        <router-link :to="{ name: 'DependentShow', params: { id: i.id } }">
+                        <router-link :to="{ name: 'DependentShow', params: { id: dependent.id } }">
                             <i class="fa-solid fa-eye" style="color: green;" />
                         </router-link>
 
-                        <router-link :to="{ name: 'DependentSave', params: { id: i.id } }">
+                        <router-link :to="{ name: 'DependentSave', params: { id: dependent.id } }">
                             <i class="fa-solid fa-user-pen" style="color: blue;" />
                         </router-link>
 
-                        <router-link :to="{ name: 'RelationshipSave', params: { id: getPivotId(i)} }">
+                        <router-link :to="{ name: 'RelationshipSave', params: { id: dependent.relationship_id } }">
                             <i class="fa-solid fa-link" style="color: #0d6dfb;" />
                         </router-link>
 
-                        <router-link :to="{ name: 'DependentDelete', params: { id: i.id } }">
+                        <router-link :to="{ name: 'DependentDelete', params: { id: dependent.id } }">
                             <i class="fa-solid fa-trash-can" style="color: red;" />
                         </router-link>
 
@@ -84,7 +84,7 @@ export default {
         this.getDependents({
             filter: null,
             extendedFilter: null,
-            relationship: "tutors",
+            relationship: null,
             sort: null,
         });
     },

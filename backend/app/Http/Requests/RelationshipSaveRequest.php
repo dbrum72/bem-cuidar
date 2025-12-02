@@ -16,7 +16,7 @@ class RelationshipSaveRequest extends FormRequest {
     public function rules(): array {     
         
         $rules = [
-            'photo' => ['nullable','file','mimes:jpg,jpeg,png','max:2048'],
+            'photo' => ['required','mimes:jpg,jpeg,png','max:2048'],
         ];
 
         if($this->method() === 'PATCH') {
@@ -42,8 +42,7 @@ class RelationshipSaveRequest extends FormRequest {
         return [
             'required' => 'Este campo é obrigatório.',
             'max' => 'Máximo 2048 bytes.',
-            'mime' => 'Formato inválido. Apenas jpg, jpeg e png são aceitos.',
-            'file' => 'O campo deve ser um arquivo.'
+            'mimes' => 'Formato inválido. Apenas jpg, jpeg e png são aceitos.'
         ];        
     }
 }

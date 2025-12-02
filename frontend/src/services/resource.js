@@ -15,11 +15,8 @@ export function createResource(resourcePath) {
 			return apiGet(url);
 		},
 
-		get(id, params = {}) {
-			const url = buildQuery(
-				`${import.meta.env.VITE_BACKEND_URL}${base}/${id}`,
-				params
-			);
+		get(id) {
+			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;	
 			return apiGet(url);
 		},
 
@@ -43,8 +40,7 @@ export function createResource(resourcePath) {
 				});
 
 				formData.append('_method', 'PATCH');
-				payload = formData;
-				
+				payload = formData;				
 			} else {
 				payload = JSON.stringify(data);
 				headers["Content-Type"] = "application/json";
