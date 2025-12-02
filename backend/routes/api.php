@@ -39,7 +39,7 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     Route::apiResource('appointment', AppointmentController::class);
 
     // Relacionamento
-    Route::apiResource('relationship', RelationshipController::class)->only(['update', 'show']);
+    Route::apiResource('relationship', RelationshipController::class)->only(['store', 'update', 'show']);
 
     // Transações financeiras
     Route::apiResource('transactions', TransactionController::class);

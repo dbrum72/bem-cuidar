@@ -71,8 +71,7 @@ const routes = [
 			{
 				path: "delete/:id",
 				name: "DependentDelete",
-				component: () =>
-					import("@/views/dependent/dependent-delete.vue"),
+				component: () => import("@/views/dependent/dependent-delete.vue"),
 			},
 		],
 	},
@@ -84,8 +83,7 @@ const routes = [
 			{
 				path: "save/:id?",
 				name: "RelationshipSave",
-				component: () =>
-					import("@/views/relationship/relationship-save.vue"),
+				component: () => import("@/views/relationship/relationship-save.vue"),
 			}
 		],
 	},

@@ -118,7 +118,7 @@ class RelationshipController extends Controller {
     /************************************************************************************/
     public function update(RelationshipSaveRequest $request, $id) {
 
-        if (! $relationship = $this->relationship->find($id)) {
+        if (!$relationship = $this->relationship->find($id)) {
             return response()->json(['errors' => ['error' => 'Registro não encontrado']], 404);
         }
 

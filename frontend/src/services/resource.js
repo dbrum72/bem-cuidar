@@ -1,6 +1,7 @@
 import { buildQuery, apiGet, apiRequest, apiDelete } from "@/services/api.js";
 
 export function createResource(resourcePath) {
+	
 	const base = resourcePath.startsWith("/")
 		? resourcePath
 		: `/${resourcePath}`;
@@ -14,11 +15,8 @@ export function createResource(resourcePath) {
 			return apiGet(url);
 		},
 
-		get(id, params = {}) {
-			const url = buildQuery(
-				`${import.meta.env.VITE_BACKEND_URL}${base}/${id}`,
-				params
-			);
+		get(id) {
+			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;	
 			return apiGet(url);
 		},
 
@@ -30,67 +28,31 @@ export function createResource(resourcePath) {
 			);
 
 			let payload;
-			const headers = {};
+			let headers = {};
 
 			if (hasFile) {
 				const formData = new FormData();
 
-				function appendFormData(key, value) {
-					if (value === null || value === undefined) return;
-
-					if (value instanceof File || value instanceof Blob) {
-						formData.append(key, value);
-						return;
+				Object.keys(data).forEach((key) => {
+					if (data[key] !== null && data[key] !== undefined) {
+						formData.append(key, data[key]);
 					}
+				});
 
-					if (Array.isArray(value)) {
-						value.forEach((item) => {
-							if (
-								typeof item === "object" &&
-								!(item instanceof File) &&
-								!(item instanceof Blob)
-							) {
-								formData.append(
-									`${key}[]`,
-									JSON.stringify(item)
-								);
-							} else {
-								formData.append(`${key}[]`, item);
-							}
-						});
-						return;
-					}
-
-					if (typeof value === "object") {
-						formData.append(key, JSON.stringify(value));
-						return;
-					}
-
-					formData.append(key, String(value));
-				}
-
-				Object.keys(data).forEach((key) =>
-					appendFormData(key, data[key])
-				);
-
-				if (data.id) {
-					formData.append("_method", "PATCH");
-				}
-
-				payload = formData;
-				
+				formData.append('_method', 'PATCH');
+				payload = formData;				
 			} else {
 				payload = JSON.stringify(data);
 				headers["Content-Type"] = "application/json";
 			}
 
-			const method = hasFile ? "post" : data.id ? "patch" : "post";
+			const method = hasFile ? 'post' : data.id ? "patch" : "post";
 
 			const url = data.id
 				? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
 				: `${import.meta.env.VITE_BACKEND_URL}${base}`;
-			
-      return apiRequest({
+
+			return apiRequest({
 				method,
 				url,
 				data: payload,

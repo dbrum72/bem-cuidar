@@ -34,11 +34,11 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState, mapActions} from 'vuex';
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
-    name: "DependentSave",
+    name: "RelationshipSave",
 
     components: { HeaderBar },
 
@@ -60,7 +60,7 @@ export default {
 
 
     methods: {
-        ...mapActions('relationship', ['addOrUpdate', 'getRelationship']),
+        ...mapActions('relationship', ['saveOrUpdate', 'getRelationship']),
 
         onFileChange(event) {
             const file = event.target.files[0];
@@ -71,9 +71,10 @@ export default {
         },
 
         async handleSubmit() {
-            this.isSaving = true;         
+            this.isSaving = true;
+
             try {
-                await this.addOrUpdate(this.form);
+                await this.saveOrUpdate(this.form);
                 this.$toast?.success("Registro salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });
             }
@@ -87,7 +88,7 @@ export default {
         },
     },
 
-    async mounted() {
+    async mounted() {        
         const id = this.$route.params.id;
 
         if (id) {
@@ -103,7 +104,5 @@ export default {
             }
         }
     },
-
-    
 };
 </script>
