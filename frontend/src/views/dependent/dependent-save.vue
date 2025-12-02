@@ -121,13 +121,13 @@ export default {
 
     methods: {
 
-        ...mapActions('dependent', ['saveOrUpdate', 'getDependent']),
+        ...mapActions('dependent', ['addOrUpdate', 'getDependent']),
 
         async handleSubmit() {
             this.isSaving = true;
 
             try {
-                await this.saveOrUpdate(this.form);
+                await this.addOrUpdate(this.form);
                 this.$toast?.success("Dependente salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });
             }

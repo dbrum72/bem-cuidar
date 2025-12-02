@@ -1,11 +1,5 @@
-// src/services/api.js
 import http from '@/services/http.js';
 
-/**
- * Constrói query string com parâmetros opcionais.
- * extendedFilter: string no formato "field,value"
- * parameter: parâmetro extra usado para montar filtros dinâmicos (mantive compatibilidade com uso anterior)
- */
 export function buildQuery(baseUrl, { filter, extendedFilter, relationship, sort, parameter } = {}) {
     const params = new URLSearchParams();
 
@@ -42,6 +36,5 @@ export const apiRequest = ({ method = "get", url, data = null, headers = {} }) =
 
     return http(cfg);
 };
-
 
 export const apiDelete = (url) => http.delete(url);

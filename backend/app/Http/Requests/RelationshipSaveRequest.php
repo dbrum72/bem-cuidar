@@ -42,7 +42,7 @@ class RelationshipSaveRequest extends FormRequest {
         return [
             'required' => 'Este campo é obrigatório.',
             'max' => 'Máximo 2048 bytes.',
-            'mime' => 'Formato inválido. Apenas jpg, jpeg e png são aceitos.',
+            'mimes' => 'Formato inválido. Apenas jpg, jpeg e png são aceitos.',
             'file' => 'O campo deve ser um arquivo.'
         ];        
     }

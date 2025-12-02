@@ -96,7 +96,7 @@ export default {
         // =====================================================
         // SAVE or UPDATE
         // =====================================================
-        async saveOrUpdate({ commit, dispatch }, payload) {
+        async addOrUpdate({ commit, dispatch }, payload) {
             const call = () => dependentAPI.save(payload);
 
             const response = await dispatch("_execRequest", {

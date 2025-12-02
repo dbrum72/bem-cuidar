@@ -22,7 +22,7 @@ class DependentController extends Controller {
 
         $user = auth()->user();
 
-        $dependentRepository = new DependentRepository($this->dependent);
+        /*$dependentRepository = new DependentRepository($this->dependent);
 
         $dependentRepository->extendedFilter('tutors,tutor_id:=:'.$user->id);
 
@@ -41,7 +41,17 @@ class DependentController extends Controller {
             $dependentRepository->sort($request->sort);
         }
 
+            
         if($dependents = $dependentRepository->getResultado()) {
+
+            return response()->json([ 'dependents' => $dependents, 'errors' => []], 201);           
+        }*/
+
+        if($dependents = DB::table('dependents')
+            ->join('dependent_tutor', 'dependents.id', '=', 'dependent_tutor.dependent_id')
+            ->where('dependent_tutor.tutor_id', $user->id)
+            ->select('dependents.*', 'dependent_tutor.id as relationship_id', 'dependent_tutor.relationship_type', 'dependent_tutor.status')
+            ->get()) {
 
             return response()->json([ 'dependents' => $dependents, 'errors' => []], 201);           
         }

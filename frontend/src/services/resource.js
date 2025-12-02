@@ -1,7 +1,6 @@
 import { buildQuery, apiGet, apiRequest, apiDelete } from "@/services/api.js";
 
 export function createResource(resourcePath) {
-	
 	const base = resourcePath.startsWith("/")
 		? resourcePath
 		: `/${resourcePath}`;
@@ -31,18 +30,53 @@ export function createResource(resourcePath) {
 			);
 
 			let payload;
-			let headers = {};
+			const headers = {};
 
 			if (hasFile) {
 				const formData = new FormData();
 
-				Object.keys(data).forEach((key) => {
-					if (data[key] !== null && data[key] !== undefined) {
-						formData.append(key, data[key]);
-					}
-				});
+				function appendFormData(key, value) {
+					if (value === null || value === undefined) return;
 
-				formData.append('_method', 'PATCH');
+					if (value instanceof File || value instanceof Blob) {
+						formData.append(key, value);
+						return;
+					}
+
+					if (Array.isArray(value)) {
+						value.forEach((item) => {
+							if (
+								typeof item === "object" &&
+								!(item instanceof File) &&
+								!(item instanceof Blob)
+							) {
+								formData.append(
+									`${key}[]`,
+									JSON.stringify(item)
+								);
+							} else {
+								formData.append(`${key}[]`, item);
+							}
+						});
+						return;
+					}
+
+					if (typeof value === "object") {
+						formData.append(key, JSON.stringify(value));
+						return;
+					}
+
+					formData.append(key, String(value));
+				}
+
+				Object.keys(data).forEach((key) =>
+					appendFormData(key, data[key])
+				);
+
+				if (data.id) {
+					formData.append("_method", "PATCH");
+				}
+
 				payload = formData;
 				
 			} else {
@@ -50,13 +84,13 @@ export function createResource(resourcePath) {
 				headers["Content-Type"] = "application/json";
 			}
 
-			const method = hasFile ? 'post' : data.id ? "patch" : "post";
+			const method = hasFile ? "post" : data.id ? "patch" : "post";
 
 			const url = data.id
 				? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
 				: `${import.meta.env.VITE_BACKEND_URL}${base}`;
-
-			return apiRequest({
+			
+      return apiRequest({
 				method,
 				url,
 				data: payload,

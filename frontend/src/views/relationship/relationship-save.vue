@@ -34,16 +34,13 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import RelationshipMixin from "@/mixins/RelationshipMixin";
+import { mapState, mapActions } from 'vuex';
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
     name: "DependentSave",
 
     components: { HeaderBar },
-
-    mixins: [RelationshipMixin],
 
     data() {
         return {
@@ -57,29 +54,14 @@ export default {
         };
     },
 
-    async mounted() {
-        const id = this.$route.params.id;
-
-        if (id) {
-            this.isEditing = true
-
-            await this.getRelationship(id, 'dependent')
-
-            if (this.relationship) {
-                this.form.id = this.dependent.id;
-                this.form.photo = this.dependent.photo;
-                if (this.dependent.photo)
-                    this.preview = `${import.meta.env.VITE_BACKEND_FILES}/dependents/${this.dependent.photo}`;
-            }
-        }
-    },
-
     computed: {
         ...mapState('relationship', ['relationship'])
     },
 
 
     methods: {
+        ...mapActions('relationship', ['addOrUpdate', 'getRelationship']),
+
         onFileChange(event) {
             const file = event.target.files[0];
             if (file) {
@@ -89,10 +71,9 @@ export default {
         },
 
         async handleSubmit() {
-            this.isSaving = true;
-
+            this.isSaving = true;         
             try {
-                await this.saveOrUpdate(this.form);
+                await this.addOrUpdate(this.form);
                 this.$toast?.success("Registro salvo com sucesso!");
                 this.$router.push({ name: "DependentList" });
             }
@@ -105,5 +86,24 @@ export default {
             }
         },
     },
+
+    async mounted() {
+        const id = this.$route.params.id;
+
+        if (id) {
+            this.isEditing = true
+
+            await this.getRelationship(id)
+
+            if (this.relationship) {
+                this.form.id = this.relationship.id;
+                this.form.photo = this.relationship.photo;
+                if (this.relationship.photo)
+                    this.preview = `${import.meta.env.VITE_BACKEND_FILES}/dependents/${this.relationship.photo}`;
+            }
+        }
+    },
+
+    
 };
 </script>
