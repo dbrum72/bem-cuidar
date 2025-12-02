@@ -50,7 +50,7 @@ class DependentController extends Controller {
         if($dependents = DB::table('dependents')
             ->join('dependent_tutor', 'dependents.id', '=', 'dependent_tutor.dependent_id')
             ->where('dependent_tutor.tutor_id', $user->id)
-            ->select('dependents.*', 'dependent_tutor.id as relationship_id', 'dependent_tutor.relationship_type', 'dependent_tutor.status')
+            ->select('dependents.*', 'dependent_tutor.photo','dependent_tutor.id as relationship_id', 'dependent_tutor.relationship_type', 'dependent_tutor.status')
             ->get()) {
 
             return response()->json([ 'dependents' => $dependents, 'errors' => []], 201);           

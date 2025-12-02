@@ -8,17 +8,15 @@
             <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
         </div>
 
-        <!-- SEM DADOS -->
         <div v-if="dependents.length === 0" class="mt-4">
             Nenhum dependente cadastrado.
         </div>
 
-        <!-- LISTA -->
         <div v-else class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
 
             <div class="card" v-for="dependent in dependents" :key="dependent.id">
                 <img
-                    :src="dependent.photo_url || '/public/img/default-dependent.png'"
+                    :src="url_photo + dependent.photo || '/public/img/default-dependent.png'"
                     class="card-img-top"
                     style="width: 10rem"
                     :alt="dependent.name"
@@ -68,20 +66,22 @@ export default {
 
     mixins: [AbstractMixin],
 
+    data() {
+        return {
+            url_photo: import.meta.env.VITE_BACKEND_FILES+'/dependents/'
+        };
+    },
+
     computed: {
         ...mapState("dependent", ["dependents"]),
     },
 
     methods: {
-        ...mapActions("dependent", ["getDependents"]),
-
-        getPivotId(dependent) {
-        return dependent?.tutors?.[0]?.pivot?.id ?? null;
-    }
+        ...mapActions("dependent", ["getDependents"])
     },
 
-    mounted() {
-        this.getDependents({
+    async mounted() {
+        await this.getDependents({
             filter: null,
             extendedFilter: null,
             relationship: null,
