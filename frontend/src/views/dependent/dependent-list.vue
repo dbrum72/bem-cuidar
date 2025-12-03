@@ -15,12 +15,11 @@
         <div v-else class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
 
             <div class="card" v-for="dependent in dependents" :key="dependent.id">
-                <img
-                    :src="url_photo + dependent.photo || '/public/img/default-dependent.png'"
-                    class="card-img-top"
-                    style="width: 10rem"
-                    :alt="dependent.name"
-                />
+                <AvatarCropper :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" :size="220"
+                    :zoom="1.3" @update:position="savePosition" />
+                <AvatarCircle :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" size="140px" />
+                <img :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" class="card-img-top"
+                    style="width: 10rem" :alt="dependent.name" />
 
                 <div class="card-body">
                     <h5 class="card-title text-center">{{ dependent.name }}</h5>
@@ -58,17 +57,19 @@
 import { mapState, mapActions } from "vuex";
 import AbstractMixin from "@/mixins/AbstractMixin";
 import HeaderBar from "@/components/bars/header-bar.vue";
+import AvatarCropper from "@/components/avatars/AvatarCropper.vue";
+import AvatarCircle from "@/components/avatars/AvatarCircle.vue";
 
 export default {
     name: "DependentFetch",
 
-    components: { HeaderBar },
+    components: { HeaderBar, AvatarCropper, AvatarCircle },
 
     mixins: [AbstractMixin],
 
     data() {
         return {
-            url_photo: import.meta.env.VITE_BACKEND_FILES+'/dependents/'
+            url_photo: import.meta.env.VITE_BACKEND_FILES + '/dependents/'
         };
     },
 
@@ -77,7 +78,12 @@ export default {
     },
 
     methods: {
-        ...mapActions("dependent", ["getDependents"])
+        ...mapActions("dependent", ["getDependents"]),
+
+        savePosition(pos) {
+            console.log("Posição final:", pos);
+            // aqui você pode salvar no backend se quiser
+        },
     },
 
     async mounted() {
