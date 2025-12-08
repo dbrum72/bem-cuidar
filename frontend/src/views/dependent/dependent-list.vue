@@ -13,42 +13,12 @@
         </div>
 
         <div v-else class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
-
-            <div class="card" v-for="dependent in dependents" :key="dependent.id">
-                <AvatarCropper :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" :size="220"
-                    :zoom="1.3" @update:position="savePosition" />
-                <AvatarCircle :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" size="140px" />
-                <img :src="url_photo + dependent.photo || '/public/img/default-dependent.png'" class="card-img-top"
-                    style="width: 10rem" :alt="dependent.name" />
-
-                <div class="card-body">
-                    <h5 class="card-title text-center">{{ dependent.name }}</h5>
-                    <p class="card-text text-center">
-                        {{ formatDate(dependent.birth_date) }}
-                    </p>
-
-                    <div class="d-flex justify-content-center gap-3">
-
-                        <router-link :to="{ name: 'DependentShow', params: { id: dependent.id } }">
-                            <i class="fa-solid fa-eye" style="color: green;" />
-                        </router-link>
-
-                        <router-link :to="{ name: 'DependentSave', params: { id: dependent.id } }">
-                            <i class="fa-solid fa-user-pen" style="color: blue;" />
-                        </router-link>
-
-                        <router-link :to="{ name: 'RelationshipSave', params: { id: dependent.relationship_id } }">
-                            <i class="fa-solid fa-link" style="color: #0d6dfb;" />
-                        </router-link>
-
-                        <router-link :to="{ name: 'DependentDelete', params: { id: dependent.id } }">
-                            <i class="fa-solid fa-trash-can" style="color: red;" />
-                        </router-link>
-
-                    </div>
-                </div>
-            </div>
-
+            <DependentCard
+                v-for="d in dependents"
+                :key="d.id"
+                :dependent="d"
+                :baseUrl="url_photo"
+            />
         </div>
     </div>
 </template>
@@ -57,19 +27,18 @@
 import { mapState, mapActions } from "vuex";
 import AbstractMixin from "@/mixins/AbstractMixin";
 import HeaderBar from "@/components/bars/header-bar.vue";
-import AvatarCropper from "@/components/avatars/AvatarCropper.vue";
-import AvatarCircle from "@/components/avatars/AvatarCircle.vue";
+import DependentCard from "@/components/cards/DependentCard.vue";
 
 export default {
     name: "DependentFetch",
 
-    components: { HeaderBar, AvatarCropper, AvatarCircle },
+    components: { HeaderBar, DependentCard },
 
     mixins: [AbstractMixin],
 
     data() {
         return {
-            url_photo: import.meta.env.VITE_BACKEND_FILES + '/dependents/'
+            url_photo: import.meta.env.VITE_BACKEND_FILES + "/dependents/",
         };
     },
 
@@ -79,11 +48,6 @@ export default {
 
     methods: {
         ...mapActions("dependent", ["getDependents"]),
-
-        savePosition(pos) {
-            console.log("Posição final:", pos);
-            // aqui você pode salvar no backend se quiser
-        },
     },
 
     async mounted() {

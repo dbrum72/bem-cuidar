@@ -12,7 +12,7 @@ export default {
     props: {
         src: { type: String, required: true },
         size: { type: Number, default: 200 },
-        zoom: { type: Number, default: 1.4 }
+        zoom: { type: Number, default: 1.0 }
     },
 
     data() {
@@ -117,8 +117,5 @@ export default {
     top: 0;
     left: 0;
     object-fit: cover;
-
-    /* 🔥 OBRIGATÓRIO: NÃO DEFINIR WIDTH/HEIGHT AQUI! */
-    /* O TAMANHO VEM 100% DO JS */
 }
 </style>

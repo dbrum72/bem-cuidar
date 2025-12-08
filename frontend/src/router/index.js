@@ -31,7 +31,7 @@ const routes = [
 				path: "list",
 				name: "AppointmentList",
 				component: () =>
-					import("@/views/appointment/appointment-fetch.vue"),
+					import("@/views/appointment/appointment-list.vue"),
 			},
 			{
 				path: "save/:id?",
