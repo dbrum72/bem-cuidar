@@ -56,8 +56,8 @@ export default {
         // =====================================================
         // GET LIST
         // =====================================================
-        async getDependents({ commit, dispatch }, { filter, extendedFilter, relationship, sort }) {
-            const call = () => dependentAPI.list({ filter, extendedFilter, relationship, sort });
+        async getDependents({ commit, dispatch }) {
+            const call = () => dependentAPI.list();
 
             const response = await dispatch("_execRequest", {
                 callFn: call,

@@ -1,5 +1,6 @@
 <template>
     <HeaderBar />
+
     <div class="container mt-4">
         <h2>Evento de Cuidado Compartilhado</h2>
 
@@ -7,62 +8,95 @@
             <h6>{{ isEditing ? `Editando... (Id. ${form.id})` : 'Novo registro...' }}</h6>
         </div>
 
-        <form @submit.prevent="save">
-
-            <label class="form-label">Criança:</label>
-            <select v-model="form.dependent_id" class="form-select" required>
-                <option value="" selected>Selecione...</option>
-                <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">{{ dependent.name }}
-                </option>
-            </select>
-
-            <label class="form-label">Título:</label>
-            <input type="text" v-model="form.title" class="form-control" placeholder="Título" required />
-
-            <label class="form-label">Descrição:</label>
-            <textarea v-model="form.description" class="form-control" placeholder="Descrição"></textarea>
-
-            <label class="form-label">Início:</label>
-            <input type="datetime-local" v-model="form.start_datetime" class="form-control" required />
-
-            <label class="form-label">Fim:</label>
-            <input type="datetime-local" v-model="form.end_datetime" class="form-control" required />
-
-            <label class="form-label">Local:</label>
-            <input type="text" v-model="form.location" class="form-control" placeholder="Local" />
-
-            <label class="form-label">Despesa:</label>
-            <input type="text" v-model="form.total_expense" class="form-control" placeholder="R$ 0,00" />
-
-            <h3>Participantes</h3>
-            <div v-for="(p, index) in participants" :key="index" class="participant-row">
-                <select v-model="p.user_id" class="form-select" required>
-                    <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
-                </select>
-                <input type="number" v-model.number="p.share_percentage" placeholder="Porcentagem (%)" min="0"
-                    max="100" />
-                <button type="button" @click="removeParticipant(index)">Remover</button>
+        <form @submit.prevent="handleSubmit">
+            <div class="row">
+                <div class="col mb-3">
+                    <label class="form-label">Título:</label>
+                    <input type="text" v-model="form.title" class="form-control" placeholder="Título" required />
+                </div>
             </div>
-            <button type="button" class="btn btn-outline-success me-3" @click="addParticipant">Adicionar
-                Participante</button>
-            <button type="button" class="btn btn-secondary me-3" @click="cancelSave">Cancelar</button>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label class="form-label">Dependente:</label>
+                    <select v-model="form.dependent_id" class="form-select" required>
+                        <option value="">Selecione...</option>
+                        <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">
+                            {{ dependent.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 mb-3">
+                    <label class="form-label">Início:</label>
+                    <input type="datetime-local" v-model="form.start_datetime" class="form-control" required />
+                </div>
+                <div class="col-sm-12 col-lg-6 mb-3">
+                    <label class="form-label">Fim:</label>
+                    <input type="datetime-local" v-model="form.end_datetime" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-lg-6 mb-3">
+                    <label class="form-label">Local:</label>
+                    <input type="text" v-model="form.location" class="form-control" placeholder="Local" />
+                </div>
+                <div class="col-sm-12 col-lg-6 mb-3">
+                    <label class="form-label">Despesa:</label>
+                    <input type="text" v-model="form.total_expense" class="form-control" placeholder="R$ 0,00" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <label class="form-label">Descrição:</label>
+                    <textarea v-model="form.description" class="form-control" placeholder="Descrição"></textarea>
+                </div>
+            </div>
+
+            <div v-if="form.dependent_id">
+                <h6>Participantes:</h6>
+
+                <ParticipantRow v-for="(p, i) in participants" :key="i" v-model="participants[i]"
+                    :tutors="tutorsByDependent" :existing="participants.map(x => x.tutor_id)"
+                    @remove="removeParticipant(i)" />
+
+                <div class="row">
+                    <div class="col mb-3">
+                        <button type="button" class="btn btn-outline-success" @click="addParticipant">
+                            Adicionar Participante
+                        </button>
+
+                        <small v-if="totalPercentage !== 100 && participants.length > 0" class="text-danger">
+                            A soma deve ser 100% (atual: {{ totalPercentage }}%)
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col mb-3">
+                    <button type="button" class="btn btn-secondary me-3" @click="cancelSave">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </div>
         </form>
     </div>
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import AppointmentMixin from '@/mixins/AppointmentMixin';
-import DependentMixin from '@/mixins/DependentMixin';
 import HeaderBar from "@/components/bars/header-bar.vue"
+import ParticipantRow from "@/components/selects/ParticipantRow.vue"
 
 export default {
     name: "AppointmentSave",
 
-    components: { HeaderBar },
-
-    mixins: [AppointmentMixin, DependentMixin],
+    components: { HeaderBar, ParticipantRow },
 
     data() {
         return {
@@ -75,22 +109,89 @@ export default {
     computed: {
         ...mapState('appointment', ['appointment']),
         ...mapState('dependent', ['dependents']),
-        ...mapState('auth', ['users'])
+        ...mapState('relationship', ['tutorsByDependent']),
+
+        totalPercentage() {
+            return this.participants.reduce((sum, p) => sum + (p.share_percentage || 0), 0);
+        }
+    },
+
+    watch: {
+        "form.dependent_id": {
+            immediate: false,
+            async handler(newVal) {
+                if (newVal) {
+                    await this.getTutors(newVal);
+
+                    /* popula automaticamente os participantes
+                    this.participants = this.tutorsByDependent.map(t => ({
+                        tutor_id: t.id,
+                        share_percentage: Math.floor(100 / this.tutorsByDependent.length)
+                    }));*/
+                    this.participants = [];
+
+                    this.normalizePercentages();
+                } else {
+                    this.participants = [];
+                }
+            }
+        }
     },
 
     methods: {
 
-        async save() {
+        ...mapActions('appointment', ['addOrUpdate']),
+        ...mapActions('dependent', ['getDependents']),
+        ...mapActions('relationship', ['getTutorsByDependent']),
 
-            if (this.isEditing) {
-                await this.updateAppointment(this.form)
-            } else {
-                await this.storeAppointment(this.form)
+        async handleSubmit() {
+            this.isSaving = true;
+
+            if (this.totalPercentage !== 100) {
+                alert("A soma das porcentagens precisa ser 100%");
+                return;
+            }
+
+            try {
+                await this.addOrUpdate(this.form);
+                this.$toast?.success("Evento salvo com sucesso!");
+                this.$router.push({ name: "AppointmentList" });
+            }
+            catch (error) {
+                console.error("Erro ao salvar evento:", error);
+                this.$toast?.error("Erro ao salvar evento.");
+            }
+            finally {
+                this.isSaving = false;
             }
         },
 
         cancelSave() {
             this.$router.push({ name: 'AppointmentList' })
+        },
+
+        normalizePercentages() {
+            if (!this.participants.length) return;
+
+            const equal = Math.floor(100 / this.participants.length);
+            this.participants.forEach(p => (p.share_percentage = equal));
+        },
+
+        addParticipant() {
+            this.participants.push({
+                tutor_id: "",
+                share_percentage: 0
+            });
+        },
+
+        removeParticipant(index) {
+            this.participants.splice(index, 1);
+            this.normalizePercentages();
+        },
+
+        async getTutors(dependent_id) {
+            if (!dependent_id) return;
+            await this.getTutorsByDependent(dependent_id);
         }
     },
 

@@ -22,31 +22,6 @@ class DependentController extends Controller {
 
         $user = auth()->user();
 
-        /*$dependentRepository = new DependentRepository($this->dependent);
-
-        $dependentRepository->extendedFilter('tutors,tutor_id:=:'.$user->id);
-
-        if($request->has('with')) {
-
-            $dependentRepository->selectWith($request->with);
-        }  
-
-        if($request->has('filter')) {
-
-            $dependentRepository->filter($request->filter);
-        }
-
-        if($request->has('sort')) {
-
-            $dependentRepository->sort($request->sort);
-        }
-
-            
-        if($dependents = $dependentRepository->getResultado()) {
-
-            return response()->json([ 'dependents' => $dependents, 'errors' => []], 201);           
-        }*/
-
         if($dependents = DB::table('dependents')
             ->join('dependent_tutor', 'dependents.id', '=', 'dependent_tutor.dependent_id')
             ->where('dependent_tutor.tutor_id', $user->id)

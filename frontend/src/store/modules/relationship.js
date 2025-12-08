@@ -8,7 +8,8 @@ export default {
 
     state: {
         relationship: {},
-        relationships: []
+        relationships: [],
+        tutorsByDependent: []
     },
 
     mutations: {
@@ -27,6 +28,10 @@ export default {
             if (index !== -1) state.relationships.splice(index, 1, relationship);
             else state.relationships.push(relationship);
         },
+
+        setTutorsByDependent(state, tutorsByDependent) {
+            state.tutorsByDependent = tutorsByDependent;
+        }
     },
 
     actions: {
@@ -132,6 +137,26 @@ export default {
             });
 
             return !!response;
+        },
+
+        // =====================================================
+        // GET TUTORS BY DEPENDENT
+        // =====================================================
+        async getTutorsByDependent({ commit, dispatch }, dependentId) {
+
+            const call = () => relationshipAPI.get(`getTutors/${dependentId}`);
+
+            const response = await dispatch("_execRequest", {
+                callFn: call,
+                options: {
+                    errorMsg: "Erro ao carregar a lista de relacionamentos.",
+                    swallow: false
+                }
+            });
+
+            if (response?.data) {
+                commit("setTutorsByDependent", response.data.tutorsByDependent);
+            }
         },
 
         // =====================================================

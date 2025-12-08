@@ -1,4 +1,6 @@
-import http from "@/services/http.js";
+import { createResource } from "@/services/resource.js";
+
+const appointmentAPI = createResource("appointment");
 
 export default {
     namespaced: true,
@@ -35,22 +37,54 @@ export default {
     },
 
     actions: {
+
+        async _execRequest({ rootGetters }, { callFn, successMsg = null, errorMsg = null, swallow = true }) {
+
+            const handleRequest = rootGetters["handleRequest"];
+
+            if (typeof handleRequest === "function") {
+                try {
+                    return await handleRequest(callFn, successMsg, errorMsg, swallow);
+                } catch {
+                    return null;
+                }
+            }
+
+            try {
+                const res = await callFn();
+                if (successMsg && window?.$toast) window.$toast.success(successMsg);
+                return res;
+            } catch (err) {
+                if (errorMsg && window?.$toast) window.$toast.error(errorMsg);
+                console.error(errorMsg ?? "Erro na requisição", err);
+                return null;
+            }
+        },
+
         async fetchAppointments({ commit }) {
             const { data } = await http.get('appointments');
             commit('setAppointments', data.appointments);
         },
 
-        async saveAppointment({ commit }, payload) {
-            if (payload.id) {
-                const { data } = await http.patch(`appointments/${payload.id}`, payload);
-                commit('addAppointment', data.appointment);
-                commit('setAppointment', data.appointment);
-                return;
-            }
-            const { data } = await http.post('appointments', payload);
-            commit('addAppointment', data.appointment);
-            commit('setAppointment', data.appointment);
+        // =====================================================
+        // SAVE or UPDATE
+        // =====================================================
+        async addOrUpdate({ commit, dispatch }, payload) {
+            const call = () => appointmentAPI.save(payload);
 
+            const response = await dispatch("_execRequest", {
+                callFn: call,
+                options: {
+                    errorMsg: "Erro ao salvar os dados."
+                }
+            });
+
+            if (response?.data) {
+                commit("addAppointment", response.data.appointment);
+                return response.data.appointment;
+            }
+
+            return null;
         },
 
         async getAppointment({ commit }, id) {

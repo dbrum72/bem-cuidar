@@ -200,4 +200,21 @@ class RelationshipController extends Controller {
         return response()->json(['errors' => ['erro' => 'O registro não foi localizado.']], 404);
     }
 
+
+    /************************************************************************************/
+    public function getTutorsByDependent($id) {
+
+        if($tutors = DB::table('dependent_tutor')
+            ->join('users', 'users.id', '=', 'dependent_tutor.tutor_id')
+            ->where('dependent_id', $id)
+            ->where('status', 'accepted')
+            ->select('users.id', 'users.name','dependent_tutor.relationship_type', 'dependent_tutor.status')
+            ->get()) {
+
+            return response()->json([ 'tutorsByDependent' => $tutors, 'errors' => []], 201);           
+        }
+
+        return response()->json(['errors' => ['error' => 'Nenhum registro localizado.']], 404);
+    }
+
 }

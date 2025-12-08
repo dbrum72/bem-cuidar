@@ -40,8 +40,10 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
 
     // Relacionamento
     Route::apiResource('relationship', RelationshipController::class)->only(['store', 'update', 'show']);
-
+    Route::get('relationship/getTutors/{dependentId}', [RelationshipController::class, 'getTutorsByDependent']);
+    
     // Transações financeiras
+    
     Route::apiResource('transactions', TransactionController::class);
 
     // Notificações
