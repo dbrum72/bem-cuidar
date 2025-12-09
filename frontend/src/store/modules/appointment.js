@@ -67,6 +67,25 @@ export default {
         },
 
         // =====================================================
+        // GET LIST
+        // =====================================================
+        async getAppointments({ commit, dispatch }) {
+            const call = () => appointmentAPI.list();
+
+            const response = await dispatch("_execRequest", {
+                callFn: call,
+                options: {
+                    errorMsg: "Erro ao carregar a lista de dependentes.",
+                    swallow: false
+                }
+            });
+
+            if (response?.data) {
+                commit("setAppointments", response.data.appointments);
+            }
+        },
+
+        // =====================================================
         // SAVE or UPDATE
         // =====================================================
         async addOrUpdate({ commit, dispatch }, payload) {

@@ -1,15 +1,16 @@
 <template>
     <HeaderBar />
 
-    <div class="d-flex justify-content-between align-items-center px-3 mt-3">
-        <h2>Agendamentos</h2>
-
-        <router-link :to="{ name: 'AppointmentSave' }" class="btn btn-primary btn-sm">
-            Adicionar
-        </router-link>
-    </div>
-
     <div class="container mt-3">
+
+        <div class="d-flex justify-content-between align-items-center px-3 mt-3">
+            <h2>Agendamentos</h2>
+
+            <router-link :to="{ name: 'AppointmentSave' }" class="btn btn-primary btn-sm">
+                Adicionar
+            </router-link>
+        </div>
+
         <div v-if="appointments.length === 0" class="alert alert-info">
             Nenhum evento agendado.
         </div>
@@ -19,7 +20,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>Título</th>
-                        <th>Dependente</th>                        
+                        <th>Dependente</th>
                         <th>Início</th>
                         <th>Término</th>
                         <th>Local</th>
@@ -57,7 +58,7 @@
 
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
@@ -67,11 +68,12 @@ export default {
     components: { HeaderBar },
 
     computed: {
-        ...mapState('dependent', ['dependents']),
         ...mapState('appointment', ['appointments']),
     },
 
     methods: {
+        ...mapActions("appointment", ["getAppointments"]),
+
         getDependentName(dependent_id) {
             const c = this.dependents.find(ch => ch.id === dependent_id);
             return c ? c.name : '';
@@ -80,7 +82,6 @@ export default {
 
     mounted() {
         this.getAppointments();
-        this.getDependents();
     }
 }
 </script>

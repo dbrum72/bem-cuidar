@@ -123,12 +123,12 @@ export default {
                 if (newVal) {
                     await this.getTutors(newVal);
 
-                    /* popula automaticamente os participantes
+                    // popula automaticamente os participantes
                     this.participants = this.tutorsByDependent.map(t => ({
                         tutor_id: t.id,
                         share_percentage: Math.floor(100 / this.tutorsByDependent.length)
-                    }));*/
-                    this.participants = [];
+                    }));
+                    //this.participants = [];
 
                     this.normalizePercentages();
                 } else {
@@ -151,6 +151,13 @@ export default {
                 alert("A soma das porcentagens precisa ser 100%");
                 return;
             }
+
+            this.form.participants = this.participants.map(p => ({
+                participant_id: p.tutor_id,
+                share_percentage: p.share_percentage,
+                payment_status: p.payment_status || "pending",
+                accepted_status: p.accepted_status || "pending"
+            }));
 
             try {
                 await this.addOrUpdate(this.form);

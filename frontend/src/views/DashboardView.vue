@@ -5,7 +5,9 @@
 
         <section>
             <h5>Dependentes</h5>
-            <div v-if="dependents.length === 0">Nenhum dependente cadastrado.</div>
+            <div v-if="dependents.length === 0" class="alert alert-info">
+                Nenhum dependente cadastrado.
+            </div>
             <div v-for="dependent in dependents" :key="dependent.id" class="card">
                 <p><strong>{{ dependent.name }}</strong></p>
                 <p>Data de nascimento: {{ dependent.birth_date }}</p>
@@ -15,7 +17,9 @@
 
         <section>
             <h5>Eventos de Cuidado Compartilhado</h5>
-            <div v-if="appointments.length === 0">Nenhum evento</div>
+            <div v-if="appointments.length === 0" class="alert alert-info">
+                Nenhum evento futuro agendado.
+            </div>
             <div v-for="e in appointments" :key="e.id" class="card">
                 <p><strong>{{ e.title }}</strong></p>
                 <p>Criança: {{ getDependentName(e.dependent_id) }}</p>

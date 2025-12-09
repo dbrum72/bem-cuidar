@@ -5,14 +5,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void {
-        Schema::create('appointments_participants', function (Blueprint $table) {
+        Schema::create('appointment_participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('shared_care_event_id')->constrained('appointments')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('appointment_id')->constrained('appointments')->onDelete('cascade');
+            $table->foreignId('participant_id')->constrained('users')->onDelete('cascade');
             $table->integer('share_percentage')->default(0);
             $table->enum('payment_status',['pending','paid'])->default('pending');
             $table->enum('accepted_status',['pending','accepted','declined'])->default('pending');
@@ -20,13 +18,10 @@ return new class extends Migration {
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void {
         Schema::disableForeignKeyConstraints();
 
-        Schema::dropIfExists('appointments_participants');
+        Schema::dropIfExists('appointment_participants');
 
         Schema::enableForeignKeyConstraints();
     }

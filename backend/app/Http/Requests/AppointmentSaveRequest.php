@@ -32,7 +32,6 @@ class AppointmentSaveRequest extends FormRequest {
         $appointmentId = $this->route('shared-care-events');        
 
         $rules = [
-            //'id' => [Rule::unique('shared_care_events', 'id')->ignore($appointmentId)],
             'dependent_id' => ['required','exists:dependents,id'],
             'title' => ['required','min:3','max:255'],
             'description' => ['nullable'],
@@ -40,7 +39,12 @@ class AppointmentSaveRequest extends FormRequest {
             'end_datetime' => ['required','date','after_or_equal:start_date'],
             'location' => ['nullable','max:255'],
             'total_expense' => ['required','decimal:2'],
-            'created_by' => ['required','exists:users,id']
+            'created_by' => ['required','exists:users,id'],
+            'participants' => ['nullable','array'],
+            'participants.*.participant_id' => ['required','integer','exists:users,id'],
+            'participants.*.share_percentage' => ['required','numeric','min:0','max:100'],
+            'participants.*.payment_status' => ['nullable','string'],
+            'participants.*.accepted_status' => ['nullable','string'],
         ];
 
         if($this->method() === 'PATCH') {

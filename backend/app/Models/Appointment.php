@@ -18,4 +18,8 @@ class Appointment extends Model {
         'total_expense',
         'created_by'
     ];
+
+    public function participants() {
+        return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'tutor_id');
+    }
 }
