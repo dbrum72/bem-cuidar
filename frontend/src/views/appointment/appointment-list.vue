@@ -1,14 +1,11 @@
 <template>
     <HeaderBar />
 
-    <div class="container mt-3">
+    <div class="container mt-4">
 
         <div class="d-flex justify-content-between align-items-center px-3 mt-3">
-            <h2>Agendamentos</h2>
-
-            <router-link :to="{ name: 'AppointmentSave' }" class="btn btn-primary btn-sm">
-                Adicionar
-            </router-link>
+            <h4>Agendamentos</h4>
+            <router-link :to="{ name: 'AppointmentSave' }" class="btn btn-primary btn-sm">Adicionar</router-link>
         </div>
 
         <div v-if="appointments.length === 0" class="alert alert-info">
@@ -19,8 +16,8 @@
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Título</th>
                         <th>Dependente</th>
+                        <th>Título</th>                        
                         <th>Início</th>
                         <th>Término</th>
                         <th>Local</th>
@@ -31,12 +28,12 @@
 
                 <tbody>
                     <tr v-for="item in appointments" :key="item.id">
-                        <td>{{ getDependentName(item.dependent_id) }}</td>
+                        <td>{{ item.dependent_name }}</td>
                         <td>{{ item.title }}</td>
-                        <td>{{ item.start_datetime }}</td>
-                        <td>{{ item.end_datetime }}</td>
+                        <td>{{ formatDateTime(item.start_datetime) }}</td>
+                        <td>{{ formatDateTime(item.end_datetime) }}</td>
                         <td>{{ item.location }}</td>
-                        <td>{{ item.total_expense }}</td>
+                        <td>R${{ item.total_expense }}</td>
 
                         <td class="text-end">
                             <router-link :to="{ name: 'AppointmentShow', params: { id: item.id } }"
@@ -59,6 +56,7 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
+import AbstractMixin from "@/mixins/AbstractMixin";
 import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
@@ -67,6 +65,8 @@ export default {
 
     components: { HeaderBar },
 
+    mixins: [AbstractMixin],
+
     computed: {
         ...mapState('appointment', ['appointments']),
     },
@@ -74,10 +74,10 @@ export default {
     methods: {
         ...mapActions("appointment", ["getAppointments"]),
 
-        getDependentName(dependent_id) {
+        /*getDependentName(dependent_id) {
             const c = this.dependents.find(ch => ch.id === dependent_id);
             return c ? c.name : '';
-        }
+        }*/
     },
 
     mounted() {

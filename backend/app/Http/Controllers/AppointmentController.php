@@ -21,25 +21,47 @@ class AppointmentController extends Controller {
 
         $user = auth()->user();
 
-        if($appointments = DB::table('appointments')
+        // Buscar appointments que o usuário participa
+        $appointments = DB::table('appointments')
             ->join('dependents', 'appointments.dependent_id', '=', 'dependents.id')
-            ->join('appintments_participants','appointments.id', '=', 'appointments_participants.appointment_id')
-            ->join('users', 'users.id', '=', 'appointment_tutor.tutor_id')
-            ->whereIn('appointment_participants.participant_id', $user->id)
-            ->select('appointments.*', 'user.name as tutor')
-            ->get()) {
+            ->join('appointment_participants', 'appointments.id', '=', 'appointment_participants.appointment_id')
+            ->where('appointment_participants.participant_id', $user->id)
+            ->select('appointments.*', 'dependents.name as dependent_name')
+            ->distinct()
+            ->get();
 
-            return response()->json([ 'appointments' => $appointments, 'errors' => []], 201);           
+        if ($appointments->isEmpty()) {
+            return response()->json([
+                'errors' => ['Nenhum registro localizado.']
+            ], 404);
         }
 
-        return response()->json(['errors' => ['error' => 'Nenhum registro localizado.']], 404);
+        // Buscar todos os participants desses appointments
+        $participants = DB::table('appointment_participants')
+            ->join('users', 'appointment_participants.participant_id', '=', 'users.id')
+            ->whereIn('appointment_id', $appointments->pluck('id'))
+            ->select('appointment_participants.id','appointment_id', 'users.name', 'share_percentage', 'payment_status', 'accepted_status')
+            ->get();
+
+        // Anexar participants ao appointment correspondente
+        $appointments = $appointments->map(function ($appt) use ($participants) {
+            $appt->participants = $participants
+                ->where('appointment_id', $appt->id)
+                ->values(); // reorganiza índices
+            return $appt;
+        });
+
+        return response()->json([
+            'appointments' => $appointments,
+            'errors' => []
+        ], 200);
     }
 
-    /************************************************************************************/
 
+    /************************************************************************************/
     public function store(AppointmentSaveRequest $request) {
 
-         DB::beginTransaction();
+        DB::beginTransaction();
 
         try {
 
@@ -73,6 +95,7 @@ class AppointmentController extends Controller {
         }        
     }
 
+
     /************************************************************************************/
     public function update(AppointmentSaveRequest $request, $id) {
 
@@ -89,6 +112,7 @@ class AppointmentController extends Controller {
         return response()->json(['errors' => ['error' => 'O registro não foi localizado.']], 404);
     }
 
+
     /************************************************************************************/
     public function show($id) {
 
@@ -99,6 +123,7 @@ class AppointmentController extends Controller {
 
         return response()->json(['errors' => ['error' => 'O registro não foi localizado.']], 404);
     }
+    
 
     /************************************************************************************/
     public function destroy($id) {

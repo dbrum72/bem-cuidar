@@ -20,6 +20,6 @@ class Appointment extends Model {
     ];
 
     public function participants() {
-        return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'tutor_id');
+        return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'participant_id');
     }
 }

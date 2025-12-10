@@ -61,11 +61,6 @@ export default {
             }
         },
 
-        async fetchAppointments({ commit }) {
-            const { data } = await http.get('appointments');
-            commit('setAppointments', data.appointments);
-        },
-
         // =====================================================
         // GET LIST
         // =====================================================
