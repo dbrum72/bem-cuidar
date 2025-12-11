@@ -3,7 +3,7 @@
 
     <div class="container mt-4">
         <div class="d-flex">
-            <h4 class="text-2xl font-semibold mb-6">Dependente</h4>
+            <h4>Dependente</h4>
             <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
         </div>
 

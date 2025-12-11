@@ -16,10 +16,11 @@
             <table class="table table-striped table-hover align-middle">
                 <thead class="table-light">
                     <tr>
-                        <th>Dependente</th>
-                        <th>Título</th>                        
                         <th>Início</th>
                         <th>Término</th>
+                        <th>Título</th>
+                        <th>Dependente</th>
+                        <th>Participantes</th>
                         <th>Local</th>
                         <th>Despesas</th>
                         <th class="text-end">Ações</th>
@@ -28,10 +29,12 @@
 
                 <tbody>
                     <tr v-for="item in appointments" :key="item.id">
-                        <td>{{ item.dependent_name }}</td>
-                        <td>{{ item.title }}</td>
                         <td>{{ formatDateTime(item.start_datetime) }}</td>
                         <td>{{ formatDateTime(item.end_datetime) }}</td>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.dependent_name }}</td>
+                        <td></td>
+                        
                         <td>{{ item.location }}</td>
                         <td>R${{ item.total_expense }}</td>
 
@@ -73,11 +76,6 @@ export default {
 
     methods: {
         ...mapActions("appointment", ["getAppointments"]),
-
-        /*getDependentName(dependent_id) {
-            const c = this.dependents.find(ch => ch.id === dependent_id);
-            return c ? c.name : '';
-        }*/
     },
 
     mounted() {

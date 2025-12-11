@@ -116,12 +116,12 @@ class AppointmentController extends Controller {
     /************************************************************************************/
     public function show($id) {
 
-        if($appointment = $this->appointment->find($id)) {
+        if ($appointment = $this->appointment->with(['participants', 'dependent'])->find($id)) {;
 
             return response()->json(['appointment' => $appointment, 'errors' => []], 200);
         }
 
-        return response()->json(['errors' => ['error' => 'O registro não foi localizado.']], 404);
+        return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
     }
     
 
@@ -138,6 +138,6 @@ class AppointmentController extends Controller {
             return response()->json([ 'errors' => ['error' => 'Erro ao excluir o registro']], 404);
         }
 
-        return response()->json(['errors' => ['erro' => 'O registro não foi localizado.']], 404);
+        return response()->json(['errors' => ['error' => 'Registro não encontrado.']], 404);
     }
 }

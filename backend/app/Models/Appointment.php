@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model {
@@ -19,7 +20,13 @@ class Appointment extends Model {
         'created_by'
     ];
 
+    public function dependent() {
+        return $this->belongsTo(Dependent::class, 'dependent_id');
+    }
+
     public function participants() {
-        return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'participant_id');
+        return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'participant_id')
+            ->withPivot('share_percentage', 'payment_status', 'accepted_status')
+            ->withTimestamps();
     }
 }

@@ -81,6 +81,27 @@ export default {
         },
 
         // =====================================================
+        // GET ONE
+        // =====================================================
+        async getAppointment({ commit, dispatch }, id) {
+            const call = () => appointmentAPI.get(id);
+
+            const response = await dispatch("_execRequest", {
+                callFn: call,
+                options: {
+                    errorMsg: "Erro ao carregar os dados do registro.",
+                    swallow: false
+                }
+            });
+
+            if (response?.data) {
+                commit("setAppointment", response.data.appointment);
+            }
+
+            return response?.data?.appointment ?? null;
+        },
+
+        // =====================================================
         // SAVE or UPDATE
         // =====================================================
         async addOrUpdate({ commit, dispatch }, payload) {
@@ -99,11 +120,6 @@ export default {
             }
 
             return null;
-        },
-
-        async getAppointment({ commit }, id) {
-            const { data } = await http.get(`appointments/${id}`);
-            commit('setAppointment', data.appointment);
         }
     }
 }
