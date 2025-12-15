@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     
     public function up(): void {
-        Schema::create('appointment_participants', function (Blueprint $table) {
+        Schema::create('appointment_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('appointment_id')->constrained('appointments')->onDelete('cascade');
-            $table->foreignId('participant_id')->constrained('users')->onDelete('cascade');
-            $table->integer('share_percentage')->default(0);
-            $table->enum('payment_status',['pending','paid'])->default('pending');
-            $table->enum('accepted_status',['pending','accepted','declined'])->default('pending');
+            $table->string('filename');
             $table->timestamps();
         });
     }
@@ -21,7 +18,7 @@ return new class extends Migration {
     public function down(): void {
         Schema::disableForeignKeyConstraints();
 
-        Schema::dropIfExists('appointment_participants');
+        Schema::dropIfExists('appointment_files');
 
         Schema::enableForeignKeyConstraints();
     }

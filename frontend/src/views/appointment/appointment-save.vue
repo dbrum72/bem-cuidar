@@ -155,8 +155,8 @@ export default {
             this.form.participants = this.participants.map(p => ({
                 participant_id: p.tutor_id,
                 share_percentage: p.share_percentage,
-                payment_status: p.payment_status || "pending",
-                accepted_status: p.accepted_status || "pending"
+                payment_status: p.payment_status || "pendente",
+                aceito_status: p.aceito_status || "pendente"
             }));
 
             try {

@@ -84,5 +84,26 @@ export function createResource(resourcePath) {
 			}${base}/${pathOrId}`;
 			return apiRequest({ method: "patch", url, data });
 		},
-	};
+
+		uploadFiles(data) {
+
+			if (!data) throw new Error("Dados são requeridos.");			
+
+			const formData = new FormData();
+
+			Object.keys(data).forEach((key) => {
+				if (data[key] !== null && data[key] !== undefined) {
+					formData.append(key, data[key]);
+				}
+			});
+
+			const url = `${import.meta.env.VITE_BACKEND_URL}${base}`;
+
+			return apiRequest({
+				method: "post",
+				url,
+				data: formData,
+			});
+		}
+	}
 }

@@ -32,7 +32,7 @@
                     <span>{{ i.status }}</span> —
                     <small>{{ formatDate(i.created_at) }}</small>
 
-                    <button v-if="i.status === 'pending'" @click="resendInvite(i.id)"
+                    <button v-if="i.status === 'pendente'" @click="resendInvite(i.id)"
                         class="btn btn-sm btn-outline-secondary mx-1">
                         Reenviar
                     </button>

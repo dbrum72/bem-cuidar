@@ -27,7 +27,8 @@
             <!-- Métricas no topo -->
             <div class="row g-3 mb-4">
                 <div class="col-sm-6 col-lg-4">
-                    <MetricCard title="Dependente" :value="appointment.dependent?.name || '---'" icon="fa-solid fa-user" />
+                    <MetricCard title="Dependente" :value="appointment.dependent?.name || '---'"
+                        icon="fa-solid fa-user" />
                 </div>
 
                 <div class="col-sm-6 col-lg-4">
@@ -55,7 +56,7 @@
 
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" :class="{ active: activeTab === 'participantes' }"
-                            @click="console.log(activeTab); activeTab = 'participantes'" type="button" role="tab">
+                            @click="activeTab = 'participantes'" type="button" role="tab">
                             <i class="fa-solid fa-users me-1"></i> Participantes
                         </button>
                     </li>
@@ -113,8 +114,8 @@
                                             {{ p.pivot.payment_status || '---' }}</span>
                                     </td>
                                     <td>
-                                        <span class="badge" :class="statusClass(p.pivot.accepted_status)">
-                                            {{ p.pivot.accepted_status || '---' }}
+                                        <span class="badge" :class="statusClass(p.pivot.aceito_status)">
+                                            {{ p.pivot.aceito_status || '---' }}
                                         </span>
                                     </td>
                                 </tr>
@@ -131,11 +132,15 @@
                             Área para upload, documentos e mídia do agendamento.
                         </p>
 
-                        <div class="border rounded-3 p-4 text-center bg-light">
+                        <div class="border rounded-3 p-4 text-center bg-light upload-area" @dragover.prevent
+                            @drop.prevent="handleDrop" @click="triggerSelect">
                             <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary"></i>
                             <p class="mt-3">Arraste arquivos aqui ou clique para enviar</p>
+
+                            <input type="file" ref="fileInput" class="d-none" multiple @change="handleFileSelect" />
                         </div>
                     </div>
+
 
                 </div>
             </div>
@@ -188,14 +193,53 @@ export default {
     },
 
     methods: {
-        ...mapActions('appointment', ['getAppointment']),
+        ...mapActions('appointment', ['getAppointment', 'uploadFiles']),
 
         statusClass(status) {
             return {
-                pending: 'bg-warning',
-                accepted: 'bg-success',
-                rejected: 'bg-danger'
-            }[status] || 'bg-secondary';
+                pendente: 'badge rounded-pill text-bg-warning',
+                aceito: 'badge rounded-pill text-bg-success',
+                recusado: 'badge rounded-pill text-bg-danger',
+                pago: 'badge rounded-pill text-bg-primary',
+            }[status] || 'badge rounded-pill text-bg-secondary';
+        },
+
+        triggerSelect() {
+            this.$refs.fileInput.click();
+        },
+
+        handleFileSelect(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            this.upload(files);
+        },
+
+        handleDrop(event) {
+            const files = event.dataTransfer.files;
+            if (!files || files.length === 0) return;
+            this.upload(files);
+        },
+
+        async upload(files) {
+            try {
+                this.loader = true;
+
+                await this.uploadFiles({files, appointment_id: this.id});
+
+                // Atualiza novamente os dados do appointment
+                await this.getAppointment(this.id);
+
+                this.$toast.success("Arquivos enviados com sucesso.");
+
+            } catch (error) {
+                console.error(error);
+                this.$toast.error("Falha ao enviar os arquivos.");
+            } finally {
+                this.loader = false;
+                if (this.$refs.fileInput) {
+                    this.$refs.fileInput.value = "";
+                }
+            }
         }
     },
 

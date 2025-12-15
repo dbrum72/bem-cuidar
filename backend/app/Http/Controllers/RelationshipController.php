@@ -7,7 +7,7 @@ use App\Repositories\RelationshipRepository;
 use App\Http\Requests\RelationshipSaveRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+//use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class RelationshipController extends Controller {
@@ -83,7 +83,7 @@ class RelationshipController extends Controller {
                 $stored->tutors()->syncWithoutDetaching([
                     $request->input('created_by') => [
                         'relationship_type' => $request->input('relationship_type', null),
-                        'status' => 'accepted',
+                        'status' => 'aceito',
                         'invite_token' => null,
                         'expires_at' => null,
                         'created_at' => now(),
@@ -207,7 +207,7 @@ class RelationshipController extends Controller {
         if($tutors = DB::table('dependent_tutor')
             ->join('users', 'users.id', '=', 'dependent_tutor.tutor_id')
             ->where('dependent_id', $id)
-            ->where('status', 'accepted')
+            ->where('status', 'aceito')
             ->select('users.id', 'users.name','dependent_tutor.relationship_type', 'dependent_tutor.status')
             ->get()) {
 

@@ -48,7 +48,7 @@ class TutorInviteController extends Controller {
 
         $existing = TutorInvite::where('inviter_id', $user->id)
             ->where('tutor_id', $tutor->id)
-            ->where('status', 'pending')
+            ->where('status', 'pendente')
             ->first();
 
         if ($existing) {
@@ -87,14 +87,14 @@ class TutorInviteController extends Controller {
             return redirect(config('app.frontend_url') . '/invite/invalid?reason=not_found');
         }
 
-        if ($invite->status !== 'pending') {
+        if ($invite->status !== 'pendente') {
             return redirect(config('app.frontend_url') . '/invite/invalid?reason=already_processed');
         }
 
         DB::beginTransaction();
         try {
-            $invite->status = 'accepted';
-            $invite->accepted_at = now();
+            $invite->status = 'aceito';
+            $invite->aceito_at = now();
             $invite->save();
 
             // Cria vínculo entre tutor e dependente (ou usuário principal)
@@ -107,7 +107,7 @@ class TutorInviteController extends Controller {
 
             DB::commit();
 
-            return redirect(config('app.frontend_url') . '/invite/accepted?token=' . $invite->token);
+            return redirect(config('app.frontend_url') . '/invite/aceito?token=' . $invite->token);
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erro ao aceitar convite: '.$e->getMessage());
@@ -126,7 +126,7 @@ class TutorInviteController extends Controller {
             return response()->json(['message' => 'Convite não encontrado.'], 404);
         }
 
-        if ($invite->status !== 'pending') {
+        if ($invite->status !== 'pendente') {
             return response()->json(['message' => 'Apenas convites pendentes podem ser reenviados.'], 422);
         }
 
@@ -152,7 +152,7 @@ class TutorInviteController extends Controller {
             return response()->json(['message' => 'Convite não encontrado.'], 404);
         }
 
-        if ($invite->status === 'accepted') {
+        if ($invite->status === 'aceito') {
             return response()->json(['message' => 'Convites já aceitos não podem ser excluídos.'], 422);
         }
 

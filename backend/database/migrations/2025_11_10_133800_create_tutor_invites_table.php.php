@@ -14,8 +14,8 @@ class CreateTutorInvitesTable extends Migration {
             $table->unsignedBigInteger('tutor_id')->nullable()->index();
             $table->string('tutor_email')->index();
             $table->string('token', 100)->unique();
-            $table->enum('status', ['pending','accepted','refused','cancelled'])->default('pending');
-            $table->timestamp('accepted_at')->nullable();
+            $table->enum('status', ['pendente','aceito','refused','cancelled'])->default('pendente');
+            $table->timestamp('aceito_at')->nullable();
             $table->timestamps();
 
             $table->foreign('inviter_id')->references('id')->on('users')->onDelete('cascade');

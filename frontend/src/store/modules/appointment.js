@@ -1,6 +1,7 @@
 import { createResource } from "@/services/resource.js";
 
 const appointmentAPI = createResource("appointment");
+const appointmentUploadAPI = createResource("appointment/upload-files");
 
 export default {
     namespaced: true,
@@ -105,6 +106,7 @@ export default {
         // SAVE or UPDATE
         // =====================================================
         async addOrUpdate({ commit, dispatch }, payload) {
+
             const call = () => appointmentAPI.save(payload);
 
             const response = await dispatch("_execRequest", {
@@ -118,6 +120,28 @@ export default {
                 commit("addAppointment", response.data.appointment);
                 return response.data.appointment;
             }
+
+            return null;
+        },
+
+        // =====================================================
+        // UPLOAD FILES
+        // =====================================================
+        async uploadFiles({ dispatch }, payload) {
+            
+            const call = () => appointmentUploadAPI.uploadFiles(payload);
+
+            const response = await dispatch("_execRequest", {
+                callFn: call,
+                options: {
+                    errorMsg: "Erro ao salvar os dados."
+                }
+            });
+
+            /*if (response?.data) {
+                commit("addAppointment", response.data.appointment);
+                return response.data.appointment;
+            }*/
 
             return null;
         }

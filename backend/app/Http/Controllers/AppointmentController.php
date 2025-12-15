@@ -40,7 +40,7 @@ class AppointmentController extends Controller {
         $participants = DB::table('appointment_participants')
             ->join('users', 'appointment_participants.participant_id', '=', 'users.id')
             ->whereIn('appointment_id', $appointments->pluck('id'))
-            ->select('appointment_participants.id','appointment_id', 'users.name', 'share_percentage', 'payment_status', 'accepted_status')
+            ->select('appointment_participants.id','appointment_id', 'users.name', 'share_percentage', 'payment_status', 'aceito_status')
             ->get();
 
         // Anexar participants ao appointment correspondente
@@ -74,8 +74,8 @@ class AppointmentController extends Controller {
                             'appointment_id'   => $appointment->id,
                             'participant_id'   => $participant['participant_id'],
                             'share_percentage' => $participant['share_percentage'],
-                            'payment_status'   => $participant['payment_status'] ?? 'pending',
-                            'accepted_status'  => $participant['accepted_status'] ?? 'pending',
+                            'payment_status'   => $participant['payment_status'] ?? 'pendente',
+                            'aceito_status'  => $participant['aceito_status'] ?? 'pendente',
                         ]);
                     }
                 }

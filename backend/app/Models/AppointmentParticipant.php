@@ -13,6 +13,6 @@ class AppointmentParticipant extends Model {
         'participant_id',
         'share_percentage',
         'payment_status',
-        'accepted_status'
+        'aceito_status'
     ];
 }

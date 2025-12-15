@@ -107,7 +107,7 @@ export default {
                 document_number: "",
                 relationship_type: "",
                 notes: "",
-                status: "accepted", // tutor criador é aceito automaticamente
+                status: "aceito", // tutor criador é aceito automaticamente
             },
             isSaving: false,
             isEditing: false,

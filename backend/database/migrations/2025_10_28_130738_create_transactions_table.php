@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('participant_id')->constrained('appointments')->onDelete('cascade');
             $table->decimal('amount',10,2);
-            $table->enum('status',['pending','paid'])->default('pending');
+            $table->enum('status',['pendente','paid'])->default('pendente');
             $table->timestamp('paid_at')->nullable();
             $table->string('receipt')->nullable();
             $table->timestamps();

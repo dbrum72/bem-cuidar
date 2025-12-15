@@ -26,7 +26,7 @@ class Appointment extends Model {
 
     public function participants() {
         return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'participant_id')
-            ->withPivot('share_percentage', 'payment_status', 'accepted_status')
+            ->withPivot('share_percentage', 'payment_status', 'aceito_status')
             ->withTimestamps();
     }
 }

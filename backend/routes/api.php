@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TutorInviteController;
 use App\Http\Controllers\DependentController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\AppointmentFileController;
 use App\Http\Controllers\RelationshipController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\NotificationController;
@@ -37,6 +38,9 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
 
     // Agendamento
     Route::apiResource('appointment', AppointmentController::class);
+
+    // Agendamento - Arquivos
+    Route::apiResource('appointment/upload-files', AppointmentFileController::class)->only(['store', 'delete']);
 
     // Relacionamento
     Route::apiResource('relationship', RelationshipController::class)->only(['store', 'update', 'show']);

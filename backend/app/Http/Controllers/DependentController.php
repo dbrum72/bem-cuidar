@@ -49,7 +49,7 @@ class DependentController extends Controller {
                 $dependent->tutors()->syncWithoutDetaching([
                     $request->created_by => [
                         'relationship_type' => $request->relationship_type,
-                        'status'            => 'accepted',
+                        'status'            => 'aceito',
                         'invite_token'      => null,
                         'expires_at'        => null,
                     ]

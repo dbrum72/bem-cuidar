@@ -14,7 +14,7 @@ class TutorInvite extends Model {
         'tutor_id',
         'tutor_email',
         'token',
-        'status' // pending, accepted, refused, cancelled
+        'status' // pendente, aceito, refused, cancelled
     ];
 
     protected $casts = [
@@ -31,7 +31,7 @@ class TutorInvite extends Model {
                 $model->token = Str::random(48);
             }
             if (empty($model->status)) {
-                $model->status = 'pending';
+                $model->status = 'pendente';
             }
         });
     }

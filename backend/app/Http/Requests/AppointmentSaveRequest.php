@@ -44,7 +44,7 @@ class AppointmentSaveRequest extends FormRequest {
             'participants.*.participant_id' => ['required','integer','exists:users,id'],
             'participants.*.share_percentage' => ['required','numeric','min:0','max:100'],
             'participants.*.payment_status' => ['nullable','string'],
-            'participants.*.accepted_status' => ['nullable','string'],
+            'participants.*.aceito_status' => ['nullable','string'],
         ];
 
         if($this->method() === 'PATCH') {
