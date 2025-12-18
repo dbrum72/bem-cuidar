@@ -1,24 +1,45 @@
 export default {
-
     namespaced: true,
 
-    state: {
+    state: () => ({
         alerts: []
-    },
+    }),
 
     mutations: {
-
-        pushAlert: (state, alert) => {
+        ADD_ALERT(state, alert) {
             state.alerts.push({
-                ...alert,
-                id: Date.now().toString(),
+                id: Date.now() + Math.random(),
+                type: alert.type || "info",
+                message: alert.message,
+                icon: alert.icon || { name: "bi-info-circle", color: "blue" },
+                timeout: alert.timeout ?? 5000
             });
         },
 
-        filterAlert: (state, alertToRemove) => {
-            state.alerts = state.alerts.filter((alert) => {
-                return alert.id != alertToRemove.id;
-            });
+        REMOVE_ALERT(state, id) {
+            state.alerts = state.alerts.filter(a => a.id !== id);
+        },
+
+        CLEAR_ALERTS(state) {
+            state.alerts = [];
         }
+    },
+
+    actions: {
+        show({ commit }, alert) {
+            commit("ADD_ALERT", alert);
+        },
+
+        remove({ commit }, id) {
+            commit("REMOVE_ALERT", id);
+        },
+
+        clear({ commit }) {
+            commit("CLEAR_ALERTS");
+        }
+    },
+
+    getters: {
+        all: state => state.alerts
     }
-}
+};

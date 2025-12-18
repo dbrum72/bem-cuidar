@@ -1,17 +1,23 @@
 <template>
-    <div>        
-        <AlertList />
-        <router-view />
+    <div>
+        <HeaderBar />
+
+        <div class="container mt-4">
+            <GlobalAlert />
+            <router-view />
+        </div>
+        
     </div>
 </template>
 
 <script>
-import AlertList from './components/alerts/alert-list.vue'
+import HeaderBar from "@/components/bars/header-bar.vue";
+import GlobalAlert from "@/components/alerts/global-alert.vue";
 
 export default {
 
     name: 'AppView',
 
-    components: { AlertList }
+    components: { HeaderBar, GlobalAlert }
 }
 </script>

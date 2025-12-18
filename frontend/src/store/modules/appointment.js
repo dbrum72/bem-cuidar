@@ -4,146 +4,127 @@ const appointmentAPI = createResource("appointment");
 const appointmentUploadAPI = createResource("appointment/upload-files");
 
 export default {
-    namespaced: true,
+	namespaced: true,
 
-    state: {
-        appointment: {},
-        appointments: []
-    },
+	state: {
+		appointment: {},
+		appointments: [],
+	},
 
-    mutations: {
-        addAppointment(state, appointment) {
-            if (!appointment || !appointment.id) return;
-            const index = state.appointments.findIndex(a => a.id === appointment.id);
-            if (index !== -1) state.appointments.splice(index, 1, appointment);
-            else state.appointments.push(appointment);
-        },
+	mutations: {
+		addAppointment(state, appointment) {
+			if (!appointment || !appointment.id) return;
+			const index = state.appointments.findIndex(
+				(a) => a.id === appointment.id
+			);
+			if (index !== -1) state.appointments.splice(index, 1, appointment);
+			else state.appointments.push(appointment);
+		},
 
-        setAppointments(state, appointments) {
-            state.appointments = appointments.map(app => {
-                if (app.total_expense && typeof app.total_expense === 'string') {
-                    app.total_expense = app.total_expense.replace(/\./g, ',');
-                }
-                return app;
-            });
-            state.appointments = appointments;
-        },
+		setAppointments(state, appointments) {
+			state.appointments = appointments.map((app) => {
+				if (
+					app.total_expense &&
+					typeof app.total_expense === "string"
+				) {
+					app.total_expense = app.total_expense.replace(/\./g, ",");
+				}
+				return app;
+			});
+			state.appointments = appointments;
+		},
 
-        setAppointment(state, appointment) {
-            if (appointment.total_expense && typeof appointment.total_expense === 'string') {
-                appointment.total_expense = appointment.total_expense.replace(/\./g, ',');
-            }
-            state.appointment = appointment;
-        }
-    },
+		setAppointment(state, appointment) {
+			if (
+				appointment.total_expense &&
+				typeof appointment.total_expense === "string"
+			) {
+				appointment.total_expense = appointment.total_expense.replace(/\./g, ",")
+			}
+			state.appointment = appointment;
+		},
+	},
 
-    actions: {
+	actions: {
 
-        async _execRequest({ rootGetters }, { callFn, successMsg = null, errorMsg = null, swallow = true }) {
+		// =====================================================
+		// GET LIST
+		// =====================================================
+		async getAppointments({ commit, dispatch }) {
 
-            const handleRequest = rootGetters["handleRequest"];
+			const response = await dispatch("request/exec", {
+				callFn: () => appointmentAPI.list(),
+				successMsg: "Lista de agendamentos carregada com sucesso.",
+                errorMsg: "Erro ao carregar a lista de agendamentos."
+				},
+                { root: true }
+			);
 
-            if (typeof handleRequest === "function") {
-                try {
-                    return await handleRequest(callFn, successMsg, errorMsg, swallow);
-                } catch {
-                    return null;
-                }
-            }
+			if (response?.data) {
+				commit("setAppointments", response.data.appointments);
+			}
+		},
 
-            try {
-                const res = await callFn();
-                if (successMsg && window?.$toast) window.$toast.success(successMsg);
-                return res;
-            } catch (err) {
-                if (errorMsg && window?.$toast) window.$toast.error(errorMsg);
-                console.error(errorMsg ?? "Erro na requisição", err);
-                return null;
-            }
-        },
+		// =====================================================
+		// GET ONE
+		// =====================================================
+		async getAppointment({ commit, dispatch }, id) {
+			const call = () => appointmentAPI.get(id);
 
-        // =====================================================
-        // GET LIST
-        // =====================================================
-        async getAppointments({ commit, dispatch }) {
-            const call = () => appointmentAPI.list();
+			const response = await dispatch("_execRequest", {
+				callFn: call,
+				options: {
+					errorMsg: "Erro ao carregar os dados do registro.",
+					swallow: false,
+				},
+			});
 
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao carregar a lista de dependentes.",
-                    swallow: false
-                }
-            });
+			if (response?.data) {
+				commit("setAppointment", response.data.appointment);
+			}
 
-            if (response?.data) {
-                commit("setAppointments", response.data.appointments);
-            }
-        },
+			return response?.data?.appointment ?? null;
+		},
 
-        // =====================================================
-        // GET ONE
-        // =====================================================
-        async getAppointment({ commit, dispatch }, id) {
-            const call = () => appointmentAPI.get(id);
+		// =====================================================
+		// SAVE or UPDATE
+		// =====================================================
+		async addOrUpdate({ commit, dispatch }, payload) {
+			const call = () => appointmentAPI.save(payload);
 
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao carregar os dados do registro.",
-                    swallow: false
-                }
-            });
+			const response = await dispatch("_execRequest", {
+				callFn: call,
+				successMsg: "Agendamento salvo com sucesso.",
+                errorMsg: "Erro ao salvar agendamento."
+			});
 
-            if (response?.data) {
-                commit("setAppointment", response.data.appointment);
-            }
+			if (response?.data) {
+				commit("addAppointment", response.data.appointment);
+				return response.data.appointment;
+			}
 
-            return response?.data?.appointment ?? null;
-        },
+			return null;
+		},
 
-        // =====================================================
-        // SAVE or UPDATE
-        // =====================================================
-        async addOrUpdate({ commit, dispatch }, payload) {
+		// =====================================================
+		// UPLOAD FILES
+		// =====================================================
+		async uploadAppointmentFiles({ dispatch }, payload) {
+			const call = () => appointmentUploadAPI.uploadFiles(payload);
 
-            const call = () => appointmentAPI.save(payload);
+			const response = await dispatch("_execRequest", {
+				callFn: call,
+				options: {
+					errorMsg: "Erro ao salvar os dados.",
+				},
+			});
 
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao salvar os dados."
-                }
-            });
-
-            if (response?.data) {
-                commit("addAppointment", response.data.appointment);
-                return response.data.appointment;
-            }
-
-            return null;
-        },
-
-        // =====================================================
-        // UPLOAD FILES
-        // =====================================================
-        async uploadAppointmentFiles({ dispatch }, payload) {
-            
-            const call = () => appointmentUploadAPI.uploadFiles(payload);
-
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao salvar os dados."
-                }
-            });
-
-            /*if (response?.data) {
+			/*if (response?.data) {
                 commit("addAppointment", response.data.appointment);
                 return response.data.appointment;
             }*/
 
-            return null;
-        }
-    }
-}
+			return null;
+		},
+	},
+};

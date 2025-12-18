@@ -1,7 +1,6 @@
 <template>
-    <HeaderBar />
 
-    <div class="container mt-4">
+    
 
         <div class="d-flex justify-content-between align-items-center px-3 mt-3">
             <h4>Agendamentos</h4>
@@ -53,20 +52,16 @@
                 </tbody>
             </table>
         </div>
-    </div>
 </template>
 
 
 <script>
 import { mapState, mapActions } from "vuex";
 import AbstractMixin from "@/mixins/AbstractMixin";
-import HeaderBar from "@/components/bars/header-bar.vue";
 
 export default {
 
     name: "AppointmentFetch",
-
-    components: { HeaderBar },
 
     mixins: [AbstractMixin],
 
