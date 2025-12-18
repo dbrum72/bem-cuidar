@@ -42,7 +42,8 @@ class AppointmentFileController extends Controller {
             // Salva no banco com nome da coluna correto
             AppointmentFile::create([
                 'appointment_id' => $appointment->id,
-                'filename'       => $filename,
+                'filename'       => $file->getClientOriginalName(),
+                'storaged'       => $filename,
             ]);
         }
 

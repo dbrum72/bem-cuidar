@@ -10,7 +10,8 @@ return new class extends Migration {
         Schema::create('appointment_files', function (Blueprint $table) {
             $table->id();
             $table->foreignId('appointment_id')->constrained('appointments')->onDelete('cascade');
-            $table->string('filename');
+            $table->string('filename', 255);
+            $table->string('storaged', 255);
             $table->timestamps();
         });
     }

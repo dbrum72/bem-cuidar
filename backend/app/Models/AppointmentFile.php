@@ -10,6 +10,7 @@ class AppointmentFile extends Model {
     
     protected $fillable = [
         'appointment_id',
-        'filename'
+        'filename',
+        'storaged'
     ];
 }
