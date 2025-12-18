@@ -1,7 +1,7 @@
 import { buildQuery, apiGet, apiRequest, apiDelete } from "@/services/api.js";
+import { h } from "vue";
 
 export function createResource(resourcePath) {
-	
 	const base = resourcePath.startsWith("/")
 		? resourcePath
 		: `/${resourcePath}`;
@@ -16,7 +16,7 @@ export function createResource(resourcePath) {
 		},
 
 		get(id) {
-			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;	
+			const url = `${import.meta.env.VITE_BACKEND_URL}${base}/${id}`;
 			return apiGet(url);
 		},
 
@@ -39,14 +39,14 @@ export function createResource(resourcePath) {
 					}
 				});
 
-				formData.append('_method', 'PATCH');
-				payload = formData;				
+				formData.append("_method", "PATCH");
+				payload = formData;
 			} else {
 				payload = JSON.stringify(data);
 				headers["Content-Type"] = "application/json";
 			}
 
-			const method = hasFile ? 'post' : data.id ? "patch" : "post";
+			const method = hasFile ? "post" : data.id ? "patch" : "post";
 
 			const url = data.id
 				? `${import.meta.env.VITE_BACKEND_URL}${base}/${data.id}`
@@ -86,24 +86,15 @@ export function createResource(resourcePath) {
 		},
 
 		uploadFiles(data) {
-
-			if (!data) throw new Error("Dados são requeridos.");			
-
-			const formData = new FormData();
-
-			Object.keys(data).forEach((key) => {
-				if (data[key] !== null && data[key] !== undefined) {
-					formData.append(key, data[key]);
-				}
-			});
+			if (!data) throw new Error("Dados são requeridos.");
 
 			const url = `${import.meta.env.VITE_BACKEND_URL}${base}`;
 
 			return apiRequest({
 				method: "post",
 				url,
-				data: formData,
+				data,
 			});
-		}
-	}
+		},
+	};
 }

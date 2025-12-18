@@ -163,6 +163,7 @@ export default {
 
     data() {
         return {
+            files: [],
             activeTab: 'geral' // Tab ativa por padrão,
         };
     },
@@ -193,7 +194,7 @@ export default {
     },
 
     methods: {
-        ...mapActions('appointment', ['getAppointment', 'uploadFiles']),
+        ...mapActions('appointment', ['getAppointment', 'uploadAppointmentFiles']),
 
         statusClass(status) {
             return {
@@ -209,28 +210,35 @@ export default {
         },
 
         handleFileSelect(event) {
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-            this.upload(files);
+            this.files = event.target.files;
+            if (!this.files || this.files.length === 0) return;
+            this.upload(this.files);
         },
 
         handleDrop(event) {
-            const files = event.dataTransfer.files;
-            if (!files || files.length === 0) return;
-            this.upload(files);
+            this.files = event.dataTransfer.files;
+            if (!this.files || this.files.length === 0) return;
+            this.upload(this.files);
         },
 
         async upload(files) {
+
             try {
                 this.loader = true;
 
-                await this.uploadFiles({files, appointment_id: this.id});
+                const formData = new FormData();
 
-                // Atualiza novamente os dados do appointment
+                Array.from(files).forEach(file => {
+                    formData.append('attachments[]', file);
+                });
+
+                formData.append('appointment_id', this.id);
+
+                await this.uploadAppointmentFiles(formData);
+
                 await this.getAppointment(this.id);
 
                 this.$toast.success("Arquivos enviados com sucesso.");
-
             } catch (error) {
                 console.error(error);
                 this.$toast.error("Falha ao enviar os arquivos.");
@@ -241,6 +249,7 @@ export default {
                 }
             }
         }
+
     },
 
     created() {

@@ -46,6 +46,6 @@ class AppointmentFileController extends Controller {
             ]);
         }
 
-        return response()->json(['message' => 'uploaded'], 200);
+        return response()->json(['message' => 'Arquivos enviados com sucesso'], 200);
     }
 }

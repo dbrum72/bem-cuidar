@@ -127,7 +127,7 @@ export default {
         // =====================================================
         // UPLOAD FILES
         // =====================================================
-        async uploadFiles({ dispatch }, payload) {
+        async uploadAppointmentFiles({ dispatch }, payload) {
             
             const call = () => appointmentUploadAPI.uploadFiles(payload);
 
