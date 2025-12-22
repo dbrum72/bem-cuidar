@@ -1,10 +1,16 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
-	{
+	/*{
 		path: "/",
 		name: "Index",
 		component: () => import("@/views/index.vue"),
+	},*/
+	{
+		path: "/",
+		name: "DashboardView",
+		component: () => import("@/views/DashboardView.vue"),
+		meta: { requiresAuth: true },
 	},
 	{
 		path: "/login",
@@ -15,12 +21,6 @@ const routes = [
 		path: "/register",
 		name: "Register",
 		component: () => import("@/views/RegisterView.vue"),
-	},
-	{
-		path: "/dashboard",
-		name: "DashboardView",
-		component: () => import("@/views/DashboardView.vue"),
-		meta: { requiresAuth: true },
 	},
 	{
 		path: "/appointment",

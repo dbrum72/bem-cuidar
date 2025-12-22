@@ -39,25 +39,28 @@ export default {
 				appointment.total_expense &&
 				typeof appointment.total_expense === "string"
 			) {
-				appointment.total_expense = appointment.total_expense.replace(/\./g, ",")
+				appointment.total_expense = appointment.total_expense.replace(
+					/\./g,
+					","
+				);
 			}
 			state.appointment = appointment;
 		},
 	},
 
 	actions: {
-
 		// =====================================================
 		// GET LIST
 		// =====================================================
 		async getAppointments({ commit, dispatch }) {
-
-			const response = await dispatch("request/exec", {
-				callFn: () => appointmentAPI.list(),
-				successMsg: "Lista de agendamentos carregada com sucesso.",
-                errorMsg: "Erro ao carregar a lista de agendamentos."
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => appointmentAPI.list(),
+					successMsg: "Lista de agendamentos carregada com sucesso.",
+					errorMsg: "Erro ao carregar a lista de agendamentos.",
 				},
-                { root: true }
+				{ root: true }
 			);
 
 			if (response?.data) {
@@ -69,15 +72,15 @@ export default {
 		// GET ONE
 		// =====================================================
 		async getAppointment({ commit, dispatch }, id) {
-			const call = () => appointmentAPI.get(id);
-
-			const response = await dispatch("_execRequest", {
-				callFn: call,
-				options: {
-					errorMsg: "Erro ao carregar os dados do registro.",
-					swallow: false,
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => appointmentAPI.get(id),
+					successMsg: "Dados do agendamento carregados com sucesso.",
+					errorMsg: "Erro ao carregar os dados do agendamento.",
 				},
-			});
+				{ root: true }
+			);
 
 			if (response?.data) {
 				commit("setAppointment", response.data.appointment);
@@ -90,13 +93,15 @@ export default {
 		// SAVE or UPDATE
 		// =====================================================
 		async addOrUpdate({ commit, dispatch }, payload) {
-			const call = () => appointmentAPI.save(payload);
-
-			const response = await dispatch("_execRequest", {
-				callFn: call,
-				successMsg: "Agendamento salvo com sucesso.",
-                errorMsg: "Erro ao salvar agendamento."
-			});
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => appointmentAPI.save(payload),
+					successMsg: "Agendamento salvo com sucesso.",
+					errorMsg: "Erro ao salvar agendamento.",
+				},
+				{ root: true }
+			);
 
 			if (response?.data) {
 				commit("addAppointment", response.data.appointment);

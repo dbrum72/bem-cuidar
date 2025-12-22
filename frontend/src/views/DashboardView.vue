@@ -1,6 +1,4 @@
 <template>
-    <HeaderBar />
-    <div class="container-lg mt-4 p-3">
         <h1>Dashboard</h1>
 
         <section>
@@ -46,7 +44,6 @@
             <NotificationList />
         </section>
         -->
-    </div>
 </template>
 
 <script>

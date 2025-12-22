@@ -1,23 +1,19 @@
 <template>
-    <HeaderBar />
+    <div class="d-flex">
+        <h4>Dependente</h4>
+        <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
+    </div>
 
-    <div class="container mt-4">
-        <div class="d-flex">
-            <h4>Dependente</h4>
-            <router-link class="btn btn-sm btn-gray" :to="{ name: 'DependentList' }">Lista</router-link>
-        </div>
-
-        <div class="d-flex justify-content-between m-2 title-sub-area">
-            <div><span>Informações</span></div>
-        </div>
-        <div v-if="dependent" class="dados">
-            <div v-for="field in fields" :key="field.key" class="row mb-3">
-                <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
-                    {{ field.label }}
-                </div>
-                <div class="col-sm-12 col-lg-4">
-                    {{ field.value }}
-                </div>
+    <div class="d-flex justify-content-between m-2 title-sub-area">
+        <div><span>Informações</span></div>
+    </div>
+    <div v-if="dependent" class="dados">
+        <div v-for="field in fields" :key="field.key" class="row mb-3">
+            <div class="col-sm-12 col-lg-4 text-sm-start text-lg-end">
+                {{ field.label }}
+            </div>
+            <div class="col-sm-12 col-lg-4">
+                {{ field.value }}
             </div>
         </div>
     </div>
@@ -26,15 +22,12 @@
 <script>
 import { mapState, mapActions } from "vuex"
 import AbstractMixin from '@/mixins/AbstractMixin'
-import HeaderBar from "@/components/bars/header-bar.vue"
 
 export default {
 
     name: 'DependentShow',
 
     mixins: [AbstractMixin],
-
-    components: { HeaderBar }, 
 
     computed: {
         ...mapState(['errors', 'loader']),
@@ -46,7 +39,7 @@ export default {
 
         fields() {
             if (!this.dependent) return []
-            
+
             return [
                 { key: 'id', label: 'ID', value: this.dependent.id },
                 { key: 'name', label: 'Nome', value: this.dependent.name },

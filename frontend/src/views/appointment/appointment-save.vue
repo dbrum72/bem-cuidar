@@ -1,7 +1,4 @@
 <template>
-    <HeaderBar />
-
-    <div class="container mt-4">
         <h2>Evento de Cuidado Compartilhado</h2>
 
         <div class="col-sm-12 col-lg-8 mb-2">
@@ -84,19 +81,16 @@
                 </div>
             </div>
         </form>
-    </div>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import AppointmentMixin from '@/mixins/AppointmentMixin';
-import HeaderBar from "@/components/bars/header-bar.vue"
 import ParticipantRow from "@/components/selects/ParticipantRow.vue"
 
 export default {
     name: "AppointmentSave",
 
-    components: { HeaderBar, ParticipantRow },
+    components: { ParticipantRow },
 
     data() {
         return {
@@ -140,7 +134,7 @@ export default {
 
     methods: {
 
-        ...mapActions('appointment', ['addOrUpdate']),
+        ...mapActions('appointment', ['addOrUpdate', 'getAppointment']),
         ...mapActions('dependent', ['getDependents']),
         ...mapActions('relationship', ['getTutorsByDependent']),
 
@@ -161,12 +155,12 @@ export default {
 
             try {
                 await this.addOrUpdate(this.form);
-                this.$toast?.success("Evento salvo com sucesso!");
+                //this.$toast?.success("Evento salvo com sucesso!");
                 this.$router.push({ name: "AppointmentList" });
             }
             catch (error) {
                 console.error("Erro ao salvar evento:", error);
-                this.$toast?.error("Erro ao salvar evento.");
+                //this.$toast?.error("Erro ao salvar evento.");
             }
             finally {
                 this.isSaving = false;

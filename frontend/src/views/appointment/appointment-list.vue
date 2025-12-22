@@ -1,8 +1,6 @@
-<template>
+<template> 
 
-    
-
-        <div class="d-flex justify-content-between align-items-center px-3 mt-3">
+        <div class="d-flex justify-content-between align-items-center px-3 mt-3 mb-4">
             <h4>Agendamentos</h4>
             <router-link :to="{ name: 'AppointmentSave' }" class="btn btn-primary btn-sm">Adicionar</router-link>
         </div>
