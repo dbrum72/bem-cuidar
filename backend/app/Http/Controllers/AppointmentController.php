@@ -116,7 +116,7 @@ class AppointmentController extends Controller {
     /************************************************************************************/
     public function show($id) {
 
-        if ($appointment = $this->appointment->with(['participants', 'dependent'])->find($id)) {;
+        if ($appointment = $this->appointment->with(['participants', 'dependent', 'files'])->find($id)) {;
 
             return response()->json(['appointment' => $appointment, 'errors' => []], 200);
         }

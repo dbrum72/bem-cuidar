@@ -121,21 +121,80 @@
 
                 <!-- TAB: Anexos -->
                 <div v-if="activeTab === 'anexos'">
-                    <h5 class="fw-semibold mb-3">Anexos</h5>
 
-                    <p class="text-muted">
-                        Área para upload, documentos e mídia do agendamento.
+                    <h5 class="fw-semibold mb-1">Anexos</h5>
+                    <p class="text-muted mb-4">
+                        Documentos e mídias vinculados a este agendamento.
                     </p>
 
-                    <div class="border rounded-3 p-4 text-center bg-light upload-area" @dragover.prevent
-                        @drop.prevent="handleDrop" @click="triggerSelect">
+                    <!-- Upload area -->
+                    <div class="border rounded-3 p-4 text-center bg-light upload-area mb-4" @dragover.prevent
+                        @drop.prevent="handleDrop" @click="triggerSelect" role="button">
                         <i class="fa-solid fa-cloud-arrow-up fs-1 text-primary"></i>
-                        <p class="mt-3">Arraste arquivos aqui ou clique para enviar</p>
+                        <p class="mt-3 mb-1 fw-medium">
+                            Arraste arquivos aqui ou clique para enviar
+                        </p>
+                        <small class="text-muted">
+                            PDF, imagens ou documentos (múltiplos arquivos)
+                        </small>
 
                         <input type="file" ref="fileInput" class="d-none" multiple @change="handleFileSelect" />
                     </div>
-                </div>
 
+                    <!-- Lista de anexos -->
+                    <div v-if="appointment.files && appointment.files.length">
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4" v-for="file in appointment.files" :key="file.id">
+                                <FileCard :file="file" />
+
+                                <!--<div class="card h-100 shadow-sm border-0">
+                                    <div class="card-body d-flex flex-column">
+
+                                         Header 
+                                        <div class="d-flex align-items-start gap-3 mb-3">
+                                            <div class="icon-file bg-primary-subtle text-primary rounded-3">
+                                                <i class="fa-solid" :class="getFileIcon(file.filename)"></i>
+                                            </div>
+
+                                            <div class="flex-grow-1">
+                                                <div class="fw-semibold text-truncate" :title="file.filename">
+                                                    {{ file.filename }}
+                                                </div>
+                                                <small class="text-muted">
+                                                    Enviado em {{ formatDate(file.created_at) }}
+                                                </small>
+                                            </div>
+                                        </div>
+
+                                        <div class="mt-auto d-flex gap-2">
+                                            <a :href="getFileUrl(file)" target="_blank"
+                                                class="btn btn-sm btn-outline-primary w-100">
+                                                <i class="fa-solid fa-download me-1"></i>
+                                                Download
+                                            </a>
+
+                                            <button class="btn btn-sm btn-outline-danger" @click="removeFile(file.id)"
+                                                title="Remover anexo">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Estado vazio -->
+                    <div v-else class="text-center text-muted py-5">
+                        <i class="fa-regular fa-folder-open fs-1 mb-3"></i>
+                        <p class="mb-0">
+                            Nenhum anexo enviado até o momento.
+                        </p>
+                    </div>
+
+                </div>
 
             </div>
         </div>
@@ -148,9 +207,10 @@
 import { mapActions, mapState } from "vuex"
 import AbstractMixin from "@/mixins/AbstractMixin";
 import MetricCard from '@/components/cards/MetricCard.vue';
+import FileCard from "@/components/cards/FileCard.vue";
 
 export default {
-    components: { MetricCard },
+    components: { MetricCard, FileCard },
 
     mixins: [AbstractMixin],
 
@@ -189,15 +249,6 @@ export default {
     methods: {
         ...mapActions('appointment', ['getAppointment', 'uploadAppointmentFiles']),
 
-        statusClass(status) {
-            return {
-                pendente: 'badge rounded-pill text-bg-warning',
-                aceito: 'badge rounded-pill text-bg-success',
-                recusado: 'badge rounded-pill text-bg-danger',
-                pago: 'badge rounded-pill text-bg-primary',
-            }[status] || 'badge rounded-pill text-bg-secondary';
-        },
-
         triggerSelect() {
             this.$refs.fileInput.click();
         },
@@ -231,17 +282,24 @@ export default {
 
                 await this.getAppointment(this.id);
 
-                this.$toast.success("Arquivos enviados com sucesso.");
             } catch (error) {
                 console.error(error);
-                this.$toast.error("Falha ao enviar os arquivos.");
             } finally {
                 this.loader = false;
                 if (this.$refs.fileInput) {
                     this.$refs.fileInput.value = "";
                 }
             }
-        }
+        },
+
+        statusClass(status) {
+            return {
+                pendente: 'badge rounded-pill text-bg-warning',
+                aceito: 'badge rounded-pill text-bg-success',
+                recusado: 'badge rounded-pill text-bg-danger',
+                pago: 'badge rounded-pill text-bg-primary',
+            }[status] || 'badge rounded-pill text-bg-secondary';
+        },
 
     },
 
@@ -250,3 +308,24 @@ export default {
     }
 };
 </script>
+
+<style scoped>
+.upload-area {
+    cursor: pointer;
+    transition: background-color .2s ease, border-color .2s ease;
+}
+
+.upload-area:hover {
+    background-color: #eef4ff;
+    border-color: #0d6efd;
+}
+
+.icon-file {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+</style>

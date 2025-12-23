@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Appointment extends Model {
@@ -28,5 +27,9 @@ class Appointment extends Model {
         return $this->belongsToMany(User::class, 'appointment_participants', 'appointment_id', 'participant_id')
             ->withPivot('share_percentage', 'payment_status', 'aceito_status')
             ->withTimestamps();
+    }
+
+    public function files() {
+        return $this->hasMany(AppointmentFile::class, 'appointment_id');
     }
 }

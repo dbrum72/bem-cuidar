@@ -115,15 +115,15 @@ export default {
 		// UPLOAD FILES
 		// =====================================================
 		async uploadAppointmentFiles({ dispatch }, payload) {
-			const call = () => appointmentUploadAPI.uploadFiles(payload);
-
-			const response = await dispatch("_execRequest", {
-				callFn: call,
-				options: {
-					errorMsg: "Erro ao salvar os dados.",
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => appointmentUploadAPI.uploadFiles(payload),
+					successMsg: "Anexos salvos com sucesso.",
+					errorMsg: "Erro ao salvar anexos.",
 				},
-			});
-
+				{ root: true }
+			);
 			/*if (response?.data) {
                 commit("addAppointment", response.data.appointment);
                 return response.data.appointment;
