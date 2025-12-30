@@ -11,9 +11,17 @@ export default {
 	}),
 
 	mutations: {
-		SET_FILE_TO_DELETE(state, fileToDelete) {
-			state.fileToDelete = fileToDelete;
+		SET_FILE_TO_DELETE(state, file) {
+			state.fileToDelete = file;
 		},
+
+		REMOVE_APPOINTMENT_FILE(state, id) {
+			if (!state.appointment?.files) return;
+
+			state.appointment.files = state.appointment.files.filter(
+				file => file.id !== id
+			);
+		}
 	},
 
 	actions: {
@@ -43,7 +51,7 @@ export default {
 		// =====================================================
 		// DESTROY FILE
 		// =====================================================
-		async destroyFile({ dispatch }, id) {
+		async removeFile({ dispatch }, id) {
 			const response = await dispatch(
 				"request/exec",
 				{
@@ -56,11 +64,7 @@ export default {
 
 			commit('SET_FILE_TO_DELETE', null);
 
-			await dispatch(
-				'appointment/getAppointment',
-				id,
-				{ root: true }
-			);
+			commit("REMOVE_APPOINTMENT_FILE", id);
 
 			return !!response;
 		},

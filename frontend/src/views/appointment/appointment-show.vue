@@ -249,7 +249,7 @@ export default {
 
     methods: {
         ...mapActions('appointment', ['getAppointment']),
-        ...mapActions('file', ['uploadFile', 'destroyFile']),
+        ...mapActions('file', ['uploadFile', 'removeFile']),
 
         triggerSelect() {
             this.$refs.fileInput.click();
@@ -320,8 +320,7 @@ export default {
             try {
                 this.loader = true;
 
-                await this.destroyFile(this.fileToDelete.id);
-                await this.getAppointment(this.id);
+                await this.removeFile(this.fileToDelete.id);
 
             } finally {
                 this.loader = false;
