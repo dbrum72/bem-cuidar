@@ -3,167 +3,164 @@ import { createResource } from "@/services/resource.js";
 const relationshipAPI = createResource("relationship");
 
 export default {
+	namespaced: true,
 
-    namespaced: true,
+	state: {
+		relationship: {},
+		relationships: [],
+		tutorsByDependent: [],
+	},
 
-    state: {
-        relationship: {},
-        relationships: [],
-        tutorsByDependent: []
-    },
+	mutations: {
+		SET_RELATIONSHIPS(state, relationships) {
+			state.relationships = relationships;
+		},
 
-    mutations: {
+		SET_RELATIONSHIP(state, relationship) {
+			state.relationship = relationship;
+		},
 
-        setRelationships(state, relationships) {
-            state.relationships = relationships;
-        },
+		ADD_RELATIONSHIP(state, relationship) {
+			if (!relationship || !relationship.id) return;
+			const index = state.relationships.findIndex(
+				(a) => a.id === relationship.id
+			);
+			if (index !== -1)
+				state.relationships.splice(index, 1, relationship);
+			else state.relationships.push(relationship);
+		},
 
-        setRelationship(state, relationship) {
-            state.relationship = relationship;
-        },
+		REMOVE_RELATIONSHIP(state, relationshipId) {
+			state.relationships = state.relationships.filter(
+				(r) => r.id !== relationshipId
+			);
 
-        addRelationship(state, relationship) {
-            if (!relationship || !relationship.id) return;
-            const index = state.relationships.findIndex(a => a.id === relationship.id);
-            if (index !== -1) state.relationships.splice(index, 1, relationship);
-            else state.relationships.push(relationship);
-        },
+			if (state.relationship?.id === relationshipId) {
+				state.relationship = {};
+			}
+		},
 
-        setTutorsByDependent(state, tutorsByDependent) {
-            state.tutorsByDependent = tutorsByDependent;
-        }
-    },
+		SET_TUTOR_BY_DEPENDENT(state, tutorsByDependent) {
+			state.tutorsByDependent = tutorsByDependent;
+		},
+	},
 
-    actions: {
+	actions: {
+		// =====================================================
+		// GET LIST
+		// =====================================================
+		async getRelationships({ commit, dispatch }) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => relationshipAPI.list({ skipLoader: true }),
+					successMsg: (response) =>
+						response?.data?.relationships?.length
+							? "Relacionamentos carregados com sucesso."
+							: "Nenhum relacionamento cadastrado.",
+					errorMsg: "Erro ao carregar relacionamentos.",
+				},
+				{ root: true }
+			);
 
-        async _execRequest({ rootGetters }, { callFn, successMsg = null, errorMsg = null, swallow = true }) {
+			if (response?.data) {
+				commit("SET_RELATIONSHIPS", response.data.relationships);
+			}
+		},
 
-            const handleRequest = rootGetters["handleRequest"];
+		// =====================================================
+		// GET ONE
+		// =====================================================
+		async getRelationship({ commit, dispatch }, id) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => relationshipAPI.get(id, { skipLoader: true }),
+					successMsg: "Dados do relacionamento carregados com sucesso.",
+					errorMsg: "Erro ao carregar os dados do relacionamento.",
+				},
+				{ root: true }
+			);
 
-            if (typeof handleRequest === "function") {
-                try {
-                    return await handleRequest(callFn, successMsg, errorMsg, swallow);
-                } catch {
-                    return null;
-                }
-            }
+			if (response?.data) {
+				commit("SET_RELATIONSHIP", response.data.relationship);
+			}
+		},
 
-            try {
-                const res = await callFn();
-                if (successMsg && window?.$toast) window.$toast.success(successMsg);
-                return res;
-            } catch (err) {
-                if (errorMsg && window?.$toast) window.$toast.error(errorMsg);
-                console.error(errorMsg ?? "Erro na requisição", err);
-                return null;
-            }
-        },
+		// =====================================================
+		// SAVE or UPDATE
+		// =====================================================
+		async saveOrUpdate({ commit, dispatch }, payload) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => relationshipAPI.save(payload, { skipLoader: true }),
+					successMsg: "Dados do relacionamento salvos com sucesso.",
+					errorMsg: "Erro ao salvar dados do relacionamento.",
+				},
+				{ root: true }
+			);
 
+			if (response?.data) {
+				commit("ADD_RELATIONSHIP", response.data.relationship);
+				return response.data.relationship;
+			}
 
-        // =====================================================
-        // GET LIST
-        // =====================================================
-        async getRelationships({ commit, dispatch }, { filter, extendedFilter, relationship, sort }) {
-            const call = () => relationshipAPI.list({ filter, extendedFilter, relationship, sort });
+			return null;
+		},
 
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao carregar a lista de relacionamentos.",
-                    swallow: false
-                }
-            });
+		// =====================================================
+		// DESTROY
+		// =====================================================
+		async destroyRelationship({ commit, dispatch }, id) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => relationshipAPI.remove(id, { skipLoader: true }),
+					successMsg: "Dados do relacionamento excluídos com sucesso.",
+					errorMsg: "Erro ao excluir dados do relacionamento.",
+				},
+				{ root: true }
+			);
 
-            if (response?.data) {
-                commit("setRelationships", response.data.relationships);
-            }
-        },
+			if (response) {
+				commit("REMOVE_RELATIONSHIP", id);
+				return true;
+			}
 
-        // =====================================================
-        // GET ONE
-        // =====================================================
-        async getRelationship({ commit, dispatch }, id) {
-            const call = () => relationshipAPI.get(id);
+			return !!response;
+		},
 
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao carregar os dados do registro.",
-                    swallow: false
-                }
-            });
+		// =====================================================
+		// GET TUTORS BY DEPENDENT
+		// =====================================================
+		async getTutorsByDependent({ commit, dispatch }, dependentId) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () =>
+						relationshipAPI.get(`getTutors/${dependentId}`, {
+							skipLoader: true,
+						}),
+					successMsg: "Tutores carregados com sucesso.",
+					errorMsg: "Erro ao carregar tutores.",
+				},
+				{ root: true }
+			);
 
-            if (response?.data) {
-                commit("setRelationship", response.data.relationship);
-            }
+			if (response?.data) {
+				commit(
+					"SET_TUTOR_BY_DEPENDENT",
+					response.data.tutorsByDependent
+				);
+			}
+		},
 
-            return response?.data?.relationship ?? null;
-        },
-
-        // =====================================================
-        // SAVE or UPDATE
-        // =====================================================
-        async saveOrUpdate({ commit, dispatch }, payload) {
-            
-            const call = () => relationshipAPI.save(payload);
-
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao salvar os dados."
-                }
-            });
-
-            if (response?.data) {
-                commit("addRelationship", response.data.relationship);
-                return response.data.relationship;
-            }
-
-            return null;
-        },
-
-        // =====================================================
-        // DESTROY
-        // =====================================================
-        async destroyRelationship({ dispatch }, id) {
-            const call = () => relationshipAPI.remove(id);
-
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    successMsg: "Registro excluído com sucesso.",
-                    errorMsg: "Erro ao excluir registro."
-                }
-            });
-
-            return !!response;
-        },
-
-        // =====================================================
-        // GET TUTORS BY DEPENDENT
-        // =====================================================
-        async getTutorsByDependent({ commit, dispatch }, dependentId) {
-
-            const call = () => relationshipAPI.get(`getTutors/${dependentId}`);
-
-            const response = await dispatch("_execRequest", {
-                callFn: call,
-                options: {
-                    errorMsg: "Erro ao carregar a lista de relacionamentos.",
-                    swallow: false
-                }
-            });
-
-            if (response?.data) {
-                commit("setTutorsByDependent", response.data.tutorsByDependent);
-            }
-        },
-
-        // =====================================================
-        // GET FILE (repassado como no mixin)
-        // =====================================================
-        getFile(_, file) {
-            return file; // ou service específico
-        },
-    }
-}
+		// =====================================================
+		// GET FILE
+		// =====================================================
+		getFile(_, file) {
+			return file; // ou service específico
+		},
+	},
+};

@@ -1,7 +1,8 @@
 <template>
     <div>
-        <HeaderBar />
         <GlobalLoader />
+
+        <HeaderBar />
         
         <div class="container mt-4">
             <GlobalAlert />

@@ -42,12 +42,11 @@
                         </li>
 
                         <li role="none">
-                            <router-link class="menu-item danger"
-                                :to="{ name: 'DependentDelete', params: { id: dependent.id } }" role="menuitem"
-                                @click="close">
+                            <button type="button" class="menu-item danger border-0 w-100 text-start" role="menuitem"
+                                @click="openRemoveModal">
                                 <i class="fa-solid fa-trash-can me-2" aria-hidden="true"></i>
-                                Excluir
-                            </router-link>
+                                Excluir vínculo
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -66,10 +65,42 @@
                 {{ formatDate(dependent.birth_date) }}
             </p>
         </div>
+
+        <!-- Modal de confirmação -->
+        <div class="modal fade" :id="`removeRelationshipModal-${dependent.id}`" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="mb-0">
+                            Tem certeza que deseja remover o relacionamento de
+                            <strong>{{ dependent.name }}</strong>?
+                        </p>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+
+                        <button type="button" class="btn btn-danger" @click="confirmRemoveRelationship">
+                            Excluir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </template>
 
 <script>
+import { Modal } from "bootstrap";
+import { mapActions } from "vuex";
 import AbstractMixin from "@/mixins/AbstractMixin";
 
 export default {
@@ -84,6 +115,7 @@ export default {
         return {
             open: false,
             fallbackSet: false,
+            modalInstance: null,
         };
     },
     computed: {
@@ -103,15 +135,19 @@ export default {
         document.removeEventListener("keydown", this.onGlobalKey);
     },
     methods: {
+        ...mapActions("relationship", ["destroyRelationship"]),
+
         toggle() {
             this.open = !this.open;
             if (this.open) this.$nextTick(() => this.focusFirstItem());
         },
+
         close() {
             this.open = false;
             // devolve foco ao botão que abriu
             this.$nextTick(() => this.$refs.menuBtn && this.$refs.menuBtn.focus());
         },
+
         onOutsideClick(e) {
             const panel = this.$refs.menuPanel;
             const btn = this.$refs.menuBtn;
@@ -119,12 +155,14 @@ export default {
             if (panel.contains(e.target) || btn.contains(e.target)) return;
             if (this.open) this.close();
         },
+
         onGlobalKey(e) {
             // fechar com ESC em qualquer contexto (redundante com @keydown.esc no painel)
             if (e.key === "Escape" || e.key === "Esc") {
                 if (this.open) this.close();
             }
         },
+
         focusFirstItem() {
             // foca o primeiro item do menu (se houver)
             this.$nextTick(() => {
@@ -134,6 +172,7 @@ export default {
                 if (first) first.focus();
             });
         },
+
         onTab(e) {
             // se foco sai do painel, fechamos (comportamento mobile-friendly)
             const panel = this.$refs.menuPanel;
@@ -146,10 +185,35 @@ export default {
                 }
             });
         },
+
         onImgError(e) {
             if (!this.fallbackSet) {
                 e.target.src = "/public/img/default-dependent.png";
                 this.fallbackSet = true;
+            }
+        },
+
+        openRemoveModal() {
+            this.close(); // fecha o menu antes
+            const id = `removeRelationshipModal-${this.dependent.id}`;
+            const el = document.getElementById(id);
+
+            if (!this.modalInstance && el) {
+                this.modalInstance = new Modal(el);
+            }
+
+            this.modalInstance?.show();
+        },
+
+        async confirmRemoveRelationship() {
+            if (!this.dependent?.relationship_id) return;
+
+            const success = await this.destroyRelationship(
+                this.dependent.relationship_id
+            );
+
+            if (success) {
+                this.modalInstance?.hide();
             }
         },
     },

@@ -8,8 +8,9 @@ import transactions from './modules/transactions';
 import notifications from './modules/notifications';
 import tutorInvite from './modules/tutorInvite';
 import file from './modules/file';
+import loader from "./modules/loader";
 import alerts from './modules/alerts';
-import request from "./helpers/request";
+import request from "../helpers/request";
 
 export default createStore({
     modules: {
@@ -22,6 +23,7 @@ export default createStore({
         notifications,
         tutorInvite,
         file,
+        loader,
         alerts,
         request
     }

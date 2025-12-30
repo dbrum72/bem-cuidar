@@ -144,7 +144,7 @@
                     <!-- Lista de anexos -->
                     <div v-if="appointment.files && appointment.files.length">
 
-                        <div class="row g-3">
+                        <div class="row gap-3">
                             <FileCard class="col-12 col-md-6 col-lg-4" v-for="file in appointment.files" :key="file.id"
                                 :file="file" @request-remove="openDeleteModal" />
                         </div>
@@ -270,8 +270,6 @@ export default {
         async upload(files) {
 
             try {
-                this.loader = true;
-
                 const formData = new FormData();
 
                 Array.from(files).forEach(file => {
@@ -287,7 +285,7 @@ export default {
             } catch (error) {
                 console.error(error);
             } finally {
-                this.loader = false;
+                
                 if (this.$refs.fileInput) {
                     this.$refs.fileInput.value = "";
                 }
@@ -318,8 +316,6 @@ export default {
             if (!this.fileToDelete) return;
 
             try {
-                this.loader = true;
-
                 const removed = await this.removeFile(this.fileToDelete.id);
 
                 if (removed) {
@@ -327,7 +323,7 @@ export default {
                 }
 
             } finally {
-                this.loader = false;
+                
                 this.closeModal();
             }
         },

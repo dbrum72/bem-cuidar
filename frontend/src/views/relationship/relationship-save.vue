@@ -1,11 +1,9 @@
 <template>
-    <HeaderBar />
 
     <div class="container mt-4">
         <h4 class="text-2xl font-semibold mb-6">
             {{ isEditing ? "Editar Relacionamento" : "Novo Relacionamento" }}
         </h4>
-        <h6>{{  }}</h6>
 
         <form @submit.prevent="handleSubmit" class="space-y-4">
 

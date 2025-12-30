@@ -11,7 +11,7 @@ export default {
 	},
 
 	mutations: {
-		addAppointment(state, appointment) {
+		ADD_APPOINTMENT(state, appointment) {
 			if (!appointment || !appointment.id) return;
 			const index = state.appointments.findIndex(
 				(a) => a.id === appointment.id
@@ -20,7 +20,7 @@ export default {
 			else state.appointments.push(appointment);
 		},
 
-		setAppointments(state, appointments) {
+		SET_APPOINTMENTS(state, appointments) {
 			state.appointments = appointments.map((app) => {
 				if (
 					app.total_expense &&
@@ -33,7 +33,7 @@ export default {
 			state.appointments = appointments;
 		},
 
-		setAppointment(state, appointment) {
+		SET_APPOINTMENT(state, appointment) {
 			if (
 				appointment.total_expense &&
 				typeof appointment.total_expense === "string"
@@ -63,7 +63,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => appointmentAPI.list(),
+					callFn: () => appointmentAPI.list({ skipLoader: true }),
 					successMsg: (response) =>
 						response?.data?.appointments?.length
 							? "Agendamentos carregados com sucesso."
@@ -74,7 +74,7 @@ export default {
 			);
 
 			if (response?.data) {
-				commit("setAppointments", response.data.appointments);
+				commit("SET_APPOINTMENTS", response.data.appointments);
 			}
 		},
 
@@ -85,7 +85,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => appointmentAPI.get(id),
+					callFn: () => appointmentAPI.get(id, { skipLoader: true }),
 					successMsg: "Dados do agendamento carregados com sucesso.",
 					errorMsg: "Erro ao carregar os dados do agendamento.",
 				},
@@ -93,7 +93,7 @@ export default {
 			);
 
 			if (response?.data) {
-				commit("setAppointment", response.data.appointment);
+				commit("SET_APPOINTMENT", response.data.appointment);
 			}
 
 			return response?.data?.appointment ?? null;
@@ -106,7 +106,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => appointmentAPI.save(payload),
+					callFn: () => appointmentAPI.save(payload, { skipLoader: true }),
 					successMsg: "Agendamento salvo com sucesso.",
 					errorMsg: "Erro ao salvar agendamento.",
 				},
@@ -114,7 +114,7 @@ export default {
 			);
 
 			if (response?.data) {
-				commit("addAppointment", response.data.appointment);
+				commit("ADD_APPOINTMENT", response.data.appointment);
 				return response.data.appointment;
 			}
 

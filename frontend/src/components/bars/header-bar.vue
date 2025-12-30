@@ -5,36 +5,41 @@
             <router-link :to="{ name: 'DependentList' }">Dependentes</router-link>
             <router-link :to="{ name: 'AppointmentList' }">Agendamentos</router-link>
 
-            <button @click="performLogout()" class="logout-btn">Sair</button>
+            <button @click="performLogout" class="logout-btn">
+                Sair
+            </button>
         </nav>
 
         <div v-else class="login-container">
-            <router-link to="/login" class="login-btn">Login</router-link>
+            <router-link to="/login" class="login-btn">
+                Login
+            </router-link>
         </div>
     </header>
 </template>
 
 <script>
-import AuthMixin from '@/mixins/AuthMixin'
+import { mapState, mapActions } from "vuex";
 
 export default {
-
     name: "HeaderBar",
 
-    mixins: [AuthMixin],
-
     computed: {
+        ...mapState("auth", ["token"]),
+
         isAuthenticated() {
-            return !!this.getAuthToken();
-        }
+            return !!this.token;
+        },
     },
 
     methods: {
+        ...mapActions("auth", ["logout"]),
+
         performLogout() {
-            this.logoutUser();
-        }
-    }
-}
+            this.logout();
+        },
+    },
+};
 </script>
 
 <style scoped>

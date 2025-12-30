@@ -1,4 +1,9 @@
-// src/store/modules/auth.js
+import { createResource } from "@/services/resource.js";
+import router from "@/router";
+
+const authAPI = createResource("auth");
+const userAPI = createResource("auth/login");
+
 export default {
 	namespaced: true,
 
@@ -18,48 +23,83 @@ export default {
 	mutations: {
 		setToken(state, token) {
 			state.token = token;
-			if (token) localStorage.setItem("token", token);
-			else localStorage.removeItem("token");
+			token
+				? localStorage.setItem("token", token)
+				: localStorage.removeItem("token");
 		},
 
 		setUser(state, user) {
 			state.user = user;
-			if (user) localStorage.setItem("user", JSON.stringify(user));
-			else localStorage.removeItem("user");
+			user
+				? localStorage.setItem("user", JSON.stringify(user))
+				: localStorage.removeItem("user");
 		},
 
 		setRoles(state, roles) {
 			state.roles = roles || [];
-			if (roles) localStorage.setItem("roles", JSON.stringify(roles));
-			else localStorage.removeItem("roles");
+			roles
+				? localStorage.setItem("roles", JSON.stringify(roles))
+				: localStorage.removeItem("roles");
 		},
 
 		setPermissions(state, permissions) {
 			state.permissions = permissions || [];
-			if (permissions)
-				localStorage.setItem(
-					"permissions",
-					JSON.stringify(permissions)
-				);
-			else localStorage.removeItem("permissions");
+			permissions
+				? localStorage.setItem(
+						"permissions",
+						JSON.stringify(permissions)
+				  )
+				: localStorage.removeItem("permissions");
 		},
 
-		logout(state) {
+		clearSession(state) {
 			state.token = null;
 			state.user = null;
 			state.roles = [];
 			state.permissions = [];
-			localStorage.removeItem("token");
-			localStorage.removeItem("user");
-			localStorage.removeItem("roles");
-			localStorage.removeItem("permissions");
+			localStorage.clear();
 		},
 	},
 
-	getters: {
-		hasRole: (state) => (role) => state.roles.includes(role),
-		hasAnyRole: (state) => (roles) =>
-			roles.some((r) => state.roles.includes(r)),
-		hasPermission: (state) => (perm) => state.permissions.includes(perm),
+	actions: {
+		async login({ dispatch, commit }, payload) {
+			const response = await dispatch(
+				"request/exec",
+				{
+					callFn: () => userAPI.post(payload),
+					successMsg: "Login realizado com sucesso.",
+					errorMsg: "Erro ao realizar login.",
+				},
+				{ root: true }
+			);
+
+			if (response?.data) {
+				commit("setToken", response.data.token);
+				commit("setUser", response.data.user);
+				commit("setRoles", response.data.roles ?? []);
+				commit("setPermissions", response.data.permissions ?? []);
+
+				router.push({ name: "DashboardView" });
+			}
+
+			return response;
+		},
+
+		async logout({ dispatch, commit }) {
+			await dispatch(
+				"request/exec",
+				{
+					callFn: () => authAPI.post("logout"),
+					successMsg: "Sessão encerrada.",
+					errorMsg:
+						"Falha ao encerrar sessão no servidor. Logout local aplicado.",
+					swallow: true, // importante: nunca bloquear logout
+				},
+				{ root: true }
+			);
+
+			commit("clearSession");
+			router.push({ name: "Login" });
+		},
 	},
 };

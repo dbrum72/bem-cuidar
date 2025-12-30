@@ -25,7 +25,7 @@ export default {
     position: fixed;
     inset: 0;
     background-color: rgba(255, 255, 255, 0.7);
-    z-index: 2000;
+    z-index: 9999;
 
     display: flex;
     align-items: center;

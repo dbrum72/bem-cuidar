@@ -23,13 +23,14 @@ export function buildQuery(baseUrl, { filter, extendedFilter, relationship, sort
     return qs ? `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${qs}` : baseUrl;
 }
 
-export const apiGet = (url) => http.get(url);
+export const apiGet = (url) => http.get(url, { skipLoader: false });
 
-export const apiRequest = ({ method = "get", url, data = null, headers = {} }) => {
+export const apiRequest = ({ method = "get", url, data = null, headers = {}, skipLoader = false }) => {
     const cfg = {
         method,
         url,
-        headers
+        headers,
+        skipLoader
     };
 
     if (data !== null) cfg.data = data;
@@ -37,4 +38,4 @@ export const apiRequest = ({ method = "get", url, data = null, headers = {} }) =
     return http(cfg);
 };
 
-export const apiDelete = (url) => http.delete(url);
+export const apiDelete = (url) => http.delete(url, { skipLoader: false });

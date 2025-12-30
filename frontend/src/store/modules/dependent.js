@@ -37,7 +37,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.list(),
+					callFn: () => dependentAPI.list({ skipLoader: true }),
 					successMsg: (response) =>
 						response?.data?.dependents?.length
 							? "Dependentes carregados com sucesso."
@@ -60,9 +60,9 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.get(id),
+					callFn: () => dependentAPI.get(id, { skipLoader: true }),
 					successMsg: "Dados do dependente carregados com sucesso.",
-					errorMsg: "Erro ao carregar os dados do dependente.",
+					errorMsg: "Erro ao carregar os dados do dependente."
 				},
 				{ root: true }
 			);
@@ -79,7 +79,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.save(payload),
+					callFn: () => dependentAPI.save(payload, { skipLoader: true }),
 					successMsg: "Dados salvos com sucesso.",
 					errorMsg: "Erro ao salvar dados.",
 				},
@@ -101,7 +101,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.remove(id),
+					callFn: () => dependentAPI.remove(id, { skipLoader: true }),
 					successMsg: "Dados excluídos com sucesso.",
 					errorMsg: "Erro ao excluir dados.",
 				},

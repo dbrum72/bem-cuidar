@@ -5,14 +5,14 @@ const appointmentsAPI = createResource('appointment');
 
 export default {
   methods: {
-    ...mapMutations('appointment', ['setAppointments', 'setAppointment', 'addAppointment']),
+    ...mapMutations('appointment', ['SET_APPOINTMENTS', 'SET_APPOINTMENT', 'ADD_APPOINTMENT']),
 
     async getAppointments(filter, extendedFilter, relationship, sort) {
       const call = () => appointmentsAPI.list({ filter, extendedFilter, relationship, sort });
       const response = await this._execRequest(call, {
         errorMsg: 'Erro ao carregar a lista de agendamentos.',
       });
-      if (response?.data) this.setAppointments(response.data.appointments);
+      if (response?.data) this.SET_APPOINTMENTS(response.data.appointments);
     },
 
     async getAppointment(id) {
@@ -20,7 +20,7 @@ export default {
       const response = await this._execRequest(call, {
         errorMsg: 'Erro ao carregar o agendamento.',
       });
-      if (response?.data) this.setAppointment(response.data.appointment);
+      if (response?.data) this.SET_APPOINTMENT(response.data.appointment);
     },
 
     async storeAppointment(payload) {
@@ -29,7 +29,7 @@ export default {
         errorMsg: 'Erro ao salvar o agendamento.',
       });
       if (response?.data) {
-        this.addAppointment(response.data.appointment);
+        this.ADD_APPOINTMENT(response.data.appointment);
         this.resetAppointmentView();
       }
     },
@@ -40,7 +40,7 @@ export default {
         errorMsg: 'Erro ao atualizar o agendamento.',
       });
       if (response?.data) {
-        this.addAppointment(response.data.appointment);
+        this.ADD_APPOINTMENT(response.data.appointment);
         this.resetAppointmentView(response.data.appointment.id);
       }
     },

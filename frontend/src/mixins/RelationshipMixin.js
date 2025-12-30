@@ -35,7 +35,7 @@ export default {
 
 			if (response?.data) {
 				this.$store.commit(
-					"relationship/setRelationship",
+					"relationship/SET_RELATIONSHIP",
 					response.data.relationship
 				);
 			}

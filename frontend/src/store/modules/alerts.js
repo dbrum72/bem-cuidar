@@ -12,7 +12,7 @@ export default {
                 type: alert.type || "info",
                 message: alert.message,
                 icon: alert.icon || { name: "bi-info-circle", color: "blue" },
-                timeout: alert.timeout ?? 5000
+                timeout: alert.timeout ?? 4000
             });
         },
 
