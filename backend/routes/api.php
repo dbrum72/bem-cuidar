@@ -43,7 +43,7 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     Route::apiResource('appointment/file', AppointmentFileController::class)->only(['store', 'destroy']);
 
     // Relacionamento
-    Route::apiResource('relationship', RelationshipController::class)->only(['store', 'update', 'show']);
+    Route::apiResource('relationship', RelationshipController::class)->only(['store', 'update', 'show', 'destroy']);
     Route::get('relationship/getTutors/{dependentId}', [RelationshipController::class, 'getTutorsByDependent']);
     
     // Transações financeiras
