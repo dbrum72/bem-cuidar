@@ -1,12 +1,13 @@
 <template>
     <div>
         <HeaderBar />
-
+        <GlobalLoader />
+        
         <div class="container mt-4">
             <GlobalAlert />
             <router-view />
         </div>
-        
+
     </div>
 </template>
 

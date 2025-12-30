@@ -2,10 +2,10 @@ export default {
 	namespaced: true,
 
 	actions: {
-		async exec(
-			{ dispatch },
-			{ callFn, successMsg = null, errorMsg = null, swallow = true }
-		) {
+		async exec({ dispatch }, { callFn, successMsg = null, errorMsg = null, swallow = true }) {
+
+			dispatch("loader/START_LOADING", null, { root: true });
+
 			try {
 				const response = await callFn();
 
@@ -56,7 +56,10 @@ export default {
 				if (!swallow) throw error;
 
 				return null;
-			}
+
+			} finally {
+				dispatch("loader/STOP_LOADING", null, { root: true });
+            }
 		},
 	},
 };

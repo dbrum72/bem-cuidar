@@ -45,6 +45,14 @@ export default {
 			}
 			state.appointment = appointment;
 		},
+
+		REMOVE_APPOINTMENT_FILE(state, fileId) {
+			if (!state.appointment?.files) return;
+
+			state.appointment.files = state.appointment.files.filter(
+				(file) => file.id !== fileId
+			);
+		},
 	},
 
 	actions: {
@@ -112,7 +120,5 @@ export default {
 
 			return null;
 		},
-
-
 	},
 };

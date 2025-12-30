@@ -320,7 +320,11 @@ export default {
             try {
                 this.loader = true;
 
-                await this.removeFile(this.fileToDelete.id);
+                const removed = await this.removeFile(this.fileToDelete.id);
+
+                if (removed) {
+                    this.$store.commit("appointment/REMOVE_APPOINTMENT_FILE", this.fileToDelete.id);
+                }
 
             } finally {
                 this.loader = false;
