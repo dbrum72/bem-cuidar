@@ -37,7 +37,7 @@
 
                         <td class="text-end">
                             <router-link :to="{ name: 'AppointmentShow', params: { id: item.id } }"
-                                class="btn btn-outline-secondary btn-sm me-2">
+                                class="btn btn-outline-success btn-sm me-2">
                                 Visualizar
                             </router-link>
 

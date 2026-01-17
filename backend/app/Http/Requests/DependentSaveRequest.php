@@ -33,12 +33,12 @@ class DependentSaveRequest extends FormRequest {
         $dependentId = $this->route('dependent');        
 
         $rules = [
-            'name' => ['required','string','min:3','max:255',Rule::unique('dependents', 'name')->ignore($dependentId)],
+            'name' => ['required','string','min:3','max:255'],
             'birth_date' => ['required','date'],
             'document_type' => ['required',Rule::in(['RG', 'CPF', 'outro'])],
-            'document_number' => ['required','string'],
+            'document_number' => ['required','string',Rule::unique('dependents', 'document_number')->ignore($dependentId)],
             'notes' => ['nullable','string'],
-            'created_by' => ['required','exists:users,id']
+            'created_by' => ['required','exists:users,id']        
         ];
 
         if($this->method() === 'PATCH') {

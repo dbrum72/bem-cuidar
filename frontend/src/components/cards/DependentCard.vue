@@ -77,17 +77,17 @@
 
                     <div class="modal-body">
                         <p class="mb-0">
-                            Tem certeza que deseja remover o relacionamento de
+                            Tem certeza que deseja remover o vínculo de
                             <strong>{{ dependent.name }}</strong>?
                         </p>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             Cancelar
                         </button>
 
-                        <button type="button" class="btn btn-danger" @click="confirmRemoveRelationship">
+                        <button type="button" class="btn btn-outline-danger" @click="confirmRemoveRelationship">
                             Excluir
                         </button>
                     </div>
