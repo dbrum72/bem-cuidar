@@ -17,6 +17,8 @@
     <p>Para aceitar o convite, clique no link abaixo:</p>
     <p><a href="{{ $acceptUrl }}">{{ $acceptUrl }}</a></p>
 
+    <p>Caso ainda não possua cadastro, você será direcionado para criá-lo.</p>
+
     <p>Se preferir, copie e cole o link em seu navegador.</p>
 
     <p>Se você não esperava esse e-mail, desconsidere.</p>

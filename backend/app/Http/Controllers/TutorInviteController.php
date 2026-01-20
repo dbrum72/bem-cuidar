@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TutorInvite;
 use App\Models\User;
 use App\Mail\TutorInviteMail;
+use App\Http\Requests\TutorInviteCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ class TutorInviteController extends Controller {
         $this->middleware('jwt.auth', ['except' => ['accept']]);
     }
 
+    /************************************************************************************/
     public function index(Request $request) {
 
         $user = auth()->user();
@@ -27,43 +29,29 @@ class TutorInviteController extends Controller {
         return response()->json(['invites' => $invites], 200);
     }
 
-    public function store(Request $request)  {
+    /************************************************************************************/
+    public function store(TutorInviteCreateRequest $request)  {
 
         $user = auth()->user();
 
-        $data = $request->validate([
-            'tutor_email' => 'required|email',
-            'message' => 'nullable|string|max:1000'
-        ]);
+        $existingUser = User::where('email', $request->tutor_email)->first();
 
-        $tutor = User::where('email', $data['tutor_email'])->first();
-
-        if (!$tutor) {
-            return response()->json(['message' => 'Usuário (tutor) com esse e-mail não foi encontrado.'], 404);
-        }
-
-        if ($tutor->id === $user->id) {
+        if ($existingUser->id === $user->id) {
             return response()->json(['message' => 'Você não pode convidar a si mesmo.'], 422);
-        }
-
-        $existing = TutorInvite::where('inviter_id', $user->id)
-            ->where('tutor_id', $tutor->id)
-            ->where('status', 'pendente')
-            ->first();
-
-        if ($existing) {
-            return response()->json(['message' => 'Já existe um convite pendente para esse tutor.'], 409);
         }
 
         DB::beginTransaction();
         try {
             $invite = TutorInvite::create([
-                'inviter_id' => $user->id,
-                'tutor_id' => $tutor->id,
-                'tutor_email' => $tutor->email,
-            ]);
+            'inviter_id'  => $inviter->id,
+            'tutor_id'    => $existingUser?->id,
+            'tutor_email' => $request->tutor_email,
+            'message'     => $request->message || null,
+            'token'       => Str::random(64),
+        ]);
 
-            Mail::to($tutor->email)->send(new TutorInviteMail($invite, $user, $data['message'] ?? null));
+            Mail::to($invite->tutor_email)
+            ->send(new TutorInviteMail($invite));
 
             DB::commit();
 
@@ -79,6 +67,7 @@ class TutorInviteController extends Controller {
         }
     }
 
+    /************************************************************************************/
     public function accept($token) {
 
         $invite = TutorInvite::where('token', $token)->first();
@@ -114,54 +103,25 @@ class TutorInviteController extends Controller {
             return redirect(config('app.frontend_url') . '/invite/error');
         }
     }
-
     
-    public function resend(Request $request, $id) {
+    /************************************************************************************/
+    public function resend(TutorInvite $invite) {
 
-        $user = auth()->user();
+        abort_if($invite->status !== 'pendente', 422);
 
-        $invite = TutorInvite::where('id', $id)->where('inviter_id', $user->id)->first();
+        Mail::to($invite->tutor_email)
+            ->send(new TutorInviteMail($invite));
 
-        if (!$invite) {
-            return response()->json(['message' => 'Convite não encontrado.'], 404);
-        }
-
-        if ($invite->status !== 'pendente') {
-            return response()->json(['message' => 'Apenas convites pendentes podem ser reenviados.'], 422);
-        }
-
-        try {
-            Mail::to($invite->tutor_email)->send(new TutorInviteMail($invite, $user));
-            return response()->json(['message' => 'Convite reenviado com sucesso.'], 200);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao reenviar convite: '.$e->getMessage());
-            return response()->json(['message' => 'Erro ao reenviar convite.'], 500);
-        }
+        return response()->noContent();
     }
 
-    
-    public function destroy(Request $request, $id) {
+    /************************************************************************************/
+    public function destroy(TutorInvite $invite) {
 
-        $user = auth()->user();
+        abort_if($invite->status !== 'pendente', 422);
 
-        $invite = TutorInvite::where('id', $id)
-            ->where('inviter_id', $user->id)
-            ->first();
+        $invite->update(['status' => 'cancelado']);
 
-        if (!$invite) {
-            return response()->json(['message' => 'Convite não encontrado.'], 404);
-        }
-
-        if ($invite->status === 'aceito') {
-            return response()->json(['message' => 'Convites já aceitos não podem ser excluídos.'], 422);
-        }
-
-        try {
-            $invite->delete();
-            return response()->json(['message' => 'Convite removido com sucesso.'], 200);
-        } catch (\Exception $e) {
-            \Log::error('Erro ao excluir convite: '.$e->getMessage());
-            return response()->json(['message' => 'Erro ao excluir convite.'], 500);
-        }
+        return response()->noContent();
     }
 }

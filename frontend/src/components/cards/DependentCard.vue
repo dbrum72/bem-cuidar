@@ -105,12 +105,15 @@ import AbstractMixin from "@/mixins/AbstractMixin";
 
 export default {
     name: "DependentCard",
+
     mixins: [AbstractMixin],
+
     props: {
         dependent: { type: Object, required: true },
         baseUrl: { type: String, required: true },
         forceLargeIcon: { type: Boolean, default: false },
     },
+
     data() {
         return {
             open: false,
@@ -118,6 +121,7 @@ export default {
             modalInstance: null,
         };
     },
+
     computed: {
         photoUrl() {
             // retorna url completa ou fallback
@@ -126,14 +130,17 @@ export default {
             return "/public/img/default-dependent.png";
         },
     },
+
     mounted() {
         document.addEventListener("click", this.onOutsideClick);
         document.addEventListener("keydown", this.onGlobalKey);
     },
+
     beforeUnmount() {
         document.removeEventListener("click", this.onOutsideClick);
         document.removeEventListener("keydown", this.onGlobalKey);
     },
+    
     methods: {
         ...mapActions("relationship", ["destroyRelationship"]),
 

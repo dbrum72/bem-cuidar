@@ -232,11 +232,11 @@ export default {
         },
 
         fieldGroups() {
-            return [
-                { key: 'id', label: 'ID', icon: 'fa-solid fa-hashtag', value: this.appointment.id },
+            return [                
                 { key: 'title', label: 'Título', icon: 'fa-solid fa-pen-to-square', value: this.appointment.title },
-                { key: 'location', label: 'Local', icon: 'fa-solid fa-location-dot', value: this.appointment.location },
+                { key: 'id', label: 'ID', icon: 'fa-solid fa-hashtag', value: this.appointment.id },
                 { key: 'description', label: 'Descrição', icon: 'fa-solid fa-align-left', value: this.appointment.description },
+                { key: 'location', label: 'Local', icon: 'fa-solid fa-location-dot', value: this.appointment.location },                
                 { key: 'created_at', label: 'Criado em', icon: 'fa-solid fa-clock', value: this.formatDateTime(this.appointment.created_at) },
                 { key: 'updated_at', label: 'Atualizado em', icon: 'fa-solid fa-clock-rotate-left', value: this.formatDateTime(this.appointment.updated_at) }
             ];
