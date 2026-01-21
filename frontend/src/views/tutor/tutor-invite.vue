@@ -37,7 +37,7 @@
                         Reenviar
                     </button>
 
-                    <button @click="deleteInvite(i.id)" class="btn btn-sm btn-outline-danger mx-1">
+                    <button @click="destroyInvite(i.id)" class="btn btn-sm btn-outline-danger mx-1">
                         Excluir
                     </button>
                 </li>
@@ -48,12 +48,10 @@
 </template>
 
 <script>
-import TutorInviteMixin from '@/mixins/TutorInviteMixin.js'
+import { mapState, mapActions } from 'vuex';
 
 export default {
     name: 'TutorInvite',
-
-    mixins: [TutorInviteMixin],
 
     data() {
         return {
@@ -62,7 +60,18 @@ export default {
         }
     },
 
+    computed: {
+        ...mapState('tutorInvite', ['invites'])
+    },
+
     methods: {
+        ...mapActions('tutorInvite', [
+            'sendInvite',
+            'fetchInvites',
+            'resendInvite',
+            'destroyInvite'
+        ]),
+        
         async onSubmit() {
             this.loading = true
             try {

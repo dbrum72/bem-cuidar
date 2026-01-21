@@ -1,30 +1,30 @@
 import { createStore } from 'vuex';
-import auth from './modules/auth';
-import user from './modules/user';
-import dependent from './modules/dependent';
+import alerts from './modules/alerts';
 import appointment from './modules/appointment';
-import relationship from './modules/relationship';
-import transactions from './modules/transactions';
-import notifications from './modules/notifications';
-import tutorInvite from './modules/tutorInvite';
+import auth from './modules/auth';
+import dependent from './modules/dependent';
 import file from './modules/file';
 import loader from "./modules/loader";
-import alerts from './modules/alerts';
+import notifications from './modules/notifications';
+import relationship from './modules/relationship';
 import request from "../helpers/request";
+import transactions from './modules/transactions';
+import tutorInvite from './modules/tutorInvite';
+import user from './modules/user';
 
 export default createStore({
     modules: {
-        auth,
-        user,
-        dependent,
+        alerts,
         appointment,
-        relationship,
-        transactions,
-        notifications,
-        tutorInvite,
+        auth,
+        dependent,
         file,
         loader,
-        alerts,
-        request
+        notifications,       
+        relationship,
+        request,
+        transactions,
+        tutorInvite,
+        user       
     }
 });
