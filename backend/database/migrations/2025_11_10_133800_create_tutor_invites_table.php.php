@@ -10,7 +10,8 @@ class CreateTutorInvitesTable extends Migration {
 
         Schema::create('tutor_invites', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('inviter_id')->index();
+            $table->foreignId('inviter_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('dependent_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('tutor_id')->nullable()->index();
             $table->string('tutor_email')->index();
             $table->string('token', 100)->unique();
@@ -18,7 +19,6 @@ class CreateTutorInvitesTable extends Migration {
             $table->timestamp('accepted_at')->nullable();
             $table->timestamps();
 
-            $table->foreign('inviter_id')->references('id')->on('users')->onDelete('cascade');
             // tutor_id points to users when present
             $table->foreign('tutor_id')->references('id')->on('users')->onDelete('set null');
         });

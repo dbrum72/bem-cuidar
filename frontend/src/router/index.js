@@ -97,7 +97,7 @@ const routes = [
 		path: "/tutor-invite",
 		name: "TutorInvite",
 		component: () => import("@/views/tutor/tutor-invite.vue"),
-		meta: { requiresAuth: true, roles: ['tutor', 'admin'] }
+		meta: { requiresAuth: true /*, roles: ['tutor', 'admin'] */ },
 	},
 	{
 		path: '/user',

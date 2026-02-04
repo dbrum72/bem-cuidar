@@ -14,8 +14,9 @@ class TutorInviteCreateRequest extends FormRequest {
 
     public function rules(): array {
 
-        $rules = [            
-            'email' => ['required','email'],
+        $rules = [
+            'dependent_id' => ['required','exists:dependents,id'],       
+            'tutor_email' => ['required','email'],
             'message' => ['nullable','string','max:1000']
         ];
 
@@ -26,7 +27,8 @@ class TutorInviteCreateRequest extends FormRequest {
 
         return [
             'required' => 'Este campo é obrigatório.',
-            'email' => 'Email inválido.',
+            'exists' => 'O valor informado é inválido.',
+            'tutor_email' => 'Email inválido.',
             'max' => 'O campo deve ter no máximo 1000 caracteres.'          
         ];        
     }

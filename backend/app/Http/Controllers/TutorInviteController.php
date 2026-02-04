@@ -9,6 +9,7 @@ use App\Http\Requests\TutorInviteCreateRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class TutorInviteController extends Controller {
     
@@ -36,17 +37,18 @@ class TutorInviteController extends Controller {
 
         $existingUser = User::where('email', $request->tutor_email)->first();
 
-        if ($existingUser->id === $user->id) {
+        if ($existingUser && $existingUser->id === $user->id) {
             return response()->json(['message' => 'Você não pode convidar a si mesmo.'], 422);
         }
 
         DB::beginTransaction();
         try {
             $invite = TutorInvite::create([
-            'inviter_id'  => $inviter->id,
+            'inviter_id'  => $user->id,
+            'dependent_id' => $request->dependent_id,
             'tutor_id'    => $existingUser?->id,
             'tutor_email' => $request->tutor_email,
-            'message'     => $request->message || null,
+            'message'     => $request->message ?? null,
             'token'       => Str::random(64),
         ]);
 
@@ -63,7 +65,7 @@ class TutorInviteController extends Controller {
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erro ao criar convite: '.$e->getMessage());
-            return response()->json(['message' => 'Erro ao enviar convite.'], 500);
+            return response()->json(['message' => 'Erro ao enviar convite: '.$e->getMessage()], 500);
         }
     }
 
@@ -88,7 +90,7 @@ class TutorInviteController extends Controller {
 
             // Cria vínculo entre tutor e dependente (ou usuário principal)
             DB::table('dependent_tutor')->insertOrIgnore([
-                'dependent_id' => $invite->inviter_id,
+                'dependent_id' => $invite->dependent_id,
                 'tutor_id' => $invite->tutor_id,
                 'created_at' => now(),
                 'updated_at' => now(),

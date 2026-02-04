@@ -17,7 +17,7 @@ class TutorInviteMail extends Mailable {
              . $this->invite->token;
 
         return $this->subject('Convite para Tutoria Compartilhada')
-            ->view('emails.tutor-invite')
+            ->view('tutor_invite')
             ->with([
                 'inviter' => $this->invite->inviter,
                 'url'     => $url

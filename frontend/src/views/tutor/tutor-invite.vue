@@ -3,24 +3,34 @@
         <h2>Convidar Tutor</h2>
 
         <form @submit.prevent="onSubmit">
-            <div class="form-group">
+            <div class="form-group mb-3">
+                <label class="form-label">Dependente</label>
+                <select v-model="form.dependent_id" class="form-select" aria-label="Dependente" required>
+                    <option value="">Selecione...</option>
+                        <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">
+                            {{ dependent.name }}
+                        </option>
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
                 <label for="tutor_email">E-mail do tutor</label>
                 <input v-model="form.tutor_email" id="tutor_email" type="email" class="form-control" required />
             </div>
 
-            <div class="form-group mt-2">
+            <div class="form-group mb-3">
                 <label for="message">Mensagem (opcional)</label>
                 <textarea v-model="form.message" id="message" class="form-control" rows="3"></textarea>
             </div>
 
-            <div class="mt-3">
+            <div class="form-group">
                 <button class="btn btn-primary" :disabled="loading">
                     {{ loading ? 'Enviando...' : 'Enviar Convite' }}
                 </button>
             </div>
         </form>
 
-        <hr />
+        <hr class="mb-4" />
 
         <div>
             <h3>Convites enviados</h3>
@@ -55,19 +65,24 @@ export default {
 
     data() {
         return {
-            form: { tutor_email: '', message: '' },
+            form: {
+                tutor_email: '',
+                dependent_id: '',
+                message: ''
+            },
             loading: false
         }
     },
 
     computed: {
-        ...mapState('tutorInvite', ['invites'])
+        ...mapState('tutorInvite', ['invites']),
+        ...mapState('dependent', ['dependents'])
     },
 
     methods: {
         ...mapActions('tutorInvite', [
-            'sendInvite',
-            'fetchInvites',
+            'addOrUpdate',
+            'getInvites',
             'resendInvite',
             'destroyInvite'
         ]),
@@ -75,10 +90,11 @@ export default {
         async onSubmit() {
             this.loading = true
             try {
-                await this.sendInvite({ ...this.form })
+                await this.addOrUpdate({ ...this.form })
+                this.form.dependent_id = ''
                 this.form.tutor_email = ''
                 this.form.message = ''
-                await this.fetchInvites()
+                await this.getInvites()
             } finally {
                 this.loading = false
             }
@@ -91,7 +107,7 @@ export default {
     },
     
     mounted() {
-        this.fetchInvites()
+        this.getInvites()
     }
 }
 </script>

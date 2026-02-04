@@ -15,7 +15,7 @@
     @endif
 
     <p>Para aceitar o convite, clique no link abaixo:</p>
-    <p><a href="{{ $acceptUrl }}">{{ $acceptUrl }}</a></p>
+    <p><a href="{{ $url }}">{{ $url }}</a></p>
 
     <p>Caso ainda não possua cadastro, você será direcionado para criá-lo.</p>
 

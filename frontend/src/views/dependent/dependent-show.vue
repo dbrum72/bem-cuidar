@@ -43,6 +43,7 @@ export default {
             return [
                 { key: 'id', label: 'ID', value: this.dependent.id },
                 { key: 'name', label: 'Nome', value: this.dependent.name },
+                { key: 'document', label: 'Nº. documento', value: this.dependent.document_number + ' (' + this.dependent.document_type + ')' },
                 { key: 'birth_date', label: 'Data de Nascimento', value: this.formatDate(this.dependent.birth_date) },
                 { key: 'notes', label: 'Nota', value: this.dependent.notes },
                 { key: 'created_at', label: 'Criado em', value: this.formatDateTime(this.dependent.created_at) },
