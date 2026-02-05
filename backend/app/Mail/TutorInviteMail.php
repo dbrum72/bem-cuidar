@@ -12,7 +12,7 @@ class TutorInviteMail extends Mailable {
 
     public function build() {
 
-        $url = config(env('APP_URL'))
+        $url = env('APP_URL')
              . '/tutor-invite/accept?token='
              . $this->invite->token;
 

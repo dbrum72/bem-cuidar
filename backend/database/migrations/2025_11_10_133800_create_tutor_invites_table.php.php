@@ -14,6 +14,7 @@ class CreateTutorInvitesTable extends Migration {
             $table->foreignId('dependent_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('tutor_id')->nullable()->index();
             $table->string('tutor_email')->index();
+            $table->text('message')->nullable();
             $table->string('token', 100)->unique();
             $table->enum('status', ['pendente','aceito','recusado','cancelado'])->default('pendente');
             $table->timestamp('accepted_at')->nullable();

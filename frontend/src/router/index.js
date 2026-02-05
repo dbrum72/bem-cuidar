@@ -94,10 +94,16 @@ const routes = [
 		meta: { requiresAuth: true },
 	},
 	{
-		path: "/tutor-invite",
-		name: "TutorInvite",
-		component: () => import("@/views/tutor/tutor-invite.vue"),
+		path: "/tutor",
+		name: "Tutor",
 		meta: { requiresAuth: true /*, roles: ['tutor', 'admin'] */ },
+		children: [
+			{
+				path: "invite",
+				name: "Invite",
+				component: () => import("@/views/tutor/tutor-invite-list.vue"),
+			},
+		],
 	},
 	{
 		path: '/user',
