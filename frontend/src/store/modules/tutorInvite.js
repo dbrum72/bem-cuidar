@@ -1,6 +1,6 @@
 import { createResource } from "@/services/resource.js";
 
-const inviteAPI = createResource("tutor/invite");
+const inviteAPI = createResource("invite");
 
 export default {
 	namespaced: true,
@@ -37,7 +37,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.list({ skipLoader: true }),
+					callFn: () => inviteAPI.list({ skipLoader: true }),
 					successMsg: (response) =>
 						response?.data?.invites?.length
 							? "Convites carregados com sucesso."
@@ -60,7 +60,7 @@ export default {
 			const response = await dispatch(
 				"request/exec",
 				{
-					callFn: () => dependentAPI.get(id, { skipLoader: true }),
+					callFn: () => inviteAPI.get(id, { skipLoader: true }),
 					successMsg: "Dados do convite carregados com sucesso.",
 					errorMsg: "Erro ao carregar os dados do convite."
 				},

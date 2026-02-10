@@ -4,7 +4,7 @@
         <h4>Dependentes</h4>
         <div>
             <router-link :to="{ name: 'DependentSave' }" class="me-3">Adicionar</router-link>
-            <router-link :to="{ name: 'TutorInvite' }">Convidar tutor</router-link>
+            <router-link :to="{ name: 'InviteSend' }">Convidar tutor</router-link>
         </div>
 
     </div>

@@ -34,7 +34,7 @@
 
         <div>
             <h3>Convites enviados</h3>
-            <button class="btn btn-link" @click="fetchInvites">Atualizar</button>
+            <button class="btn btn-link" @click="getInvites">Atualizar</button>
 
             <ul v-if="invites && invites.length">
                 <li v-for="i in invites" :key="i.id" class="my-2">
@@ -86,12 +86,8 @@ export default {
     },
 
     methods: {
-        ...mapActions('tutorInvite', [
-            'addOrUpdate',
-            'getInvites',
-            'resendInvite',
-            'destroyInvite'
-        ]),
+        ...mapActions('dependent', ['getDependents']),
+        ...mapActions('tutorInvite', [ 'addOrUpdate', 'getInvites', 'resendInvite', 'destroyInvite' ]),
 
         async onSubmit() {
             this.loading = true
@@ -117,6 +113,7 @@ export default {
     },
 
     mounted() {
+        this.getDependents()
         this.getInvites()
     }
 }

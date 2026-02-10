@@ -13,8 +13,8 @@ class TutorInviteMail extends Mailable
     {
         $this->invite->loadMissing(['inviter', 'dependent']);
 
-        $url = config('app.frontend_url')
-            . '/invite/accept?token='
+        $url = env('APP_FRONTEND_URL')
+            . '/#/invite/accept/'
             . $this->invite->token;
 
         return $this->subject('Convite para Tutoria Compartilhada')

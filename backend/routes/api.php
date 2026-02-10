@@ -28,10 +28,10 @@ Route::group([
 Route::group(['middleware' => ['api', 'jwt.auth']], function () {
     
     // Tutor - Convite
-    Route::get('tutor/invite', [TutorInviteController::class, 'index'])->middleware('role:tutor|admin');
-    Route::post('tutor/invite', [TutorInviteController::class, 'store'])/*->middleware('role:tutor|admin')*/;
-    Route::post('tutor/invite/{id}/resend', [TutorInviteController::class, 'resend'])->middleware('role:tutor|admin');
-    Route::delete('tutor/invite/{id}', [TutorInviteController::class, 'destroy'])->middleware('role:admin');
+    Route::get('invite', [TutorInviteController::class, 'index'])/*->middleware('role:tutor|admin')*/;
+    Route::post('invite', [TutorInviteController::class, 'store'])/*->middleware('role:tutor|admin')*/;
+    Route::post('invite/{id}/resend', [TutorInviteController::class, 'resend'])->middleware('role:tutor|admin');
+    Route::delete('invite/{id}', [TutorInviteController::class, 'destroy'])->middleware('role:admin');
 
     // Dependente
     Route::apiResource('dependent', DependentController::class);
@@ -59,5 +59,5 @@ Route::group(['middleware' => ['api', 'jwt.auth']], function () {
 });
 
 // Tutor - Aceite (sem autenticação)
-Route::get('/invite/accept/{token}', [TutorInviteController::class, 'accept'])
-    ->name('tutor-invite.accept');
+Route::get('invite/accept/{token}', [TutorInviteController::class, 'accept'])
+    ->name('invite-accept');

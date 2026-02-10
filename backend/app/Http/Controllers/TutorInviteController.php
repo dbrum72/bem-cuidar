@@ -80,11 +80,11 @@ class TutorInviteController extends Controller {
         $invite = TutorInvite::where('token', $token)->first();
 
         if (!$invite) {
-            return redirect(config('app.frontend_url') . '/invite/invalid?reason=not_found');
+            return redirect(env('APP_FRONTEND_URL') . '/invite/invalid?reason=not_found');
         }
 
         if ($invite->status !== 'pendente') {
-            return redirect(config('app.frontend_url') . '/invite/invalid?reason=already_processed');
+            return redirect(env('APP_FRONTEND_URL') . '/invite/invalid?reason=already_processed');
         }
 
         DB::beginTransaction();
@@ -103,11 +103,11 @@ class TutorInviteController extends Controller {
 
             DB::commit();
 
-            return redirect(config('app.frontend_url') . '/invite/aceito?token=' . $invite->token);
+            return redirect(env('APP_FRONTEND_URL') . '/invite/aceito?token=' . $invite->token);
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erro ao aceitar convite: '.$e->getMessage());
-            return redirect(config('app.frontend_url') . '/invite/error');
+            return redirect(env('APP_FRONTEND_URL') . '/invite/error');
         }
     }
     
