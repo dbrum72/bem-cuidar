@@ -2,7 +2,11 @@
 
     <div class="d-flex justify-content-between">
         <h4>Dependentes</h4>
-        <router-link :to="{ name: 'DependentSave' }">Adicionar</router-link>
+        <div>
+            <router-link :to="{ name: 'DependentSave' }" class="me-3">Adicionar</router-link>
+            <router-link :to="{ name: 'TutorInvite' }">Convidar tutor</router-link>
+        </div>
+
     </div>
 
     <div v-if="dependents.length === 0" class="mt-4">

@@ -1,6 +1,6 @@
 import { createResource } from "@/services/resource.js";
 
-const inviteAPI = createResource("tutor-invite");
+const inviteAPI = createResource("tutor/invite");
 
 export default {
 	namespaced: true,

@@ -7,9 +7,9 @@
                 <label class="form-label">Dependente</label>
                 <select v-model="form.dependent_id" class="form-select" aria-label="Dependente" required>
                     <option value="">Selecione...</option>
-                        <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">
-                            {{ dependent.name }}
-                        </option>
+                    <option v-for="dependent in dependents" :key="dependent.id" :value="dependent.id">
+                        {{ dependent.name }}
+                    </option>
                 </select>
             </div>
 
@@ -66,9 +66,9 @@ export default {
     data() {
         return {
             form: {
-                tutor_email: '',
-                dependent_id: '',
-                message: ''
+                tutor_email: null,
+                dependent_id: null,
+                message: null
             },
             loading: false
         }
@@ -76,7 +76,13 @@ export default {
 
     computed: {
         ...mapState('tutorInvite', ['invites']),
-        ...mapState('dependent', ['dependents'])
+        ...mapState('dependent', ['dependents']),
+
+        getDependentName() {
+            const id = Number(this.form.dependent_id)
+            if (!id || !this.dependents?.length) return null
+            return this.dependents.find(d => d.id === id)?.name ?? null
+        }
     },
 
     methods: {
@@ -86,17 +92,21 @@ export default {
             'resendInvite',
             'destroyInvite'
         ]),
-        
+
         async onSubmit() {
             this.loading = true
             try {
-                await this.addOrUpdate({ ...this.form })
-                this.form.dependent_id = ''
-                this.form.tutor_email = ''
-                this.form.message = ''
-                await this.getInvites()
+                await this.addOrUpdate({ 
+                    ...this.form,
+                    dependent_name: this.getDependentName
+                })
             } finally {
-                this.loading = false
+                await this.getInvites(),
+                    this.form.dependent_id = '',
+                    this.form.dependent_name = '',
+                    this.form.tutor_email = '',
+                    this.form.message = '',
+                    this.loading = false
             }
         },
 
@@ -105,7 +115,7 @@ export default {
             return new Date(date).toLocaleString()
         }
     },
-    
+
     mounted() {
         this.getInvites()
     }

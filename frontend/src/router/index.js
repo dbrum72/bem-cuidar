@@ -99,9 +99,9 @@ const routes = [
 		meta: { requiresAuth: true /*, roles: ['tutor', 'admin'] */ },
 		children: [
 			{
-				path: "invite",
-				name: "Invite",
-				component: () => import("@/views/tutor/tutor-invite-list.vue"),
+				path: "invite/:id?",
+				name: "TutorInvite",
+				component: () => import("@/views/tutor/tutor-invite.vue"),
 			},
 		],
 	},

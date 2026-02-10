@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dependent;
 use App\Models\TutorInvite;
 use App\Models\User;
 use App\Mail\TutorInviteMail;
@@ -41,20 +42,24 @@ class TutorInviteController extends Controller {
             return response()->json(['message' => 'Você não pode convidar a si mesmo.'], 422);
         }
 
+        $dependent = Dependent::findOrFail($request->dependent_id);
+
         DB::beginTransaction();
+        
         try {
             $invite = TutorInvite::create([
-            'inviter_id'  => $user->id,
+            'inviter_id'   => $user->id,
             'dependent_id' => $request->dependent_id,
-            'tutor_id'    => $existingUser?->id,
-            'tutor_email' => $request->tutor_email,
-            'message'     => $request->message ?? null,
-            'token'       => Str::random(64),
+            'tutor_id'     => $existingUser?->id,
+            'tutor_email'  => $request->tutor_email,
+            'message'      => $request->message,
+            'token'        => Str::random(64),
         ]);
 
-            Mail::to($invite->tutor_email)
-            ->send(new TutorInviteMail($invite));
+        $invite->load(['inviter', 'dependent']);
 
+        Mail::to($invite->tutor_email)
+            ->send(new TutorInviteMail($invite));
             DB::commit();
 
             return response()->json([
